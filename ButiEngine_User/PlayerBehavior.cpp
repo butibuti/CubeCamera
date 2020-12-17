@@ -8,7 +8,7 @@
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
 	if (goal)
-	{
+	{//a
 		GUI::Begin("player");
 		GUI::Text("Clear");
 		GUI::End();
