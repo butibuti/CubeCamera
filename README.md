@@ -1,2 +1,3 @@
-# CubeCamera
-2年生3回目の制作
+# ButiEngine
+
+DirectX12を使用した自作エンジン
