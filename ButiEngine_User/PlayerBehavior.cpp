@@ -55,19 +55,19 @@ void ButiEngine::PlayerBehavior::OnShowUI()
 
 void ButiEngine::PlayerBehavior::Contoroll()
 {
-	if (GameDevice::GetInput()->TriggerKey(Keys::D))
+	if (GameDevice::GetInput()->CheckKey(Keys::D))
 	{
 		PushD();
 	}
-	if (GameDevice::GetInput()->TriggerKey(Keys::A))
+	if (GameDevice::GetInput()->CheckKey(Keys::A))
 	{
 		PushA();
 	}
-	if (GameDevice::GetInput()->TriggerKey(Keys::W))
+	if (GameDevice::GetInput()->CheckKey(Keys::W))
 	{
 		PushW();
 	}
-	if (GameDevice::GetInput()->TriggerKey(Keys::S))
+	if (GameDevice::GetInput()->CheckKey(Keys::S))
 	{
 		PushS();
 	}
@@ -401,7 +401,9 @@ ButiEngine::MoveDirection ButiEngine::PlayerBehavior::CheckMoveDirection(Vector3
 	int block = 2;
 	if (mapData[movePos.y][movePos.z][movePos.x] == block)
 	{
-		if (movePos.y + 1 >= mapData.size() || mapData[movePos.y + 1][movePos.z][movePos.x] == block)
+		if (movePos.y + 1 >= mapData.size() || 
+			mapData[movePos.y + 1][movePos.z][movePos.x] == block ||
+			mapData[mapPos.y + 1][mapPos.z][mapPos.x] == block)
 		{
 			output = MoveDirection::No;
 		}
