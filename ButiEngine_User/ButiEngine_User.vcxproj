@@ -158,6 +158,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapComponent.cpp" />
     <ClCompile Include="PlayerBehavior.cpp" />
+    <ClCompile Include="PlayerCameraComponent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -172,6 +173,7 @@
     <ClInclude Include="GameSettings.h" />
     <ClInclude Include="MapComponent.h" />
     <ClInclude Include="PlayerBehavior.h" />
+    <ClInclude Include="PlayerCameraComponent.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stdafx_u.h" />
     <ClInclude Include="TestBehavior.h" />

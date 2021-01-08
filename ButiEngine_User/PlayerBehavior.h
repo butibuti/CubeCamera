@@ -3,8 +3,9 @@
 namespace ButiEngine {
 
 	class MapComponent;
+	class PlayerCameraComponent;
 
-	enum MoveDirection
+	enum class MoveDirection
 	{
 		Up,
 		Normal,
@@ -36,14 +37,15 @@ namespace ButiEngine {
 	private:
 		float length;
 		std::shared_ptr<MapComponent> shp_map;
+		std::shared_ptr<PlayerCameraComponent> shp_playerCamera;
 		Vector3 mapPos;
 		bool goal;
 
 		void Contoroll();
-		void PushD();
-		void PushA();
-		void PushW();
-		void PushS();
+		void OnPushD();
+		void OnPushA();
+		void OnPushW();
+		void OnPushS();
 		void MoveRightUp();
 		void MoveRight();
 		void MoveRightDown();

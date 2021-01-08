@@ -11,17 +11,22 @@ namespace ButiEngine {
 		}
 		int linkBone;
 		std::shared_ptr<Bone> shp_linkBone;
-		bool radianLimit=false;
-		Vector3 upLimmit;
-		Vector3 downLimmit;
+		bool radianLimit=false; 
+		float bonesLength = 0;
+		Quat befBoneInitRotation;
+		Vector3 upLimit;
+		Vector3 downLimit;
 		Vector3* axis=nullptr;
 	};
 	struct IKData {
+		~IKData();
 		int targetBoneIndex;
 		std::shared_ptr<Bone> shp_targetBone;
 		int loopCount;
 		float maxRadian;
+		float sum_bonesLength=0;
 		std::vector<IKLink> links;
+		Vector3* p_jointPoints=nullptr;
 	}; 
 	struct Bone
 	{
@@ -75,6 +80,7 @@ namespace ButiEngine {
 		void AddBonePower();
 
 		void InverseKinematic();
+		void CCDInverseKinematic();
 
 	};
 }
