@@ -74,12 +74,12 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 					break;
 				case 1://プレイヤー開始地点
 				{
-					playerPos = Vector3(x, y, z);
 					auto gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
-					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3::Zero, Vector3::Zero, scale));
+					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
 					auto camera = GetCamera("playerCamera");
 					camera.lock()->shp_transform->SetBaseTransform(gameObject.lock()->transform, true);
 					cameraMesh.lock()->transform->SetBaseTransform(gameObject.lock()->transform, true);
+					playerPos = Vector3(x, y, z);
 
 				break;
 				}
@@ -149,7 +149,7 @@ ButiEngine::MapData::MapData(int stageNum)
 				{3,0,0,0,0,0,0,0,0,0,4},
 				{0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,2,0,0,0,0,0},
-				{0,0,2,2,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,1,4,0,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,0},
@@ -157,19 +157,6 @@ ButiEngine::MapData::MapData(int stageNum)
 				{0,0,0,0,0,2,2,2,2,2,0},
 				{0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,5},
-			},
-			{
-				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,2,0,0,0,0,0,0,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,0,0,0,0,0,0,2,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
 			},
 			{
 				{0,0,0,0,0,0,0,0,0,0,0},

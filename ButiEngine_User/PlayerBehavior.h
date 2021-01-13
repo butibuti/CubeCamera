@@ -10,7 +10,6 @@ namespace ButiEngine {
 		Up,
 		Normal,
 		Down,
-		Fall,
 		No,
 	};
 
@@ -41,8 +40,6 @@ namespace ButiEngine {
 		std::shared_ptr<PlayerCameraComponent> shp_playerCamera;
 		Vector3 mapPos;
 		bool goal;
-		bool fall;
-		Vector3 afterFallPos;
 
 		void Contoroll();
 		void OnPushD();
@@ -61,13 +58,7 @@ namespace ButiEngine {
 		void MoveUpBack();
 		void MoveBack();
 		void MoveDownBack();
-		void RotationRight();
-		void RotationLeft();
-		void RotationFront();
-		void RotationBack();
-		void Fall();
 		MoveDirection CheckMoveDirection(Vector3 movePos);
-		bool CheckExistUnderBlock(Vector3 movePos);
 		
 		void CheckGoal();
 	};
