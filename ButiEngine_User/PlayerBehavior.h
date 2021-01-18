@@ -35,6 +35,9 @@ namespace ButiEngine {
 		void OnShowUI()override;
 
 		bool GetGoal() { return goal; }
+
+		bool IsRollFinish();
+		Vector3 GetMapPos() { return mapPos; }
 	private:
 		float length;
 		std::shared_ptr<MapComponent> shp_map;
@@ -43,6 +46,8 @@ namespace ButiEngine {
 		bool goal;
 		bool fall;
 		Vector3 afterFallPos;
+
+		std::shared_ptr<RelativeTimer> timer;
 
 		void Contoroll();
 		void OnPushD();

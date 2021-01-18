@@ -18,7 +18,15 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		return; 
 	}
 	GUI::End();
+	if (timer->Update())
+	{
+		timer->Stop();
+	}
 	Contoroll();
+	if (IsRollFinish() && !gameObject.lock()->GetGameComponent<CubeTransformAnimation>())
+	{
+		CheckExistUnderBlock(mapPos); 
+	}
 	Fall();
 	CheckGoal();
 }
@@ -37,6 +45,7 @@ void ButiEngine::PlayerBehavior::Start()
 	shp_playerCamera = gameObject.lock()->GetGameComponent<PlayerCameraComponent>();
 	shp_playerCamera->SetTimer(0);
 	mapPos = shp_map->GetPlayerPos();
+	timer = ObjectFactory::Create<RelativeTimer>(9);
 }
 
 std::shared_ptr<ButiEngine::Behavior> ButiEngine::PlayerBehavior::Clone()
@@ -58,6 +67,11 @@ void ButiEngine::PlayerBehavior::OnCollisionEnd(std::weak_ptr<GameObject> arg_ot
 
 void ButiEngine::PlayerBehavior::OnShowUI()
 {
+}
+
+bool ButiEngine::PlayerBehavior::IsRollFinish()
+{
+	return !timer->IsOn();
 }
 
 void ButiEngine::PlayerBehavior::Contoroll()
@@ -146,6 +160,8 @@ void ButiEngine::PlayerBehavior::MoveRightUp()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -168,6 +184,8 @@ void ButiEngine::PlayerBehavior::MoveRight()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -188,6 +206,8 @@ void ButiEngine::PlayerBehavior::MoveRightDown()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -211,6 +231,8 @@ void ButiEngine::PlayerBehavior::MoveLeftUp()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -233,6 +255,8 @@ void ButiEngine::PlayerBehavior::MoveLeft()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim) 
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -253,6 +277,8 @@ void ButiEngine::PlayerBehavior::MoveLeftDown()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -276,6 +302,8 @@ void ButiEngine::PlayerBehavior::MoveUpFront()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -298,6 +326,8 @@ void ButiEngine::PlayerBehavior::MoveFront()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -318,6 +348,8 @@ void ButiEngine::PlayerBehavior::MoveDownFront()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -341,6 +373,8 @@ void ButiEngine::PlayerBehavior::MoveUpBack()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -363,6 +397,8 @@ void ButiEngine::PlayerBehavior::MoveBack()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -383,6 +419,8 @@ void ButiEngine::PlayerBehavior::MoveDownBack()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		timer->Reset();
+		timer->Start();
 		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
@@ -485,7 +523,6 @@ void ButiEngine::PlayerBehavior::Fall()
 	if (fall)
 	{
 		gameObject.lock()->transform->TranslateY(-0.05f);
-		float a = gameObject.lock()->transform->GetWorldPosition().y;
 		if (gameObject.lock()->transform->GetWorldPosition().y <= afterFallPos.y)
 		{
 			shp_playerCamera->SetTimer(0);
@@ -509,12 +546,11 @@ ButiEngine::MoveDirection ButiEngine::PlayerBehavior::CheckMoveDirection(Vector3
 		return output;
 	}
 
-	const int block = 2;
-	if (mapData[movePos.y][movePos.z][movePos.x] == block)
+	if (mapData[movePos.y][movePos.z][movePos.x] == GameSettings::block)
 	{
 		if (movePos.y + 1 >= mapData.size() || 
-			mapData[movePos.y + 1][movePos.z][movePos.x] == block ||
-			mapData[mapPos.y + 1][mapPos.z][mapPos.x] == block)
+			mapData[movePos.y + 1][movePos.z][movePos.x] == GameSettings::block ||
+			mapData[mapPos.y + 1][mapPos.z][mapPos.x] == GameSettings::block)
 		{
 			output = MoveDirection::No;
 		}
@@ -523,11 +559,11 @@ ButiEngine::MoveDirection ButiEngine::PlayerBehavior::CheckMoveDirection(Vector3
 			output = MoveDirection::Up;
 		}
 	}
-	else if (mapData[movePos.y - 1][movePos.z][movePos.x] == block)
+	else if (mapData[movePos.y - 1][movePos.z][movePos.x] == GameSettings::block)
 	{
 		output = MoveDirection::Normal;
 	}
-	else if (movePos.y - 2 >= 0 && mapData[movePos.y - 2][movePos.z][movePos.x] == block)
+	else if (movePos.y - 2 >= 0 && mapData[movePos.y - 2][movePos.z][movePos.x] == GameSettings::block)
 	{
 		output = MoveDirection::Down;
 	}
@@ -545,14 +581,20 @@ ButiEngine::MoveDirection ButiEngine::PlayerBehavior::CheckMoveDirection(Vector3
 
 bool ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
 {
-	if (movePos.y - 3 < 0) { return false; }
-	const int block = 2;
+	if (movePos.y - 2 < 0)
+	{
+		return false; 
+	}
 	auto mapData = shp_map->GetCurrentMapData().mapData;
+	if (mapData[movePos.y - 1][movePos.z][movePos.x] == GameSettings::block)
+	{
+		return false; 
+	}
 	Vector3 offset(mapData[0][0].size() / 2, mapData.size() / 2, mapData[0].size() / 2);
 
-	for (int y = movePos.y - 3; y >= 0; y--)
+	for (int y = movePos.y - 2; y >= 0; y--)
 	{
-		if (mapData[y][movePos.z][movePos.x] == block)
+		if (mapData[y][movePos.z][movePos.x] == GameSettings::block)
 		{
 			mapPos = Vector3(movePos.x, y + 1, movePos.z);
 			afterFallPos = (mapPos - offset) * GameSettings::BlockSize;
@@ -560,6 +602,7 @@ bool ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
 			return true;
 		}
 	}
+	fall = false;
 	return false;
 }
 
@@ -574,11 +617,11 @@ void ButiEngine::PlayerBehavior::CheckGoal()
 	{
 		goal = true;
 	}
-	else if (mapNum == easyGoal && GetManager().lock()->GetGameObject("EasyGoal").lock()->GetGameComponent<EasyGoalComponent>()->GetActive())
+	else if (mapNum == easyGoal && GetManager().lock()->GetGameObject("EasyGoal").lock()->GetGameComponent<EasyGoalComponent>()->IsActive())
 	{
 		goal = true;
 	}
-	else if (mapNum == defaultGoal && GetManager().lock()->GetGameObject("DefaultGoal").lock()->GetGameComponent<DefaultGoalComponent>()->GetActive())
+	else if (mapNum == defaultGoal && GetManager().lock()->GetGameObject("DefaultGoal").lock()->GetGameComponent<DefaultGoalComponent>()->IsActive())
 	{
 		goal = true;
 	}

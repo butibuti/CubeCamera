@@ -1,23 +1,16 @@
 #pragma once
 #include"Header/GameComponentHeader.h"
-
 namespace ButiEngine {
-
-	namespace Collision
-	{
-		class CollisionPrimitive_Box_AABB;
-	}
-
-	class DefaultGoalComponent :public GameComponent
+	class InvisibleBlockManagerComponent :public GameComponent
 	{
 	public:
-		DefaultGoalComponent() {}
+		InvisibleBlockManagerComponent() {}
 
 		void OnUpdate()override;
 		void OnSet()override;
 		void Start()override;
 		std::string GetGameComponentName()override {
-			return "DefaultGoalComponent";
+			return "InvisibleBlockManagerComponent";
 		}
 		std::shared_ptr<GameComponent> Clone()override;
 		template<class Archive>
@@ -26,12 +19,9 @@ namespace ButiEngine {
 			archive(isActive);
 		}
 		void OnShowUI();
-
-		bool IsActive() { return active; }
 	private:
-		bool active;
-		std::shared_ptr<Collision::CollisionPrimitive_Box_AABB> shp_AABB;
+		void SetActive(std::vector<std::shared_ptr<GameObject>> invBlocks, int id, bool flag);
 	};
 
 }
-BUTI_REGIST_GAMECOMPONENT(ButiEngine::DefaultGoalComponent)
+BUTI_REGIST_GAMECOMPONENT(ButiEngine::InvisibleBlockManagerComponent)

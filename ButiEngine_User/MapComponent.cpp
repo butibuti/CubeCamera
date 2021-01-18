@@ -2,6 +2,7 @@
 #include "MapComponent.h"
 #include"GameSettings.h"
 #include"PlayerBehavior.h"
+#include"InvisibleBlockComponent.h"
 
 void ButiEngine::MapComponent::OnUpdate()
 {
@@ -68,61 +69,82 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				position -= offset;
 				position *= GameSettings::BlockSize;
 
-				switch (mapData[y][z][x])
-				{
-				case 0://なんもない
-					break;
-				case 1://プレイヤー開始地点
+				int mapNum = mapData[y][z][x];
+				if (mapNum == GameSettings::player)
 				{
 					playerPos = Vector3(x, y, z);
 					auto gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
-					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3::Zero, Vector3::Zero, scale));
+					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3(0, 0, -0.1f), Vector3::Zero, scale));
 					auto camera = GetCamera("playerCamera");
+					camera.lock()->shp_transform->TranslateZ(0.00f);
 					camera.lock()->shp_transform->SetBaseTransform(gameObject.lock()->transform, true);
 					cameraMesh.lock()->transform->SetBaseTransform(gameObject.lock()->transform, true);
-
-				break;
 				}
-				case 2://ブロック
+				else if (mapNum == GameSettings::block)
 				{
 					auto gameObject = GetManager().lock()->AddObjectFromCereal("Block", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
-					break;
 				}
-				case 3://ゴール
+				else if (mapNum == GameSettings::tutorialGoal)
 				{
 					auto gameObject = GetManager().lock()->AddObjectFromCereal("TutorialGoal");
 					gameObject.lock()->transform->SetWorldPosition(position);
-					break;
 				}
-				case 4://ゴール
+				else if (mapNum == GameSettings::easyGoal)
 				{
 					auto gameObject = GetManager().lock()->AddObjectFromCereal("EasyGoal");
 					gameObject.lock()->transform->SetWorldPosition(position);
-					break;
 				}
-				case 5://見たら出現するゴール
+				else if (mapNum == GameSettings::defaultGoal)
 				{
 					auto gameObject = GetManager().lock()->AddObjectFromCereal("DefaultGoal");
 					gameObject.lock()->transform->SetWorldPosition(position);
-					break;
 				}
-				default:
-					break;
-				};
+				else if (mapNum >= GameSettings::invisibleBlock)
+				{
+					auto gameObject = GetManager().lock()->AddObjectFromCereal("InvisibleBlock");
+					gameObject.lock()->transform->SetWorldPosition(position);
+					int id = mapNum - GameSettings::invisibleBlock;
+					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetID(id);
+					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetMapPos(Vector3(x, y, z));
+				}
 			}
 		}
 	}
 }
 
+void ButiEngine::MapComponent::ChangeBlock(Vector3 mapPos, int mapChipNum)
+{
+	if (mapPos.x < 0 || mapPos.x >= currentMapData.mapData[0][0].size() ||
+		mapPos.y < 0 || mapPos.y >= currentMapData.mapData.size() ||
+		mapPos.z < 0 || mapPos.z >= currentMapData.mapData[0].size())
+	{
+		return;
+	}
+	currentMapData.mapData[mapPos.y][mapPos.z][mapPos.x] = mapChipNum;
+}
+
 void ButiEngine::MapComponent::DestoroyMapChip()
 {
-	auto tag = GetTagManager()->GetObjectTag("MapChip");
-	auto manager = GetManager().lock();
-	std::vector<std::shared_ptr<GameObject>> gameObjects = manager->GetGameObjects(tag);
-
-	for (auto itr = gameObjects.begin(); itr != gameObjects.end(); ++itr)
 	{
-		(*itr)->SetIsRemove(true);
+		auto tag = GetTagManager()->GetObjectTag("MapChip");
+		auto manager = GetManager().lock();
+		std::vector<std::shared_ptr<GameObject>> gameObjects = manager->GetGameObjects(tag);
+
+		for (auto itr = gameObjects.begin(); itr != gameObjects.end(); ++itr)
+		{
+			(*itr)->SetIsRemove(true);
+		}
+	}
+
+	{
+		auto tag = GetTagManager()->GetObjectTag("InvisibleBlock");
+		auto manager = GetManager().lock();
+		std::vector<std::shared_ptr<GameObject>> gameObjects = manager->GetGameObjects(tag);
+
+		for (auto itr = gameObjects.begin(); itr != gameObjects.end(); ++itr)
+		{
+			(*itr)->SetIsRemove(true);
+		}
 	}
 }
 
@@ -147,15 +169,15 @@ ButiEngine::MapData::MapData(int stageNum)
 			},
 			{
 				{3,0,0,0,0,0,0,0,0,0,4},
-				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,100,0,0,0,0},
 				{0,0,0,0,0,2,0,0,0,0,0},
-				{0,0,2,2,0,0,0,0,0,0,0},
+				{0,0,2,2,0,0,0,0,101,0,0},
 				{0,0,0,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,1,4,0,0,0,0},
+				{0,0,101,0,0,0,0,0,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
-				{0,0,0,0,0,2,2,2,2,2,0},
-				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,101,0,0,2,2,2,2,2,0},
+				{0,0,0,0,0,100,100,100,0,0,0},
 				{0,0,0,0,0,0,0,0,0,0,5},
 			},
 			{
