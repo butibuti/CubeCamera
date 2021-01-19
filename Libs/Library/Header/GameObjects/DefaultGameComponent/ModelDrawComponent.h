@@ -12,7 +12,6 @@ namespace ButiEngine {
 		std::string GetGameComponentName() {
 			return "ModelDraw";
 		}
-		void OnUpdate()override;
 
 		void OnSet()override;
 		std::shared_ptr<ModelDrawData> GetModelData();
@@ -20,9 +19,25 @@ namespace ButiEngine {
 
 		void OnShowUI()override;
 
+
+		template<class Archive>
+		void serialize(Archive& archive)
+		{
+			archive(layer);
+			archive(meshTag);
+			archive(shaderTag);
+			archive(modelTag);
+			archive(materialTag);
+			archive(isActive);
+			archive(shp_transform);
+			archive(shp_drawInfo);
+		}
+
+
 	protected:
 		void CreateData()override;
 	private:
+		std::shared_ptr<ModelDrawData> shp_modelData;
 	};
 
 }

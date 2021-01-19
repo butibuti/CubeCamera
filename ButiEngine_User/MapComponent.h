@@ -4,7 +4,8 @@ namespace ButiEngine {
 
 	struct MapData
 	{
-		MapData();
+		MapData(){}
+		MapData(int stageNum);
 		template<class Archive>
 		void serialize(Archive& archive)
 		{
@@ -41,6 +42,8 @@ namespace ButiEngine {
 		MapData currentMapData;
 		Vector3 playerPos;
 		int currentStageNum;
+
+		void DestoroyMapChip();
 	};
 
 }

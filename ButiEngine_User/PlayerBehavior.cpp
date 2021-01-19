@@ -4,21 +4,23 @@
 #include"Header/GameObjects/DefaultGameComponent/CubeTransformAnimation.h"
 #include"EasyGoalComponent.h"
 #include"DefaultGoalComponent.h"
+#include"PlayerCameraComponent.h"
+#include"GameSettings.h"
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
+	GUI::Begin("player");
+	GUI::Text(mapPos);
 	if (goal)
 	{
-		GUI::Begin("player");
 		GUI::Text("Clear");
 		GUI::End();
 		return; 
 	}
+	GUI::End();
 	Contoroll();
-	if (!gameObject.lock()->GetGameComponent<CubeTransformAnimation>())
-	{
-		CheckGoal();
-	}
+	Fall();
+	CheckGoal();
 }
 
 void ButiEngine::PlayerBehavior::OnSet()
@@ -27,8 +29,13 @@ void ButiEngine::PlayerBehavior::OnSet()
 
 void ButiEngine::PlayerBehavior::Start()
 {
+	goal = false;
+	fall = false;
+	afterFallPos = Vector3::Zero;
 	length = 1.0f;
 	shp_map = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Map").lock()->GetGameComponent<MapComponent>();
+	shp_playerCamera = gameObject.lock()->GetGameComponent<PlayerCameraComponent>();
+	shp_playerCamera->SetTimer(0);
 	mapPos = shp_map->GetPlayerPos();
 }
 
@@ -55,91 +62,82 @@ void ButiEngine::PlayerBehavior::OnShowUI()
 
 void ButiEngine::PlayerBehavior::Contoroll()
 {
-	if (GameDevice::GetInput()->TriggerKey(Keys::D))
+	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+	if (anim) { return; }
+	if (GameDevice::GetInput()->CheckKey(Keys::D))
 	{
-		PushD();
+		OnPushD();
 	}
-	if (GameDevice::GetInput()->TriggerKey(Keys::A))
+	if (GameDevice::GetInput()->CheckKey(Keys::A))
 	{
-		PushA();
+		OnPushA();
 	}
-	if (GameDevice::GetInput()->TriggerKey(Keys::W))
+	if (GameDevice::GetInput()->CheckKey(Keys::W))
 	{
-		PushW();
+		OnPushW();
 	}
-	if (GameDevice::GetInput()->TriggerKey(Keys::S))
+	if (GameDevice::GetInput()->CheckKey(Keys::S))
 	{
-		PushS();
+		OnPushS();
 	}
 	
 }
 
-void ButiEngine::PlayerBehavior::PushD()
+void ButiEngine::PlayerBehavior::OnPushD()
 {
+	if (fall)
+	{
+		RotationRight();
+		return;
+	}
+
 	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x + 1, mapPos.y, mapPos.z));
-	if (dir == MoveDirection::Up)
-	{
-		MoveRightUp();
-	}
-	else if (dir == MoveDirection::Normal)
-	{
-		MoveRight();
-	}
-	else if (dir == MoveDirection::Down)
-	{
-		MoveRightDown();
-	}
+	if (dir == MoveDirection::Up) { MoveRightUp(); }
+	else if (dir == MoveDirection::Normal) { MoveRight(); }
+	else if (dir == MoveDirection::Down) { MoveRightDown(); }
+	else if (dir == MoveDirection::Fall) { MoveRightDown(); }
 }
 
-void ButiEngine::PlayerBehavior::PushA()
+void ButiEngine::PlayerBehavior::OnPushA()
 {
+	if (fall)
+	{
+		RotationLeft();
+		return;
+	}
 	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x - 1, mapPos.y, mapPos.z));
-	if (dir == MoveDirection::Up)
-	{
-		MoveLeftUp();
-	}
-	else if (dir == MoveDirection::Normal)
-	{
-		MoveLeft();
-	}
-	else if (dir == MoveDirection::Down)
-	{
-		MoveLeftDown();
-	}
+	if (dir == MoveDirection::Up) { MoveLeftUp(); }
+	else if (dir == MoveDirection::Normal) { MoveLeft(); }
+	else if (dir == MoveDirection::Down) { MoveLeftDown(); }
+	else if (dir == MoveDirection::Fall) { MoveLeftDown(); }
 }
 
-void ButiEngine::PlayerBehavior::PushW()
+void ButiEngine::PlayerBehavior::OnPushW()
 {
+	if (fall)
+	{
+		RotationFront();
+		return;
+	}
 	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x, mapPos.y, mapPos.z + 1));
-	if (dir == MoveDirection::Up)
-	{
-		MoveUpFront();
-	}
-	else if (dir == MoveDirection::Normal)
-	{
-		MoveFront();
-	}
-	else if (dir == MoveDirection::Down)
-	{
-		MoveDownFront();
-	}
+	if (dir == MoveDirection::Up) { MoveUpFront(); }
+	else if (dir == MoveDirection::Normal) { MoveFront(); }
+	else if (dir == MoveDirection::Down) { MoveDownFront(); }
+	else if (dir == MoveDirection::Fall) { MoveDownFront(); }
 }
 
-void ButiEngine::PlayerBehavior::PushS()
+void ButiEngine::PlayerBehavior::OnPushS()
 {
+	if (fall)
+	{
+		RotationBack();
+		return;
+	}
 	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x, mapPos.y, mapPos.z - 1));
-	if (dir == MoveDirection::Up)
-	{
-		MoveUpBack();
-	}
-	else if (dir == MoveDirection::Normal)
-	{
-		MoveBack();
-	}
-	else if (dir == MoveDirection::Down)
-	{
-		MoveDownBack();
-	}
+	if (dir == MoveDirection::Up) { MoveUpBack(); }
+	else if (dir == MoveDirection::Normal) { MoveBack(); }
+	else if (dir == MoveDirection::Down) { MoveDownBack(); }
+	else if (dir == MoveDirection::Fall) { MoveDownBack(); }
 }
 
 void ButiEngine::PlayerBehavior::MoveRightUp()
@@ -148,12 +146,13 @@ void ButiEngine::PlayerBehavior::MoveRightUp()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
-		anim->GetTargetTransform()->Translate(Vector3(length, length, 0));
+		anim->GetTargetTransform()->Translate(Vector3(length, length, 0));//
 
-		anim->GetTargetTransform()->RollWorldRotationZ_Degrees(-179.99f);
+		anim->GetTargetTransform()->RollWorldRotationZ_Degrees(-179.99f);//
 		anim->SetEaseType(Easing::EasingType::Liner);
 		anim->SetXEaseType(Easing::EasingType::CubeRotateMin180);
 		anim->SetYEaseType(Easing::EasingType::CubeRotate180);
@@ -169,6 +168,7 @@ void ButiEngine::PlayerBehavior::MoveRight()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -188,6 +188,7 @@ void ButiEngine::PlayerBehavior::MoveRightDown()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -198,6 +199,7 @@ void ButiEngine::PlayerBehavior::MoveRightDown()
 		anim->SetXEaseType(Easing::EasingType::CubeRotate180);
 		anim->SetYEaseType(Easing::EasingType::CubeRotate180);
 
+		if (fall) { return; }
 		mapPos.x++;
 		mapPos.y--;
 	}
@@ -209,6 +211,7 @@ void ButiEngine::PlayerBehavior::MoveLeftUp()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -230,6 +233,7 @@ void ButiEngine::PlayerBehavior::MoveLeft()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim) 
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -249,6 +253,7 @@ void ButiEngine::PlayerBehavior::MoveLeftDown()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -259,6 +264,7 @@ void ButiEngine::PlayerBehavior::MoveLeftDown()
 		anim->SetXEaseType(Easing::EasingType::CubeRotateMin180);
 		anim->SetYEaseType(Easing::EasingType::CubeRotate180);
 
+		if (fall) { return; }
 		mapPos.x--;
 		mapPos.y--;
 	}
@@ -270,6 +276,7 @@ void ButiEngine::PlayerBehavior::MoveUpFront()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -291,6 +298,7 @@ void ButiEngine::PlayerBehavior::MoveFront()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -310,6 +318,7 @@ void ButiEngine::PlayerBehavior::MoveDownFront()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -320,6 +329,7 @@ void ButiEngine::PlayerBehavior::MoveDownFront()
 		anim->SetYEaseType(Easing::EasingType::CubeRotate180);
 		anim->SetZEaseType(Easing::EasingType::CubeRotate180);
 
+		if (fall) { return; }
 		mapPos.y--;
 		mapPos.z++;
 	}
@@ -331,6 +341,7 @@ void ButiEngine::PlayerBehavior::MoveUpBack()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -352,6 +363,7 @@ void ButiEngine::PlayerBehavior::MoveBack()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -371,6 +383,7 @@ void ButiEngine::PlayerBehavior::MoveDownBack()
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (!anim)
 	{
+		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -381,8 +394,104 @@ void ButiEngine::PlayerBehavior::MoveDownBack()
 		anim->SetYEaseType(Easing::EasingType::CubeRotate180);
 		anim->SetZEaseType(Easing::EasingType::CubeRotateMin180);
 
+		if (fall) { return; }
 		mapPos.y--;
 		mapPos.z--;
+	}
+}
+
+void ButiEngine::PlayerBehavior::RotationRight()
+{
+	auto t = gameObject.lock()->transform;
+	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+	if (!anim)
+	{
+		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
+		anim->SetSpeed(1.0f / 10);
+		anim->SetTargetTransform(t->Clone());
+		anim->GetTargetTransform()->TranslateY(-10 * 0.05f);
+		if (anim->GetTargetTransform()->GetWorldPosition().y < afterFallPos.y)
+		{
+			anim->GetTargetTransform()->SetWorldPosition(afterFallPos);
+		}
+
+		anim->GetTargetTransform()->RollWorldRotationZ_Degrees(-90.0f);
+		anim->SetEaseType(Easing::EasingType::Liner);
+	}
+}
+
+void ButiEngine::PlayerBehavior::RotationLeft()
+{
+	auto t = gameObject.lock()->transform;
+	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+	if (!anim)
+	{
+		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
+		anim->SetSpeed(1.0f / 10);
+		anim->SetTargetTransform(t->Clone());
+		anim->GetTargetTransform()->TranslateY(-10 * 0.05f);
+		if (anim->GetTargetTransform()->GetWorldPosition().y < afterFallPos.y)
+		{
+			anim->GetTargetTransform()->SetWorldPosition(afterFallPos);
+		}
+
+		anim->GetTargetTransform()->RollWorldRotationZ_Degrees(90.0f);
+		anim->SetEaseType(Easing::EasingType::Liner);
+	}
+}
+
+void ButiEngine::PlayerBehavior::RotationFront()
+{
+	auto t = gameObject.lock()->transform;
+	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+	if (!anim)
+	{
+		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
+		anim->SetSpeed(1.0f / 10);
+		anim->SetTargetTransform(t->Clone());
+		anim->GetTargetTransform()->TranslateY(-10 * 0.05f);
+		if (anim->GetTargetTransform()->GetWorldPosition().y < afterFallPos.y)
+		{
+			anim->GetTargetTransform()->SetWorldPosition(afterFallPos);
+		}
+
+		anim->GetTargetTransform()->RollWorldRotationX_Degrees(90.0f);
+		anim->SetEaseType(Easing::EasingType::Liner);
+	}
+}
+
+void ButiEngine::PlayerBehavior::RotationBack()
+{
+	auto t = gameObject.lock()->transform;
+	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+	if (!anim)
+	{
+		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
+		anim->SetSpeed(1.0f / 10);
+		anim->SetTargetTransform(t->Clone());
+		anim->GetTargetTransform()->TranslateY(-10 * 0.05f);
+		if (anim->GetTargetTransform()->GetWorldPosition().y < afterFallPos.y)
+		{
+			anim->GetTargetTransform()->SetWorldPosition(afterFallPos);
+		}
+
+		anim->GetTargetTransform()->RollWorldRotationX_Degrees(-90.0f);
+		anim->SetEaseType(Easing::EasingType::Liner);
+	}
+}
+
+void ButiEngine::PlayerBehavior::Fall()
+{
+	if (fall)
+	{
+		gameObject.lock()->transform->TranslateY(-0.05f);
+		float a = gameObject.lock()->transform->GetWorldPosition().y;
+		if (gameObject.lock()->transform->GetWorldPosition().y <= afterFallPos.y)
+		{
+			shp_playerCamera->SetTimer(0);
+			gameObject.lock()->transform->SetWorldPosition(afterFallPos);
+			fall = false;
+		}
 	}
 }
 
@@ -391,17 +500,21 @@ ButiEngine::MoveDirection ButiEngine::PlayerBehavior::CheckMoveDirection(Vector3
 	MoveDirection output;
 	std::vector<std::vector<std::vector<int>>> mapData = shp_map->GetCurrentMapData().mapData;
 
-	if(movePos.x >= mapData[0][0].size() || movePos.y >= mapData.size() || movePos.z >= mapData[0].size() ||
+	if( movePos.x >= mapData[0][0].size() ||
+		movePos.y >= mapData.size() ||
+		movePos.z >= mapData[0].size() ||
 		movePos.x < 0 || movePos.y < 0 || movePos.z < 0)
 	{
 		output = MoveDirection::No;
 		return output;
 	}
 
-	int block = 2;
+	const int block = 2;
 	if (mapData[movePos.y][movePos.z][movePos.x] == block)
 	{
-		if (movePos.y + 1 >= mapData.size() || mapData[movePos.y + 1][movePos.z][movePos.x] == block)
+		if (movePos.y + 1 >= mapData.size() || 
+			mapData[movePos.y + 1][movePos.z][movePos.x] == block ||
+			mapData[mapPos.y + 1][mapPos.z][mapPos.x] == block)
 		{
 			output = MoveDirection::No;
 		}
@@ -418,12 +531,36 @@ ButiEngine::MoveDirection ButiEngine::PlayerBehavior::CheckMoveDirection(Vector3
 	{
 		output = MoveDirection::Down;
 	}
+	else if(CheckExistUnderBlock(movePos))
+	{
+		output = MoveDirection::Fall;
+	}
 	else
 	{
 		output = MoveDirection::No;
 	}
 
 	return output;
+}
+
+bool ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
+{
+	if (movePos.y - 3 < 0) { return false; }
+	const int block = 2;
+	auto mapData = shp_map->GetCurrentMapData().mapData;
+	Vector3 offset(mapData[0][0].size() / 2, mapData.size() / 2, mapData[0].size() / 2);
+
+	for (int y = movePos.y - 3; y >= 0; y--)
+	{
+		if (mapData[y][movePos.z][movePos.x] == block)
+		{
+			mapPos = Vector3(movePos.x, y + 1, movePos.z);
+			afterFallPos = (mapPos - offset) * GameSettings::BlockSize;
+			fall = true;
+			return true;
+		}
+	}
+	return false;
 }
 
 void ButiEngine::PlayerBehavior::CheckGoal()

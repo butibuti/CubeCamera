@@ -66,6 +66,8 @@ namespace ButiEngine {
 		virtual void ShowUI() = 0;
 		virtual CameraProjProperty& GetCameraProperty() = 0;
 		virtual int IsContaineVisibility(std::shared_ptr<Geometry::Box_AABB>arg_AABB) = 0;
+		virtual void End() = 0;
+		virtual void SetProjectionTexture(const TextureTag& arg_tag)=0;
 	protected:
 	};
 

@@ -67,7 +67,7 @@ namespace ButiEngine {
 		bool ShowUI() { return false; }
 		inline Vector4 operator*(const Vector4& vec4);
 
-		inline Matrix4x4 operator*(const Matrix4x4& arg_matrix) {
+		inline Matrix4x4 operator*(const Matrix4x4& arg_matrix)const {
 			return (XMMATRIX)(*this) * (XMMATRIX)arg_matrix;
 		}
 		inline Matrix4x4 operator*=(const Matrix4x4& arg_matrix) {
@@ -145,23 +145,12 @@ namespace ButiEngine {
 
 		inline void Decompose(Vector3& rScaling, Quat& rQt, Vector3& rTranslation)const;
 
-		inline Vector3 GetEuler(const bool arg_reverse = false)const;
 		inline Vector3 GetEulerOneValue()const;
+		inline Vector3 GetEulerOneValue_local()const;
 
-		inline Vector3 GetEulerDegrees(const bool arg_reverse = false)const;
 
-		inline Matrix4x4& CreateFromEuler(const float arg_x, const float arg_y, const float arg_z) {
-			*this = DirectX::XMMatrixRotationX(
-				arg_x
-			) *
-				DirectX::XMMatrixRotationY(
-					arg_y
-				) *
-				DirectX::XMMatrixRotationZ(
-					arg_z
-				);
-			return *this;
-		}
+		inline Matrix4x4& CreateFromEuler(const Vector3& arg_euler);
+		inline Matrix4x4& CreateFromEuler_local(const Vector3& arg_euler);
 		inline bool Same(const Matrix4x4& other, const float epsilon = 0.001f) const {
 
 			for (int i = 0; i < 4; i++) {
@@ -584,6 +573,11 @@ namespace ButiEngine {
 			*this = *this - vec;
 			return *this;
 		}
+		inline Vector3 operator -(const Vector3& vec)const
+		{
+			return Vector3(x - vec.x, y - vec.y, z - vec.z);
+			
+		}
 
 		inline Vector3& operator -=(float value)
 		{
@@ -601,6 +595,14 @@ namespace ButiEngine {
 		{
 			*this = *this * value;
 			return *this;
+		}
+		inline Vector3 operator *(float value)const
+		{
+			Vector3 out = *this;
+			out.x *= value;
+			out.y *= value;
+			out.z *= value;
+			return out;
 		}
 
 		inline Vector3& operator *=(Matrix4x4 value)
@@ -635,6 +637,8 @@ namespace ButiEngine {
 		{
 			return  -1 * (*this);
 		}
+
+		inline Vector3 operator*(const Quat& other);
 
 		inline const bool operator==(const Vector3& other)const {
 			if (other.x != this->x || other.y != this->y || other.z != this->z) {
@@ -764,7 +768,21 @@ namespace ButiEngine {
 		{
 			return XMVector3IsInfinite(*this);
 		}
-
+		inline bool isZero() const
+		{
+			return (abs(x) <= FLT_MIN*10) && (abs(y) <= FLT_MIN * 10) && (abs(z) <= FLT_MIN * 10);
+		}
+		inline void RemoveEps() {
+			if ((abs(x) <= 0.000000025)) {
+				x = 0;
+			}
+			if ((abs(y) <= 0.000000025)) {
+				y = 0;
+			}
+			if ((abs(z) <= 0.000000025)) {
+				z = 0;
+			}
+		}
 		inline const Vector3& ToDegrees() {
 			x = XMConvertToDegrees(x);
 			y = XMConvertToDegrees(y);
@@ -841,13 +859,81 @@ namespace ButiEngine {
 			return ((Vector3)DirectX::XMVector3Length(DirectX::XMVECTOR(*this))).x;
 		}
 
-		inline void Normalize()
+		inline Vector3& Abs() {
+
+			x = abs(x);
+			y = abs(y);
+			z = abs(z);
+
+			return *this;
+		}
+		inline Vector3 GetAbs()const {
+			Vector3 output;
+			output.x = abs(x);
+			output.y = abs(y);
+			output.z = abs(z);
+
+			return output;
+		}
+
+		inline Vector3& Normalize()
 		{
 			*this = DirectX::XMVector3Normalize(DirectX::XMVECTOR(*this));
+			return *this;
 		}
+		inline Vector3& Scroll()
+		{
+			auto temp = *this;
+
+			x = temp.z;
+			y = temp.x;
+			z = temp.y;
+			return *this;
+		}
+
+		inline Vector3& Scroll_Reverse() {
+
+			auto temp = *this;
+
+			x = temp.y;
+			y = temp.z;
+			z = temp.x;
+			return *this;
+		}
+
 		inline Vector3 GetNormalize() const
 		{
 			return DirectX::XMVector3Normalize(DirectX::XMVECTOR(*this));
+		}
+
+		inline Vector3& Max(const Vector3& arg_other) {
+			this->x = max(x, arg_other.x);
+			this->y = max(y, arg_other.y);
+			this->z = max(z, arg_other.z);
+			return *this;
+		}
+		inline Vector3& Min(const Vector3& arg_other) {
+			this->x = min(x, arg_other.x);
+			this->y = min(y, arg_other.y);
+			this->z = min(z, arg_other.z);
+			return *this;
+		}
+		inline Vector3 GetMax(const Vector3& arg_other)const {
+			Vector3 output;
+			output.x = max(x, arg_other.x);
+			output.y = max(y, arg_other.y);
+			output.z = max(z, arg_other.z);
+
+			return output;
+		}
+		inline Vector3 GetMin(const Vector3& arg_other)const {
+
+			Vector3 output;
+			output.x = min(x, arg_other.x);
+			output.y = min(y, arg_other.y);
+			output.z = min(z, arg_other.z);
+
+			return output;
 		}
 
 
@@ -1111,22 +1197,36 @@ namespace ButiEngine {
 			return ((Vector3)XMVector3Length(vec)).x;
 		}
 
-		inline static const Vector3 Normalize(const Vector3& vec)
+		inline static Vector3 Normalize(const Vector3& vec)
 		{
 			return (Vector3)XMVector3Normalize(vec);
 		}
 
-		inline static const Vector3 Cross(const Vector3& vec0, const Vector3& vec1)
+		static  Matrix4x4 GetLookAtRotation(const Vector3& arg_lookPos,const Vector3& arg_targetPos, const Vector3& arg_upAxis) {
+			Vector3 z = ((Vector3)(arg_targetPos - arg_lookPos)).GetNormalize();
+			Vector3 x = arg_upAxis.GetCross(z).GetNormalize();
+			Vector3 y = z.GetCross(x).GetNormalize();
+
+			auto out = Matrix4x4();
+			out._11 = x.x; out._12 = x.y; out._13 = x.z;
+			out._21 = y.x; out._22 = y.y; out._23 = y.z;
+			out._31 = z.x; out._32 = z.y; out._33 = z.z;
+
+
+			return out;
+		}
+
+		inline static  Vector3 Cross(const Vector3& vec0, const Vector3& vec1)
 		{
 			return (Vector3)XMVector3Cross(vec0, vec1);
 		}
 
-		inline static const Vector3 Reflect(const Vector3& vec, const Vector3& normal)
+		inline static Vector3 Reflect(const Vector3& vec, const Vector3& normal)
 		{
 			return (Vector3)XMVector3Reflect(vec, normal);
 		}
 
-		inline static const Vector3 Slide(const Vector3& vec, const Vector3& normal)
+		inline static Vector3 Slide(const Vector3& vec, const Vector3& normal)
 		{
 			//vecと法線から直行線の長さ（内積で求める）
 			float Len = Dot(vec, normal);
@@ -1135,7 +1235,7 @@ namespace ButiEngine {
 			//スライドする方向は現在のベクトルから引き算
 			return (vec - Contact);
 		}
-		inline static const Matrix4x4 inverse(const Matrix4x4& mat)
+		inline static Matrix4x4 inverse(const Matrix4x4& mat)
 		{
 			XMVECTOR Vec;
 			return (Matrix4x4)XMMatrixInverse(&Vec, mat);
@@ -1179,7 +1279,7 @@ namespace ButiEngine {
 
 		inline Quat() :Vector4()
 		{
-			identity();
+			Identity();
 		}
 		inline Quat(const Quat& quat) :
 			Vector4(quat.x, quat.y, quat.z, quat.w)
@@ -1252,6 +1352,10 @@ namespace ButiEngine {
 
 		inline bool operator!=(const Quat& other)const {
 			return !XMQuaternionEqual(*this, other);
+		}
+
+		inline Quat operator/(const Quat& other) {
+			return (Quat)(((XMVECTOR)*this )/ (XMVECTOR)other);
 		}
 
 		inline Quat& setXYZ(const Vector3& vec)
@@ -1330,27 +1434,32 @@ namespace ButiEngine {
 		}
 
 
-		inline const Quat operator +(const Quat& quat) const
+		inline Quat operator +(const Quat& quat) const
 		{
 			return (Quat)XMVectorAdd(*this, quat);
 		}
 
 
-		inline const Quat operator -(const Quat& quat) const
+		inline Quat operator -(const Quat& quat) const
 		{
 			return (Quat)XMVectorSubtract(*this, quat);
 		}
 
 
-		inline const Quat operator *(const Quat& quat) const
+		inline Quat operator *(const Quat& quat) const
 		{
 			return (Quat)XMQuaternionMultiply(*this, quat);
 		}
 
-		inline const Quat operator *(float val) const
+		inline Quat operator *(float val) const
 		{
 			Quat temp(val, val, val, val);
 			return (Quat)XMVectorMultiply(*this, temp);
+		}
+		inline const Quat& operator *=(float val) 
+		{
+			Quat temp(val, val, val, val);
+			return *this=(Quat)XMVectorMultiply(*this, temp);
 		}
 
 		inline const Quat& CreateFromAxisRotate(const Vector3& arg_axis, const  float angle) {
@@ -1358,19 +1467,33 @@ namespace ButiEngine {
 			return *this;
 		}
 
-		inline Matrix4x4 ToMatrix() {
+		inline Matrix4x4 ToMatrix()const {
 			return Matrix4x4(*this);
 		}
 		inline Quat& CreateFromEular(const Vector3& arg_eular) {
 
-			Matrix4x4 rotationMatrix = DirectX::XMMatrixRotationX(
-				arg_eular.x
+			Matrix4x4 rotationMatrix = DirectX::XMMatrixRotationZ(
+				arg_eular.z
 			) *
 				DirectX::XMMatrixRotationY(
 					arg_eular.y
 				) *
-				DirectX::XMMatrixRotationZ(
-					arg_eular.z
+				DirectX::XMMatrixRotationX(
+					arg_eular.x
+				);
+			*this = rotationMatrix.ToQuat();
+			return *this;
+		}
+		inline Quat& CreateFromEular_deg(const Vector3& arg_eular) {
+
+			Matrix4x4 rotationMatrix = DirectX::XMMatrixRotationZ(
+				XMConvertToRadians( arg_eular.z)
+			) *
+				DirectX::XMMatrixRotationY(
+					XMConvertToRadians(arg_eular.y)
+				) *
+				DirectX::XMMatrixRotationX(
+					XMConvertToRadians(arg_eular.x)
 				);
 			*this = rotationMatrix.ToQuat();
 			return *this;
@@ -1389,103 +1512,37 @@ namespace ButiEngine {
 		inline float Dot(const Quat& quat)const {
 			return ((Quat)XMQuaternionDot(*this, quat)).x;
 		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	相手との共役を返す
-		@param[in]	quat	相手
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
-		inline Quat& conj(const Quat& quat) {
+
+		inline Quat& Conj(const Quat& quat) {
 			*this = (Quat)XMQuaternionConjugate(quat);
 			return *this;
 		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	単位クオータニオンを設定する
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
-		inline  Quat& identity() {
+		inline Quat& Conj() {
+			this->x = -this->x;
+			this->y = -this->y;
+			this->z = -this->z;
+			return *this;
+		}
+		inline  Quat& Identity() {
 			*this = (Quat)XMQuaternionIdentity();
 			return *this;
 		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	X軸回転のクオータニオンを設定する
-		@param[in]	radians 回転値
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
-		inline Quat& rotationX(float radians) {
-			*this = (Quat)XMQuaternionRotationAxis(XMVECTOR(Vector3(1, 0, 0)), radians);
-			return *this;
-		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	Y軸回転のクオータニオンを設定する
-		@param[in]	radians 回転値
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
-		inline Quat& rotationY(float radians) {
-			*this = (Quat)XMQuaternionRotationAxis(Vector3(0, 1, 0), radians);
-			return *this;
-		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	Z軸回転のクオータニオンを設定する
-		@param[in]	radians 回転値
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
-		inline Quat& rotationZ(float radians) {
-			*this = (Quat)XMQuaternionRotationAxis(Vector3(0, 0, 1), radians);
-			return *this;
-		}
-
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	指定の軸回転のクオータニオンを設定する
-		@param[in]	radians 回転値
-		@param[in]	unitVec 回転軸
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
-		inline Quat& rotation(float radians, const Vector3& unitVec) {
-			*this = (Quat)XMQuaternionRotationAxis(unitVec, radians);
-			return *this;
-		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	指定の軸回転のクオータニオンを設定する(引数が逆バージョン)
-		@param[in]	unitVec 回転軸
-		@param[in]	radians 回転値
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
-		inline Quat& rotation(const Vector3& unitVec, float radians) {
+		
+		inline Quat& Rotation(float radians, const Vector3& unitVec) {
 			*this = (Quat)XMQuaternionRotationAxis(unitVec, radians);
 			return *this;
 		}
 
-		/*!
-		@brief	回転ベクトルからクオータニオンを設定する
-		@param[in]	rotVec 回転ベクトル
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
+		inline Quat& Rotation(const Vector3& unitVec, float radians) {
+			*this = (Quat)XMQuaternionRotationAxis(unitVec, radians);
+			return *this;
+		}
 		inline Quat& rotationRollPitchYawFromVector(const Vector3& rotVec) {
 			*this = (Quat)XMQuaternionRotationRollPitchYawFromVector(rotVec);
 			return *this;
 		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	クォータニオンを回転ベクトルに変換して返す
-		@return	演算後の値
-		*/
-		//--------------------------------------------------------------------------------------
-		inline const Vector3 toRotVec() const {
+
+		inline  Vector3 ToRotVec() const {
 			Quat Temp = *this;
 			Temp.Normalize();
 			Matrix4x4 mt(Temp);
@@ -1508,25 +1565,15 @@ namespace ButiEngine {
 			return Rot;
 		}
 
-
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	*thisの逆クォータニオンを設定する
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
-		inline Quat& inverse() {
+		inline Quat& Inverse() {
 			*this = (Quat)XMQuaternionInverse(*this);
 			return *this;
 		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	指定した法線の方向を向く回転を設定する
-		@param[in]	norm 法線
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
-		inline Quat& facing(const Vector3& norm) {
+		inline Quat GetInverse()const {
+			return (Quat)XMQuaternionInverse(*this);
+			
+		}
+		inline Quat& Facing(const Vector3& norm) {
 			Vector3 DefUp(0, 1.0f, 0);
 			Vector3 Temp = norm;
 			Vector2 TempVec2(Temp.x, Temp.z);
@@ -1541,13 +1588,7 @@ namespace ButiEngine {
 			(*this).Normalize();
 			return *this;
 		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	指定した法線のY軸のみ方向を向く回転を設定する
-		@param[in]	norm 法線
-		@return	*thisの参照
-		*/
-		//--------------------------------------------------------------------------------------
+
 		inline Quat& facingY(const Vector3& norm) {
 			Vector3 Temp = norm;
 			Temp.Normalize();
@@ -1555,26 +1596,18 @@ namespace ButiEngine {
 			(*this).Normalize();
 			return *this;
 		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	*thisにNaNが含まれるかどうかを返す
-		@return	含まれていたらtrue
-		*/
-		//--------------------------------------------------------------------------------------
-		inline bool isNaN() const {
+
+		inline bool IsNaN() const {
 			return XMQuaternionIsNaN(*this);
 		}
-		//--------------------------------------------------------------------------------------
-		/*!
-		@brief	*thisに無限大が含まれるかどうかを返す
-		@return	含まれていたらtrue
-		*/
-		//--------------------------------------------------------------------------------------
-		inline bool isInfinite() const {
+		inline bool IsInfinite() const {
 			return XMQuaternionIsInfinite(*this);
 		}
 	};
-
+	inline Vector3 ButiEngine::Vector3::operator*(const Quat& other)
+	{
+		return (Vector3)(*this)*(other.ToMatrix());
+	}
 
 	inline Quat MathHelper::LearpQuat(const Quat& arg_firstQuat, const Quat& arg_secondQuat, const float pase)
 	{
@@ -1994,111 +2027,82 @@ namespace ButiEngine {
 		}
 	}
 
+	inline Matrix4x4& Matrix4x4::CreateFromEuler(const Vector3& arg_euler)
+	{
+		*this = DirectX::XMMatrixRotationX(
+			arg_euler.x
+		) *
+			DirectX::XMMatrixRotationY(
+				arg_euler.y
+			) *
+			DirectX::XMMatrixRotationZ(
+				arg_euler.z
+			);
+		return *this;
+	}
+	inline Matrix4x4& Matrix4x4::CreateFromEuler_local(const Vector3& arg_euler)
+	{
+		*this = DirectX::XMMatrixRotationZ(
+			arg_euler.z
+		) *
+			DirectX::XMMatrixRotationY(
+				arg_euler.y
+			) *
+			DirectX::XMMatrixRotationX(
+				arg_euler.x
+			);
+		return *this;
+	}
+
 	static const float EulerXLimit = 90.0f / 180.0f * XM_PI;
-	inline Vector3 Matrix4x4::GetEuler(const bool arg_reverse) const
+	inline Vector3 Matrix4x4::GetEulerOneValue_local() const
 	{
 
-		if (fabs(this->m[0][2] - 1) > 0.00001 && fabs(this->m[0][2] + 1) > 0.00001) {
-
-			float yTheta = asin(-this->m[0][2]);///-90~90
-
-
-			if (!arg_reverse)
-			{
-				auto yThetaCos = cos(yTheta);
-
-				float xTheta = atan2(this->_23 / yThetaCos, this->m[2][2] / yThetaCos);///-90~90
-
-
-				float zTheta = atan2(this->m[0][1] / yThetaCos, this->m[0][0] / yThetaCos);///-90~90
-
-				return Vector3(xTheta, yTheta, zTheta);
-			}
-			else {
-				float yTheta2 = XM_PI - yTheta;        ///90~180,-180~-90
-
-				auto yThetaCos = cos(yTheta2);
-				float xTheta2 = atan2(this->_23 / yThetaCos, this->m[2][2] / yThetaCos);///90~180,-180~-90));
-				float zTheta2 = atan2(this->m[0][1] / yThetaCos, this->m[0][0] / yThetaCos);///90~180,-180~-90
-				return Vector3(xTheta2, yTheta2, zTheta2);
-			}
+		Vector3 Rot;
+		if (this->_31 == 1.0f) {
+			Rot.x = atan2(-this->_32,this->_33);
+			Rot.y = XM_PI / 2.0f;
+			Rot.z = 0;
+		}
+		else if (this->_31 == -1.0f) {
+			Rot.x = atan2(-this->_32,this->_33);
+			Rot.y = -XM_PI / 2.0f;
+			Rot.z = 0;
 		}
 		else {
-			float xTheta = 0;
-			float yTheta = 0;
-			float zTheta = 0;
-			if (abs(this->m[0][2] - 1) < 0.00001) {
-				yTheta = -XM_PI / 2;
-			}
-			else {
-				yTheta = XM_PI / 2;
-			}
-			auto ythetaCos = cos(yTheta);
-			zTheta = atan2(this->m[0][1] / ythetaCos, this->m[0][0] / ythetaCos);
-			xTheta = atan2(this->_23 / ythetaCos, this->m[2][2] / ythetaCos);
-			return Vector3(xTheta, yTheta, zTheta);
+
+
+			Rot.x = atan2(-this->_32, this->_33);
+			Rot.y = asin(this->_31);
+			Rot.z = -atan2(this->_21, this->_11);///-90~90
 		}
+
+		return Rot;
 
 
 	}
 	inline Vector3 Matrix4x4::GetEulerOneValue() const
 	{
-
-		if (fabs(this->m[0][2] - 1) > 0.00001 && fabs(this->m[0][2] + 1) > 0.00001) {
-
-			float yTheta = asin(-this->m[0][2]);///-90~90
-
-
-			auto yThetaCos = cos(yTheta);
-
-			float xTheta = atan2(this->_23 / yThetaCos, this->m[2][2] / yThetaCos);///-90~90
-
-
-			float zTheta = atan2(this->m[0][1] / yThetaCos, this->m[0][0] / yThetaCos);///-90~90
-
-
-			Matrix4x4 test;
-			test.CreateFromEuler(xTheta, yTheta, zTheta);
-
-			if (this->Same(test))
-				return  Vector3(xTheta, yTheta, zTheta);
-
-
-
-			float yTheta2 = XM_PI - yTheta;        ///90~180,-180~-90
-
-			yThetaCos = cos(yTheta2);
-			float xTheta2 = atan2(this->_23 / yThetaCos, this->m[2][2] / yThetaCos);///90~180,-180~-90));
-			float zTheta2 = atan2(this->m[0][1] / yThetaCos, this->m[0][0] / yThetaCos);///90~180,-180~-90
-			return Vector3(xTheta2, yTheta2, zTheta2);
-
+		Vector3 Rot;
+		if (this->_13 == 1.0f) {
+			Rot.x = atan2(this->_23 , this->_33);
+			Rot.y = XM_PI / 2.0f;
+			Rot.z = 0;
+		}
+		else if (this->_13 == -1.0f) {
+			Rot.x = atan2(this->_23 , this->_33 );
+			Rot.y = -XM_PI / 2.0f;
+			Rot.z = 0;
 		}
 		else {
-			float xTheta = 0;
-			float yTheta = 0;
-			float zTheta = 0;
-			if (abs(this->m[0][2] - 1) < 0.00001) {
-				yTheta = -XM_PI / 2;
-			}
-			else {
-				yTheta = XM_PI / 2;
-			}
-			auto ythetaCos = cos(yTheta);
-			zTheta = atan2(this->m[0][1] / ythetaCos, this->m[0][0] / ythetaCos);
-			xTheta = atan2(this->_23 / ythetaCos, this->m[2][2] / ythetaCos);
-			return Vector3(xTheta, yTheta, zTheta);
-		}
 
 
-	}
-	inline Vector3 Matrix4x4::GetEulerDegrees(const bool arg_reverse)const {
-		auto outVec = GetEuler(arg_reverse);
+			Rot.x = atan2(this->_23 , this->_33);
+			Rot.y = -asin(this->_13);
+			Rot.z = atan2(this->_12 , this->_11 );///-90~90
+		} 
 
-		outVec.x = XMConvertToDegrees(outVec.x);
-		outVec.y = XMConvertToDegrees(outVec.y);
-		outVec.z = XMConvertToDegrees(outVec.z);
-
-		return outVec;
+		return Rot;
 	}
 
 

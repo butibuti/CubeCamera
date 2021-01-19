@@ -20,7 +20,7 @@ void ButiEngine::EasyGoalComponent::OnUpdate()
 		{
 			//マテリアル変更
 			auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent>();
-			meshDraw->SetMaterialTag(gameObject.lock()->GetResourceContainer()->GetMaterialTag("yellow3"));
+			meshDraw->SetMaterialTag(gameObject.lock()->GetResourceContainer()->GetMaterialTag("goalMaterial"));
 			meshDraw->ReRegist();
 			active = true;
 		}

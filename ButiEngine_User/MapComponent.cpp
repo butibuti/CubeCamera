@@ -5,13 +5,18 @@
 
 void ButiEngine::MapComponent::OnUpdate()
 {
-	if (GetManager().lock()->GetGameObject("Player").lock()->GetBehavior<PlayerBehavior>()->GetGoal())
+	auto player = GetManager().lock()->GetGameObject("Player").lock();
+	if (player && player->GetBehavior<PlayerBehavior>()->GetGoal())
 	{
-		if (GameDevice::GetInput()->CheckKey(Keys::N))
+		if (GameDevice::GetInput()->TriggerKey(Keys::N))
 		{
-			GUI::Begin("map");
-			GUI::Text("NextStage");
-			GUI::End();
+			currentStageNum++;
+			if (currentStageNum >= vec_mapData.size())
+			{
+				currentStageNum--; 
+				return;
+			}
+			PutBlock(currentStageNum);
 		}
 	}
 }
@@ -24,7 +29,8 @@ void ButiEngine::MapComponent::Start()
 {
 	currentMapData.mapData.clear();
 	playerPos = Vector3::Zero;
-	vec_mapData.push_back(MapData());
+	vec_mapData.push_back(MapData(0));
+	vec_mapData.push_back(MapData(1));
 	currentStageNum = 0;
 	PutBlock(currentStageNum);
 }
@@ -44,6 +50,8 @@ void ButiEngine::MapComponent::OnShowUI()
 
 void ButiEngine::MapComponent::PutBlock(int stageNum)
 {
+	DestoroyMapChip();
+
 	currentMapData = vec_mapData[stageNum];
 
 	std::vector<std::vector<std::vector<int>>> mapData = currentMapData.mapData;
@@ -66,12 +74,12 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 					break;
 				case 1://プレイヤー開始地点
 				{
+					playerPos = Vector3(x, y, z);
 					auto gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
-					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
+					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3::Zero, Vector3::Zero, scale));
 					auto camera = GetCamera("playerCamera");
 					camera.lock()->shp_transform->SetBaseTransform(gameObject.lock()->transform, true);
 					cameraMesh.lock()->transform->SetBaseTransform(gameObject.lock()->transform, true);
-					playerPos = Vector3(x, y, z);
 
 				break;
 				}
@@ -106,48 +114,107 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 	}
 }
 
-ButiEngine::MapData::MapData()
+void ButiEngine::MapComponent::DestoroyMapChip()
 {
-	mapData =
+	auto tag = GetTagManager()->GetObjectTag("MapChip");
+	auto manager = GetManager().lock();
+	std::vector<std::shared_ptr<GameObject>> gameObjects = manager->GetGameObjects(tag);
+
+	for (auto itr = gameObjects.begin(); itr != gameObjects.end(); ++itr)
 	{
+		(*itr)->SetIsRemove(true);
+	}
+}
+
+ButiEngine::MapData::MapData(int stageNum)
+{
+	if (stageNum == 0)
+	{
+		mapData =
 		{
-			{2,2,2,2,2,2,2,2,2,2,2},
-			{2,2,2,2,2,2,2,2,2,2,2},
-			{2,2,2,2,2,2,2,2,2,2,2},
-			{2,2,2,2,2,2,2,2,2,2,2},
-			{2,2,2,2,2,2,2,2,2,2,2},
-			{2,2,2,2,2,2,2,2,2,2,2},
-			{2,2,2,2,2,2,2,2,2,2,2},
-			{2,2,2,2,2,2,2,2,2,2,2},
-			{2,2,2,2,0,2,2,2,2,2,2},
-			{2,2,2,2,2,2,2,2,2,2,2},
-			{2,2,2,2,2,2,2,2,2,2,2},
-		},
+			{
+				{2,2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,0,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2,2},
+				{2,2,2,2,2,2,2,2,2,2,2},
+			},
+			{
+				{3,0,0,0,0,0,0,0,0,0,4},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,2,0,0,0,0,0},
+				{0,0,2,2,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,1,4,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,2,2,2,2,2,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,5},
+			},
+			{
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,2,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,2,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+			},
+			{
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,2,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+				{0,0,0,0,0,0,0,0,0,0,0},
+			},
+		};
+	}
+	else if (stageNum == 1)
+	{
+		mapData =
 		{
-			{3,0,0,0,0,0,0,0,0,0,4},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,2,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,1,4,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,2,2,2,2,2,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,5},
-		},
-		{
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,2,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-			{0,0,0,0,0,0,0,0,0,0,0},
-		},
-	};
+			{
+				{2,2,2},
+				{2,2,2},
+				{2,2,2},
+			},
+			{
+				{0,0,0},
+				{0,1,0},
+				{0,2,0},
+			},
+			{
+				{0,0,0},
+				{0,0,0},
+				{0,0,2},
+			},
+			{
+				{0,0,0},
+				{0,0,2},
+				{0,0,0},
+			},
+			{
+				{0,0,2},
+				{0,0,0},
+				{0,0,0},
+			},
+		};
+	}
 }
