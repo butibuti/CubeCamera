@@ -495,6 +495,12 @@ namespace ButiEngine {
 			this->y = y;
 			this->z = z;
 		}
+		inline Vector3(float v)
+		{
+			this->x = v;
+			this->y = v;
+			this->z = v;
+		}
 		inline Vector3()
 		{
 			x = 0;
@@ -747,7 +753,9 @@ namespace ButiEngine {
 		{
 			return ((Vector3)XMVector3Dot(*this, vec1)).x;
 		}
-
+		inline Vector2 ToVector2()const {
+			return Vector2(x,y);
+		}
 		inline Vector3& Cross(const Vector3& vec1)
 		{
 			*this = (Vector3)XMVector3Cross(*this, vec1);

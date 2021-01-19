@@ -21,11 +21,10 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 #endif
 
-	auto app = CreateDefaultApplicationInstance("cubegame", WindowPopType::max, 1080,720, false);
+	auto app = CreateDefaultApplicationInstance("cubegame", WindowPopType::max, 1080,720, true);
 	GameDevice::Initialize();
 	GameDevice::GetInput()->Initialize(app);
 
-	ModelFileConverter::FBXtoB3M("Player.fbx", "Player.b3m", "Model/");
 
 	app->InitLoadResources();
 	//ComponentsLoader::GetInstance()->AddGameComponent<MeshDrawComponent_Static>();

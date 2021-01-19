@@ -16,6 +16,7 @@ namespace ButiEngine {
 		void OnUpdate()override;
 		void OnSet()override;
 		void Start()override;
+		bool IsContaineVisibility();
 		std::string GetGameComponentName()override {
 			return "InvisibleBlockComponent";
 		}
@@ -35,7 +36,15 @@ namespace ButiEngine {
 		bool IsSeen() { return seen; }
 		bool IsHitPlayer() { return hitPlayer; }
 		void SetMapPos(Vector3 mapPos) { this->mapPos = mapPos; }
+		const Vector3& GetMapPos()const {
+			return mapPos;
+		}
+		Vector3 GetCameraLocalPos()const;
+		static void SetCameraInv(const Matrix4x4& arg_cameraInv) {
+			cameraInv = arg_cameraInv;
+		}
 	private:
+		static Matrix4x4 cameraInv;
 		std::shared_ptr<MapComponent> shp_map;
 		Vector3 mapPos;
 		int id;

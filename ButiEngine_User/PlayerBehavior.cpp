@@ -5,6 +5,7 @@
 #include"EasyGoalComponent.h"
 #include"DefaultGoalComponent.h"
 #include"PlayerCameraComponent.h"
+#include"InvisibleBlockManagerComponent.h"
 #include"GameSettings.h"
 
 void ButiEngine::PlayerBehavior::OnUpdate()
@@ -21,6 +22,7 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 	if (timer->Update())
 	{
 		timer->Stop();
+		shp_invisibleBlockManager->Check();
 	}
 	Contoroll();
 	if (IsRollFinish() && !gameObject.lock()->GetGameComponent<CubeTransformAnimation>())
@@ -45,7 +47,10 @@ void ButiEngine::PlayerBehavior::Start()
 	shp_playerCamera = gameObject.lock()->GetGameComponent<PlayerCameraComponent>();
 	shp_playerCamera->SetTimer(0);
 	mapPos = shp_map->GetPlayerPos();
+	offset =mapPos-gameObject.lock()->transform->GetWorldPosition();
 	timer = ObjectFactory::Create<RelativeTimer>(9);
+	shp_invisibleBlockManager= gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
+	shp_invisibleBlockManager->Check();
 }
 
 std::shared_ptr<ButiEngine::Behavior> ButiEngine::PlayerBehavior::Clone()
@@ -81,18 +86,38 @@ void ButiEngine::PlayerBehavior::Contoroll()
 	if (GameDevice::GetInput()->CheckKey(Keys::D))
 	{
 		OnPushD();
+		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+		if (cubeAnim) {
+			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
+			nextMapPos += offset;
+		}
 	}
 	if (GameDevice::GetInput()->CheckKey(Keys::A))
 	{
 		OnPushA();
+		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+		if (cubeAnim) {
+			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
+			nextMapPos += offset;
+		}
 	}
 	if (GameDevice::GetInput()->CheckKey(Keys::W))
 	{
 		OnPushW();
+		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+		if (cubeAnim) {
+			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
+			nextMapPos += offset;
+		}
 	}
 	if (GameDevice::GetInput()->CheckKey(Keys::S))
 	{
 		OnPushS();
+		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+		if (cubeAnim) {
+			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
+			nextMapPos += offset;
+		}
 	}
 	
 }

@@ -3,6 +3,7 @@
 #include"GameSettings.h"
 #include"PlayerBehavior.h"
 #include"InvisibleBlockComponent.h"
+#include"InvisibleBlockManagerComponent.h"
 
 void ButiEngine::MapComponent::OnUpdate()
 {
@@ -33,7 +34,10 @@ void ButiEngine::MapComponent::Start()
 	vec_mapData.push_back(MapData(0));
 	vec_mapData.push_back(MapData(1));
 	currentStageNum = 0;
+	auto invManager= GetManager().lock()->AddObjectFromCereal("InvisibleBlockManager");
 	PutBlock(currentStageNum);
+	//InvisibleBlock Manager
+	invManager.lock()->GetGameComponent<InvisibleBlockManagerComponent>()->RegistBlocks();
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::MapComponent::Clone()
@@ -110,6 +114,9 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 			}
 		}
 	}
+	GameObjectTag tag = gameObject.lock()->GetApplication().lock()->GetGameObjectTagManager()->GetObjectTag("InvisibleBlock");
+	auto invs= GetManager().lock()->GetGameObjects(tag);
+
 }
 
 void ButiEngine::MapComponent::ChangeBlock(Vector3 mapPos, int mapChipNum)
