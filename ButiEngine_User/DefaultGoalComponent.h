@@ -27,7 +27,7 @@ namespace ButiEngine {
 		}
 		void OnShowUI();
 
-		bool GetActive() { return active; }
+		bool IsActive() { return active; }
 	private:
 		bool active;
 		std::shared_ptr<Collision::CollisionPrimitive_Box_AABB> shp_AABB;

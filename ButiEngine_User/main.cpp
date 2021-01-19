@@ -3,6 +3,7 @@
 #pragma comment(lib,"ButiEngine.lib")
 #include"Header/Scene/ComponentsLoader.h"
 #include"Header/Device/ModelFileConverter.h"
+#include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent_Static.h"
 
 //#include"Header/GameObjects/DefaultGameComponent/ChaseComponent.h"
 
@@ -20,15 +21,13 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 #endif
 
-	auto app = CreateDefaultApplicationInstance("cubegame", WindowPopType::max, 1080,720, false);
+	auto app = CreateDefaultApplicationInstance("cubegame", WindowPopType::max, 1080,720, true);
 	GameDevice::Initialize();
 	GameDevice::GetInput()->Initialize(app);
 
-	ModelFileConverter::FBXtoB3M("Player.fbx", "Player.b3m", "Model/");
 
 	app->InitLoadResources();
-
-	//ComponentsLoader::GetInstance()->AddGameComponent<ChaseComponent>();
+	//ComponentsLoader::GetInstance()->AddGameComponent<MeshDrawComponent_Static>();
 
 	app->GetSceneManager()->LoadScene_Init_EditMode("CollisionScene");
 	//app->GetSceneManager()->LoadScene_Init("CollisionScene");

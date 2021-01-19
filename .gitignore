@@ -44,6 +44,8 @@
 #fontfile
 *.ttc
 
+*.ini
+
 .vs/
 Temp/
 output/

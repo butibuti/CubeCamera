@@ -4,7 +4,7 @@ namespace ButiEngine {
 
 	class MapComponent;
 	class PlayerCameraComponent;
-
+	class InvisibleBlockManagerComponent;
 	enum class MoveDirection
 	{
 		Up,
@@ -35,14 +35,23 @@ namespace ButiEngine {
 		void OnShowUI()override;
 
 		bool GetGoal() { return goal; }
+
+		bool IsRollFinish();
+		const Vector3 &GetMapPos() const{ return mapPos; }
+		const Vector3 &GetNextMapPos() { return nextMapPos; }
 	private:
 		float length;
 		std::shared_ptr<MapComponent> shp_map;
 		std::shared_ptr<PlayerCameraComponent> shp_playerCamera;
+		std::shared_ptr<InvisibleBlockManagerComponent> shp_invisibleBlockManager;
 		Vector3 mapPos;
+		Vector3 nextMapPos;
+		Vector3 offset;
 		bool goal;
 		bool fall;
 		Vector3 afterFallPos;
+
+		std::shared_ptr<RelativeTimer> timer;
 
 		void Contoroll();
 		void OnPushD();

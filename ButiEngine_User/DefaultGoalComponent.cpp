@@ -1,7 +1,7 @@
 #include "stdafx_u.h"
 #include "DefaultGoalComponent.h"
 #include"Header/Common/CollisionPrimitive.h"
-#include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent.h"
+#include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent_Static.h"
 #include"Header/GameObjects/DefaultGameComponent/CubeTransformAnimation.h"
 
 void ButiEngine::DefaultGoalComponent::OnUpdate()
@@ -18,19 +18,19 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 	{
 		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 0)
 		{
-			gameObject.lock()->GetGameComponent<MeshDrawComponent>()->Regist();
+			gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>()->Regist();
 			active = true;
 		}
 	}
 	//マテリアル変更
-	//auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent>();
+	//auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>();
 	//meshDraw->SetMaterialTag(gameObject.lock()->GetResourceContainer()->GetMaterialTag("検索する名前"));
 	//meshDraw->ReRegist();
 }
 
 void ButiEngine::DefaultGoalComponent::OnSet()
 {
-	gameObject.lock()->GetGameComponent<MeshDrawComponent>()->UnRegist();
+	gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>()->UnRegist();
 }
 
 void ButiEngine::DefaultGoalComponent::Start()

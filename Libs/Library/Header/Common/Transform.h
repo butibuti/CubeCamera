@@ -514,17 +514,32 @@ namespace ButiEngine {
 		}
 		inline void SetBaseTransform(std::shared_ptr<Transform> argParent, const bool arg_isKeepLocalPosition = false)
 		{
-			baseTransform = argParent;
-			if (argParent == nullptr)
-				return;
+			if (argParent == nullptr) {
+				if (arg_isKeepLocalPosition) {
 
+					baseTransform = argParent;
+					return;
+				}
+				rotation = GetWorldRotation();
+				localPosition= GetWorldPosition();
+
+				localMatrix = nullptr;
+				baseTransform = argParent;
+				return;
+			}
 			if (!arg_isKeepLocalPosition) {
+
+				baseTransform = argParent;
 				localPosition = localPosition - baseTransform->GetWorldPosition();
+				rotation = rotation * baseTransform->GetWorldRotation().Inverse();
 				if (localMatrix) {
 					localMatrix->_41 = localPosition.x;
 					localMatrix->_42 = localPosition.y;
 					localMatrix->_43 = localPosition.z;
 				}
+			}
+			else {
+				baseTransform = argParent;
 			}
 		}
 		inline std::shared_ptr<Transform> GetBaseTransform()
@@ -590,6 +605,7 @@ namespace ButiEngine {
 			if (!arg_isKeepLocalPosition) {
 
 				localPosition = localPosition - parentBoneTransform->GetWorldPosition();
+				rotation = rotation * parentBoneTransform->GetWorldRotation().Inverse();
 				if (localMatrix) {
 					localMatrix->_41 = localPosition.x;
 					localMatrix->_42 = localPosition.y;

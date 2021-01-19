@@ -1,7 +1,7 @@
 #include "stdafx_u.h"
 #include "EasyGoalComponent.h"
 #include"Header/Common/CollisionPrimitive.h"
-#include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent.h"
+#include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent_Static.h"
 #include"Header/GameObjects/DefaultGameComponent/CubeTransformAnimation.h"
 
 void ButiEngine::EasyGoalComponent::OnUpdate()
@@ -19,7 +19,7 @@ void ButiEngine::EasyGoalComponent::OnUpdate()
 		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 1)
 		{
 			//マテリアル変更
-			auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent>();
+			auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>();
 			meshDraw->SetMaterialTag(gameObject.lock()->GetResourceContainer()->GetMaterialTag("goalMaterial"));
 			meshDraw->ReRegist();
 			active = true;
