@@ -25,10 +25,10 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		shp_invisibleBlockManager->Check();
 	}
 	Contoroll();
-	if (IsRollFinish() && !gameObject.lock()->GetGameComponent<CubeTransformAnimation>())
-	{
-		CheckExistUnderBlock(mapPos); 
-	}
+	CheckExistUnderBlock(mapPos);
+	//if (IsRollFinish() && !gameObject.lock()->GetGameComponent<CubeTransformAnimation>())
+	//{
+	//}
 	Fall();
 }
 
