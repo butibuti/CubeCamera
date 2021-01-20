@@ -22,6 +22,7 @@ namespace ButiEngine {
 		}
 		void OnShowUI();
 		void RegistBlocks();
+		void ClearBlocks();
 	private:
 		std::vector<std::shared_ptr<InvisibleBlockComponent>> vec_invBlocks;
 		std::vector< std::vector<std::shared_ptr<InvisibleBlockComponent>> >vec_vec_invBlocks;

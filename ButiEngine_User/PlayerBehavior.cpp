@@ -30,7 +30,6 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		CheckExistUnderBlock(mapPos); 
 	}
 	Fall();
-	CheckGoal();
 }
 
 void ButiEngine::PlayerBehavior::OnSet()
@@ -39,6 +38,7 @@ void ButiEngine::PlayerBehavior::OnSet()
 
 void ButiEngine::PlayerBehavior::Start()
 {
+	gameObject.lock()->SetObjectName("Player");
 	goal = false;
 	fall = false;
 	afterFallPos = Vector3::Zero;
@@ -50,7 +50,6 @@ void ButiEngine::PlayerBehavior::Start()
 	offset =mapPos-gameObject.lock()->transform->GetWorldPosition();
 	timer = ObjectFactory::Create<RelativeTimer>(9);
 	shp_invisibleBlockManager= gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
-	shp_invisibleBlockManager->Check();
 }
 
 std::shared_ptr<ButiEngine::Behavior> ButiEngine::PlayerBehavior::Clone()
@@ -60,6 +59,27 @@ std::shared_ptr<ButiEngine::Behavior> ButiEngine::PlayerBehavior::Clone()
 
 void ButiEngine::PlayerBehavior::OnCollisionEnter(std::weak_ptr<GameObject> arg_other)
 {
+	GameObjectTag tag = arg_other.lock()->GetGameObjectTag();
+	std::string tagStr = GetTagManager()->GetTagName(tag);
+	if (tagStr != "Goal")
+	{
+		return;
+	}
+
+	std::vector<std::vector<std::vector<int>>>& mapData = shp_map->GetCurrentMapData()->mapData;
+	int mapNum = mapData[mapPos.y][mapPos.z][mapPos.x];
+	if (mapNum == GameSettings::tutorialGoal)
+	{
+		goal = true;
+	}
+	else if (mapNum == GameSettings::easyGoal && arg_other.lock()->GetGameComponent<EasyGoalComponent>()->IsActive())
+	{
+		goal = true;
+	}
+	else if (mapNum == GameSettings::defaultGoal && arg_other.lock()->GetGameComponent<DefaultGoalComponent>()->IsActive())
+	{
+		goal = true;
+	}
 }
 
 void ButiEngine::PlayerBehavior::OnCollision(std::weak_ptr<GameObject> arg_other)
@@ -560,7 +580,7 @@ void ButiEngine::PlayerBehavior::Fall()
 ButiEngine::MoveDirection ButiEngine::PlayerBehavior::CheckMoveDirection(Vector3 movePos)
 {
 	MoveDirection output;
-	std::vector<std::vector<std::vector<int>>> mapData = shp_map->GetCurrentMapData().mapData;
+	std::vector<std::vector<std::vector<int>>> &mapData = shp_map->GetCurrentMapData()->mapData;
 
 	if( movePos.x >= mapData[0][0].size() ||
 		movePos.y >= mapData.size() ||
@@ -610,7 +630,7 @@ bool ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
 	{
 		return false; 
 	}
-	auto mapData = shp_map->GetCurrentMapData().mapData;
+	std::vector<std::vector<std::vector<int>>>& mapData = shp_map->GetCurrentMapData()->mapData;
 	if (mapData[movePos.y - 1][movePos.z][movePos.x] == GameSettings::block)
 	{
 		return false; 
@@ -629,25 +649,4 @@ bool ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
 	}
 	fall = false;
 	return false;
-}
-
-void ButiEngine::PlayerBehavior::CheckGoal()
-{
-	std::vector<std::vector<std::vector<int>>> mapData = shp_map->GetCurrentMapData().mapData;
-	int mapNum = mapData[mapPos.y][mapPos.z][mapPos.x];
-	int tutorialGoal = 3;
-	int easyGoal = 4;
-	int defaultGoal = 5;
-	if (mapNum == tutorialGoal)
-	{
-		goal = true;
-	}
-	else if (mapNum == easyGoal && GetManager().lock()->GetGameObject("EasyGoal").lock()->GetGameComponent<EasyGoalComponent>()->IsActive())
-	{
-		goal = true;
-	}
-	else if (mapNum == defaultGoal && GetManager().lock()->GetGameObject("DefaultGoal").lock()->GetGameComponent<DefaultGoalComponent>()->IsActive())
-	{
-		goal = true;
-	}
 }

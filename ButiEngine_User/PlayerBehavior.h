@@ -77,8 +77,6 @@ namespace ButiEngine {
 		void Fall();
 		MoveDirection CheckMoveDirection(Vector3 movePos);
 		bool CheckExistUnderBlock(Vector3 movePos);
-		
-		void CheckGoal();
 	};
 
 }

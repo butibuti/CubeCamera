@@ -35,12 +35,12 @@ namespace ButiEngine {
 		void OnShowUI();
 
 		void PutBlock(int stageNum);
-		MapData GetCurrentMapData() { return currentMapData; }
+		std::shared_ptr< MapData >GetCurrentMapData() { return currentMapData; }
 		Vector3 GetPlayerPos() { return playerPos; }
 		void ChangeBlock(Vector3 mapPos, int mapChipNum);
 	private:
 		std::vector<MapData> vec_mapData;
-		MapData currentMapData;
+		std::shared_ptr< MapData > currentMapData;
 		Vector3 playerPos;
 		int currentStageNum;
 
