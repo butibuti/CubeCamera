@@ -36,8 +36,6 @@ void ButiEngine::MapComponent::Start()
 	currentStageNum = 0;
 	auto invManager= GetManager().lock()->AddObjectFromCereal("InvisibleBlockManager");
 	PutBlock(currentStageNum);
-	//InvisibleBlock Manager
-	invManager.lock()->GetGameComponent<InvisibleBlockManagerComponent>()->RegistBlocks();
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::MapComponent::Clone()
@@ -55,6 +53,8 @@ void ButiEngine::MapComponent::OnShowUI()
 
 void ButiEngine::MapComponent::PutBlock(int stageNum)
 {
+	auto invisibleBlockManager = GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
+	invisibleBlockManager->ClearBlocks();
 	DestoroyMapChip();
 
 	currentMapData = vec_mapData[stageNum];
@@ -114,9 +114,9 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 			}
 		}
 	}
-	GameObjectTag tag = gameObject.lock()->GetApplication().lock()->GetGameObjectTagManager()->GetObjectTag("InvisibleBlock");
-	auto invs= GetManager().lock()->GetGameObjects(tag);
-
+	
+	invisibleBlockManager->RegistBlocks();
+	invisibleBlockManager->Check();
 }
 
 void ButiEngine::MapComponent::ChangeBlock(Vector3 mapPos, int mapChipNum)
@@ -145,6 +145,17 @@ void ButiEngine::MapComponent::DestoroyMapChip()
 
 	{
 		auto tag = GetTagManager()->GetObjectTag("InvisibleBlock");
+		auto manager = GetManager().lock();
+		std::vector<std::shared_ptr<GameObject>> gameObjects = manager->GetGameObjects(tag);
+
+		for (auto itr = gameObjects.begin(); itr != gameObjects.end(); ++itr)
+		{
+			(*itr)->SetIsRemove(true);
+		}
+	}
+
+	{
+		auto tag = GetTagManager()->GetObjectTag("Goal");
 		auto manager = GetManager().lock();
 		std::vector<std::shared_ptr<GameObject>> gameObjects = manager->GetGameObjects(tag);
 

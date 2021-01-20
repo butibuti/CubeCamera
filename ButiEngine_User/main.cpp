@@ -21,7 +21,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 #endif
 
-	auto app = CreateDefaultApplicationInstance("cubegame", WindowPopType::max, 1080,720, true);
+	auto app = CreateDefaultApplicationInstance("cubegame", WindowPopType::max, 1080,720, false);
 	GameDevice::Initialize();
 	GameDevice::GetInput()->Initialize(app);
 

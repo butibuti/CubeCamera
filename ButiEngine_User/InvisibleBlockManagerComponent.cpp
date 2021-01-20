@@ -89,7 +89,9 @@ void ButiEngine::InvisibleBlockManagerComponent::RegistBlocks()
 	auto invBlocks = GetManager().lock()->GetGameObjects(tag);
 	vec_invBlocks.reserve( invBlocks.size());
 	for (auto itr = invBlocks.begin(); itr != invBlocks.end();itr++) {
-		vec_invBlocks.push_back((*itr)->GetGameComponent<InvisibleBlockComponent>());
+		if (!(*itr)->GetIsRemove()) {
+			vec_invBlocks.push_back((*itr)->GetGameComponent<InvisibleBlockComponent>());
+		}
 	}
 
 	vec_vec_invBlocks.resize(32);
@@ -100,6 +102,12 @@ void ButiEngine::InvisibleBlockManagerComponent::RegistBlocks()
 			vec_vec_invBlocks.at(component->GetID()).push_back(component);
 		}
 	}
+}
+
+void ButiEngine::InvisibleBlockManagerComponent::ClearBlocks()
+{
+	vec_invBlocks.clear();
+	vec_vec_invBlocks.clear();
 }
 
 void ButiEngine::InvisibleBlockManagerComponent::SetActive(std::vector<std::shared_ptr<GameObject>> invBlocks, int id, bool flag)
