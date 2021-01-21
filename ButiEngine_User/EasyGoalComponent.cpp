@@ -3,6 +3,7 @@
 #include"Header/Common/CollisionPrimitive.h"
 #include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent_Static.h"
 #include"Header/GameObjects/DefaultGameComponent/CubeTransformAnimation.h"
+#include"PlayerBehavior.h"
 
 void ButiEngine::EasyGoalComponent::OnUpdate()
 {
@@ -14,7 +15,7 @@ void ButiEngine::EasyGoalComponent::OnUpdate()
 	//ƒJƒƒ‰‚ÉAABB‚ğ“n‚µ‚Ä”»’è
 	//bool ICamera::IsContaineVisibility(std::shared_ptr<Geometry::Box_AABB> arg_checkPrimitive)
 	//‘æˆêˆø”: ”»’è‚Ég‚¤AABB
-	if (!gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Player").lock()->GetGameComponent<CubeTransformAnimation>())
+	if (gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Player").lock()->GetBehavior<PlayerBehavior>()->IsRollFinish())
 	{
 		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 1)
 		{
