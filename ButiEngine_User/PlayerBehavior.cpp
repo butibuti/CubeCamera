@@ -635,7 +635,7 @@ bool ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
 	{
 		return false; 
 	}
-	Vector3 offset(mapData[0][0].size() / 2, mapData.size() / 2, mapData[0].size() / 2);
+	//Vector3 offset(mapData[0][0].size() / 2, mapData.size() / 2, mapData[0].size() / 2);
 
 	for (int y = movePos.y - 2; y >= 0; y--)
 	{

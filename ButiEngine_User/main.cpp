@@ -32,12 +32,12 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//ComponentsLoader::GetInstance()->AddGameComponent<TitleBlockComponent>();
 	
 
-	app->GetSceneManager()->LoadScene_Init_EditMode("TitleScene");
+	app->GetSceneManager()->LoadScene_Init_EditMode("EditorScene");
 	//app->GetSceneManager()->LoadScene_Init("CollisionScene");
 
 	app->GetGraphicDevice()->SetClearColor(Vector4(180.0f / 255, 180.0f / 255, 1, 1));
 	int returnCode = app->Run();
-
+	
 
 	app->Exit();
 

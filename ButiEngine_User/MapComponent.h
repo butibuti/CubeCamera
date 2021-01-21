@@ -2,10 +2,14 @@
 #include"Header/GameComponentHeader.h"
 namespace ButiEngine {
 
-	struct MapData
+	class MapData
 	{
+	public:
 		MapData(){}
 		MapData(int stageNum);
+		Vector3 GetSize() {
+			return Vector3(mapData[0][0].size(),mapData.size(),mapData[0].size());
+		}
 		template<class Archive>
 		void serialize(Archive& archive)
 		{
@@ -36,16 +40,24 @@ namespace ButiEngine {
 
 		void PutBlock(int stageNum);
 		std::shared_ptr< MapData >GetCurrentMapData() { return currentMapData; }
+		MapData& GetMapData(const unsigned int index) { return vec_mapData[index]; }
+
+		std::vector<std::vector<std::vector<std::shared_ptr<GameObject>>>>& GetMapObjectData() { return mapObjectData; }
 		Vector3 GetPlayerPos() { return playerPos; }
 		void ChangeBlock(Vector3 mapPos, int mapChipNum);
 	private:
 		std::vector<MapData> vec_mapData;
 		std::shared_ptr< MapData > currentMapData;
+		std::vector<std::vector<std::vector<std::shared_ptr<GameObject>>>> mapObjectData;
+		
 		Vector3 playerPos;
 		int currentStageNum;
 
 		void DestoroyMapChip();
 	};
 
+	void OutputCereal(const std::shared_ptr<MapData>& v, const std::string& path);
+
+	void InputCereal(std::shared_ptr<MapData>& v, const std::string& path);
 }
 BUTI_REGIST_GAMECOMPONENT(ButiEngine::MapComponent)

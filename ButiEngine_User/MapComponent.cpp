@@ -4,6 +4,7 @@
 #include"PlayerBehavior.h"
 #include"InvisibleBlockComponent.h"
 #include"InvisibleBlockManagerComponent.h"
+#include "..\..\Header\Common\CerealUtill.h"
 
 void ButiEngine::MapComponent::OnUpdate()
 {
@@ -26,16 +27,29 @@ void ButiEngine::MapComponent::OnUpdate()
 void ButiEngine::MapComponent::OnSet()
 {
 	currentMapData = std::make_shared<MapData>();
-	//vec_mapData.push_back(MapData(0));
-	//vec_mapData.push_back(MapData(1));
 }
 
 void ButiEngine::MapComponent::Start()
 {
+	vec_mapData.clear();
+	auto mapFilePath = "Scene/" + GetManager().lock()->GetScene().lock()->GetSceneInformation()->GetSceneName() + "/mapInfo.map";
+	if (Util::IsFileExistence(GlobalSettings::GetResourceDirectory()+ mapFilePath)) {
+
+		auto input = std::make_shared<MapData>();
+		InputCereal(input, mapFilePath);
+		vec_mapData.push_back(*input);
+	}
+	else {
+		vec_mapData.push_back(MapData(0));
+	}
+
+
+
 	playerPos = Vector3::Zero;
 	currentStageNum = 0;
 	auto invManager= GetManager().lock()->AddObjectFromCereal("InvisibleBlockManager");
 	PutBlock(currentStageNum);
+
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::MapComponent::Clone()
@@ -58,6 +72,16 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 
 	*currentMapData = vec_mapData[stageNum];
 
+	mapObjectData.clear();
+	auto mapSize = currentMapData->GetSize();
+	mapObjectData.resize(mapSize.y);
+	for (int i = 0; i < mapSize.y; i++) {
+		mapObjectData[i].resize(mapSize.z);
+		for (int j = 0; j < mapSize.z; j++) {
+			mapObjectData[i][j].resize(mapSize.x);
+		}
+	}
+
 	std::vector<std::vector<std::vector<int>>> mapData = currentMapData->mapData;
 	Vector3 scale(GameSettings::BlockSize, GameSettings::BlockSize, GameSettings::BlockSize);
 	Vector3 offset(mapData[0][0].size() / 2, mapData.size() / 2, mapData[0].size() / 2);
@@ -71,45 +95,47 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				Vector3 position(x, y, z);
 				position -= offset;
 				position *= GameSettings::BlockSize;
-
+				std::weak_ptr<GameObject> gameObject=std::shared_ptr<GameObject>();
 				int mapNum = mapData[y][z][x];
 				if (mapNum == GameSettings::player)
 				{
 					playerPos = Vector3(x, y, z);
-					auto gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
+					gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
 					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3(0, 0, -0.1f), Vector3::Zero, scale));
 					auto camera = GetCamera("playerCamera");
-					camera.lock()->shp_transform->TranslateZ(0.3f);
+					camera.lock()->shp_transform->SetLocalPosition().z = 0.3f;
 					camera.lock()->shp_transform->SetBaseTransform(gameObject.lock()->transform, true);
 					cameraMesh.lock()->transform->SetBaseTransform(gameObject.lock()->transform, true);
 				}
 				else if (mapNum == GameSettings::block)
 				{
-					auto gameObject = GetManager().lock()->AddObjectFromCereal("Block", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
+					gameObject = GetManager().lock()->AddObjectFromCereal("Block", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
 				}
 				else if (mapNum == GameSettings::tutorialGoal)
 				{
-					auto gameObject = GetManager().lock()->AddObjectFromCereal("TutorialGoal");
+					gameObject = GetManager().lock()->AddObjectFromCereal("TutorialGoal");
 					gameObject.lock()->transform->SetWorldPosition(position);
 				}
 				else if (mapNum == GameSettings::easyGoal)
 				{
-					auto gameObject = GetManager().lock()->AddObjectFromCereal("EasyGoal");
+					gameObject = GetManager().lock()->AddObjectFromCereal("EasyGoal");
 					gameObject.lock()->transform->SetWorldPosition(position);
 				}
 				else if (mapNum == GameSettings::defaultGoal)
 				{
-					auto gameObject = GetManager().lock()->AddObjectFromCereal("DefaultGoal");
+					gameObject = GetManager().lock()->AddObjectFromCereal("DefaultGoal");
 					gameObject.lock()->transform->SetWorldPosition(position);
 				}
 				else if (mapNum >= GameSettings::invisibleBlock)
 				{
-					auto gameObject = GetManager().lock()->AddObjectFromCereal("InvisibleBlock");
+					gameObject = GetManager().lock()->AddObjectFromCereal("InvisibleBlock");
 					gameObject.lock()->transform->SetWorldPosition(position);
 					int id = mapNum - GameSettings::invisibleBlock;
 					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetID(id);
 					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetMapPos(Vector3(x, y, z));
 				}
+
+				mapObjectData[y][z][x] = gameObject.lock();
 			}
 		}
 	}
@@ -256,4 +282,35 @@ ButiEngine::MapData::MapData(int stageNum)
 			},
 		};
 	}
+}
+
+void ButiEngine::OutputCereal(const std::shared_ptr<MapData>& v, const std::string& path)
+{
+
+	std::stringstream stream;
+
+
+	cereal::BinaryOutputArchive binOutArchive(stream);
+	binOutArchive(v);
+
+	std::ofstream outputFile(GlobalSettings::GetResourceDirectory() + path, std::ios::binary);
+
+	outputFile << stream.str();
+
+	outputFile.close();
+	stream.clear();
+}
+
+void ButiEngine::InputCereal(std::shared_ptr<MapData>& v, const std::string& path)
+{
+	std::stringstream stream;
+
+	std::ifstream inputFile(GlobalSettings::GetResourceDirectory() + path, std::ios::binary);
+
+	stream << inputFile.rdbuf();
+
+	cereal::BinaryInputArchive binInputArchive(stream);
+
+
+	binInputArchive(v);
 }
