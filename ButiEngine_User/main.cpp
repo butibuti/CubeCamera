@@ -37,7 +37,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	app->GetGraphicDevice()->SetClearColor(Vector4(180.0f / 255, 180.0f / 255, 1, 1));
 	int returnCode = app->Run();
-
+	
 
 	app->Exit();
 
