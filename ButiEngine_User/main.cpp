@@ -3,7 +3,7 @@
 #pragma comment(lib,"ButiEngine.lib")
 #include"Header/Scene/ComponentsLoader.h"
 #include"Header/Device/ModelFileConverter.h"
-//#include"Header/GameObjects/DefaultGameComponent/ModelDrawComponent.h"
+#include"CameraController.h"
 #include"MapEditorComponent.h"
 
 //#include"Header/GameObjects/DefaultGameComponent/ChaseComponent.h"
@@ -29,7 +29,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//ModelFileConverter::FBXtoB3M("InvisibleBlock.fbx", "InvisibleBlock.b3m", "Model/Cubes/");
 	app->InitLoadResources();
-	//ComponentsLoader::GetInstance()->AddGameComponent<TitleBlockComponent>();
+	//ComponentsLoader::GetInstance()->AddGameComponent<CameraController>();
 	
 
 	app->GetSceneManager()->LoadScene_Init_EditMode("EditorScene");
