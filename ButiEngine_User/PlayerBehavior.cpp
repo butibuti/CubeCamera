@@ -10,6 +10,7 @@
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
+#if _DEBUG
 	GUI::Begin("player");
 	GUI::Text(mapPos);
 	if (goal)
@@ -24,6 +25,7 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		timer->Stop();
 		shp_invisibleBlockManager->Check();
 	}
+#endif
 	Contoroll();
 	CheckExistUnderBlock(mapPos);
 	//if (IsRollFinish() && !gameObject.lock()->GetGameComponent<CubeTransformAnimation>())

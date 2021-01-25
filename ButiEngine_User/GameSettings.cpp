@@ -3,7 +3,6 @@
 
 using namespace ButiEngine;
 
-int GameSettings::maxMapCount = 10;
 float GameSettings::BlockSize = 1.0f;
 int GameSettings::player = 1;
 int GameSettings::block = 2;

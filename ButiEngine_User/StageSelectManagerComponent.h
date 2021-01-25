@@ -19,9 +19,18 @@ namespace ButiEngine {
 			archive(isActive);
 		}
 		void OnShowUI();
-	private:
-		int stageNum;
 
+		static std::string GetNextSceneName();
+
+	private:
+		std::shared_ptr<RelativeTimer> animTimer;
+
+		void RestartTimer();
+		void OnPushRight();
+		void OnPushLeft();
+
+		static int stageNum;
+		static int maxStageNum;
 	};
 
 }

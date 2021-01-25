@@ -6,8 +6,8 @@ void ButiEngine::TitleManagerComponent::OnUpdate()
 	if (GameDevice::GetInput()->GetAnyButtonTrigger() || GameDevice::GetInput()->TriggerKey(Keys::Space))
 	{
 		auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
-		sceneManager->LoadScene("Stage1Scene");
-		sceneManager->ChangeScene("Stage1Scene");
+		sceneManager->LoadScene("StageSelectScene");
+		sceneManager->ChangeScene("StageSelectScene");
 	}
 }
 
