@@ -54,10 +54,10 @@ namespace ButiEngine {
 		std::shared_ptr<RelativeTimer> timer;
 
 		void Contoroll();
-		void OnPushD();
-		void OnPushA();
-		void OnPushW();
-		void OnPushS();
+		void OnPushRight();
+		void OnPushLeft();
+		void OnPushFront();
+		void OnPushBack();
 		void MoveRightUp();
 		void MoveRight();
 		void MoveRightDown();

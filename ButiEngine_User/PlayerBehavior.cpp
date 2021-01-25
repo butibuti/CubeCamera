@@ -103,36 +103,36 @@ void ButiEngine::PlayerBehavior::Contoroll()
 {
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (anim) { return; }
-	if (GameDevice::GetInput()->CheckKey(Keys::D))
+	if (GameSettings::CheckRight())
 	{
-		OnPushD();
+		OnPushRight();
 		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 		if (cubeAnim) {
 			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
 			nextMapPos += offset;
 		}
 	}
-	if (GameDevice::GetInput()->CheckKey(Keys::A))
+	if (GameSettings::CheckLeft())
 	{
-		OnPushA();
+		OnPushLeft();
 		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 		if (cubeAnim) {
 			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
 			nextMapPos += offset;
 		}
 	}
-	if (GameDevice::GetInput()->CheckKey(Keys::W))
+	if (GameSettings::CheckFront())
 	{
-		OnPushW();
+		OnPushFront();
 		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 		if (cubeAnim) {
 			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
 			nextMapPos += offset;
 		}
 	}
-	if (GameDevice::GetInput()->CheckKey(Keys::S))
+	if (GameSettings::CheckBack())
 	{
-		OnPushS();
+		OnPushBack();
 		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 		if (cubeAnim) {
 			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
@@ -142,7 +142,7 @@ void ButiEngine::PlayerBehavior::Contoroll()
 	
 }
 
-void ButiEngine::PlayerBehavior::OnPushD()
+void ButiEngine::PlayerBehavior::OnPushRight()
 {
 	if (fall)
 	{
@@ -157,7 +157,7 @@ void ButiEngine::PlayerBehavior::OnPushD()
 	else if (dir == MoveDirection::Fall) { MoveRightDown(); }
 }
 
-void ButiEngine::PlayerBehavior::OnPushA()
+void ButiEngine::PlayerBehavior::OnPushLeft()
 {
 	if (fall)
 	{
@@ -171,7 +171,7 @@ void ButiEngine::PlayerBehavior::OnPushA()
 	else if (dir == MoveDirection::Fall) { MoveLeftDown(); }
 }
 
-void ButiEngine::PlayerBehavior::OnPushW()
+void ButiEngine::PlayerBehavior::OnPushFront()
 {
 	if (fall)
 	{
@@ -185,7 +185,7 @@ void ButiEngine::PlayerBehavior::OnPushW()
 	else if (dir == MoveDirection::Fall) { MoveDownFront(); }
 }
 
-void ButiEngine::PlayerBehavior::OnPushS()
+void ButiEngine::PlayerBehavior::OnPushBack()
 {
 	if (fall)
 	{
