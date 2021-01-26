@@ -29,13 +29,14 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//ModelFileConverter::FBXtoB3M("InvisibleBlock.fbx", "InvisibleBlock.b3m", "Model/Cubes/");
 	app->InitLoadResources();
-	//ComponentsLoader::GetInstance()->AddGameComponent<StageSelectManagerComponent>();
+	//ComponentsLoader::GetInstance()->AddGameComponent<CameraMeshComponent>();
 	
 
-	app->GetSceneManager()->LoadScene_Init_EditMode("TitleScene");
+	app->GetSceneManager()->LoadScene_Init_EditMode("Stage1Scene");
 	//app->GetSceneManager()->LoadScene_Init("CollisionScene");
 
-	app->GetGraphicDevice()->SetClearColor(Vector4(180.0f / 255, 180.0f / 255, 1, 1));
+	app->GetGraphicDevice()->SetClearColor(Vector4(0.025f, 0.025f, 0.025f, 1.0f));
+	//app->GetGraphicDevice()->SetClearColor(Vector4(180.0f / 255, 180.0f / 255, 1, 1));
 	int returnCode = app->Run();
 	
 

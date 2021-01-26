@@ -1,16 +1,19 @@
 #include "stdafx_u.h"
 #include "PlayerCameraComponent.h"
+#include"CameraMeshComponent.h"
 
 void ButiEngine::PlayerCameraComponent::OnUpdate()
 {
+	auto cameraMesh = GetManager().lock()->GetGameObject("CameraMesh").lock()->GetGameComponent<CameraMeshComponent>();
 	if (isShutter)
 	{
 		isShutter = false;
 		auto camera = GetCamera("playerCamera");
 		TextureTag tag = gameObject.lock()->GetResourceContainer()->GetTextureTag(":/movie/162/114");
 		camera.lock()->SetProjectionTexture(tag);
+		cameraMesh->Shutter();
 	}
-
+	cameraMesh->Shrink();
 	if (shp_timer && shp_timer->Update())
 	{
 		shp_timer->Stop();

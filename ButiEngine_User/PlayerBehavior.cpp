@@ -7,6 +7,7 @@
 #include"PlayerCameraComponent.h"
 #include"InvisibleBlockManagerComponent.h"
 #include"GameSettings.h"
+#include"CameraMeshComponent.h"
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
