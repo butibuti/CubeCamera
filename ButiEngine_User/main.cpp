@@ -29,7 +29,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//ModelFileConverter::FBXtoB3M("InvisibleBlock.fbx", "InvisibleBlock.b3m", "Model/Cubes/");
 	app->InitLoadResources();
-	//ComponentsLoader::GetInstance()->AddGameComponent<StageSelectManagerComponent>();
+	//ComponentsLoader::GetInstance()->AddGameComponent<GoalAuraComponent>();
 	
 
 	app->GetSceneManager()->LoadScene_Init_EditMode("TitleScene");

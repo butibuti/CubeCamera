@@ -109,11 +109,11 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				{
 					playerPos = Vector3(x, y, z);
 					gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
-					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3(0, 0, -0.1f), Vector3::Zero, scale));
+					//auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3(0, 0, -0.1f), Vector3::Zero, scale));
 					auto camera = GetCamera("playerCamera");
 					camera.lock()->shp_transform->SetLocalPosition().z = 0.3f;
 					camera.lock()->shp_transform->SetBaseTransform(gameObject.lock()->transform, true);
-					cameraMesh.lock()->transform->SetBaseTransform(gameObject.lock()->transform, true);
+					//cameraMesh.lock()->transform->SetBaseTransform(gameObject.lock()->transform, true);
 				}
 				else if (mapNum == GameSettings::block)
 				{
