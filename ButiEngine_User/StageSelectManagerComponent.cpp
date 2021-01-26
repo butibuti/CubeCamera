@@ -40,7 +40,7 @@ void ButiEngine::StageSelectManagerComponent::OnSet()
 
 void ButiEngine::StageSelectManagerComponent::Start()
 {
-	animTimer = ObjectFactory::Create<RelativeTimer>(30);
+	animTimer = ObjectFactory::Create<RelativeTimer>(10);
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::StageSelectManagerComponent::Clone()
