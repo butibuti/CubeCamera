@@ -20,17 +20,16 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		return; 
 	}
 	GUI::End();
+#endif
 	if (timer->Update())
 	{
 		timer->Stop();
 		shp_invisibleBlockManager->Check();
+		Expansion();
 	}
-#endif
+	Shrink();
 	Contoroll();
 	CheckExistUnderBlock(mapPos);
-	//if (IsRollFinish() && !gameObject.lock()->GetGameComponent<CubeTransformAnimation>())
-	//{
-	//}
 	Fall();
 }
 
@@ -199,6 +198,26 @@ void ButiEngine::PlayerBehavior::OnPushBack()
 	else if (dir == MoveDirection::Normal) { MoveBack(); }
 	else if (dir == MoveDirection::Down) { MoveDownBack(); }
 	else if (dir == MoveDirection::Fall) { MoveDownBack(); }
+}
+
+void ButiEngine::PlayerBehavior::Expansion()
+{
+	scale = 1.5f;
+	gameObject.lock()->transform->SetLocalScale(scale);
+}
+
+void ButiEngine::PlayerBehavior::Shrink()
+{
+	if (scale <= 1.0f)
+	{
+		return;
+	}
+	scale -= 0.1f;
+	if (scale < 1.0f)
+	{
+		scale = 1.0f;
+	}
+	gameObject.lock()->transform->SetLocalScale(scale);
 }
 
 void ButiEngine::PlayerBehavior::MoveRightUp()
