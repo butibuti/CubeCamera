@@ -14,6 +14,7 @@ void ButiEngine::MapEditorComponent::OnUpdate()
     static int blockPos_edgeOne[3];
     static int blockPos_edgeTwo[3];
     static int invisibleID;
+    gameObject.lock()->transform->SetLocalPosition(Vector3(blockPos[0], blockPos[1], blockPos[2])-offset);
 
     GUI::Begin("Editor");
 
