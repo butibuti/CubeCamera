@@ -10,6 +10,7 @@
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
+#if _DEBUG
 	GUI::Begin("player");
 	GUI::Text(mapPos);
 	if (goal)
@@ -19,16 +20,16 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		return; 
 	}
 	GUI::End();
+#endif
 	if (timer->Update())
 	{
 		timer->Stop();
 		shp_invisibleBlockManager->Check();
+		Expansion();
 	}
+	Shrink();
 	Contoroll();
 	CheckExistUnderBlock(mapPos);
-	//if (IsRollFinish() && !gameObject.lock()->GetGameComponent<CubeTransformAnimation>())
-	//{
-	//}
 	Fall();
 }
 
@@ -103,36 +104,36 @@ void ButiEngine::PlayerBehavior::Contoroll()
 {
 	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 	if (anim) { return; }
-	if (GameDevice::GetInput()->CheckKey(Keys::D))
+	if (GameSettings::CheckRight())
 	{
-		OnPushD();
+		OnPushRight();
 		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 		if (cubeAnim) {
 			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
 			nextMapPos += offset;
 		}
 	}
-	if (GameDevice::GetInput()->CheckKey(Keys::A))
+	if (GameSettings::CheckLeft())
 	{
-		OnPushA();
+		OnPushLeft();
 		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 		if (cubeAnim) {
 			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
 			nextMapPos += offset;
 		}
 	}
-	if (GameDevice::GetInput()->CheckKey(Keys::W))
+	if (GameSettings::CheckFront())
 	{
-		OnPushW();
+		OnPushFront();
 		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 		if (cubeAnim) {
 			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
 			nextMapPos += offset;
 		}
 	}
-	if (GameDevice::GetInput()->CheckKey(Keys::S))
+	if (GameSettings::CheckBack())
 	{
-		OnPushS();
+		OnPushBack();
 		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
 		if (cubeAnim) {
 			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
@@ -142,7 +143,7 @@ void ButiEngine::PlayerBehavior::Contoroll()
 	
 }
 
-void ButiEngine::PlayerBehavior::OnPushD()
+void ButiEngine::PlayerBehavior::OnPushRight()
 {
 	if (fall)
 	{
@@ -157,7 +158,7 @@ void ButiEngine::PlayerBehavior::OnPushD()
 	else if (dir == MoveDirection::Fall) { MoveRightDown(); }
 }
 
-void ButiEngine::PlayerBehavior::OnPushA()
+void ButiEngine::PlayerBehavior::OnPushLeft()
 {
 	if (fall)
 	{
@@ -171,7 +172,7 @@ void ButiEngine::PlayerBehavior::OnPushA()
 	else if (dir == MoveDirection::Fall) { MoveLeftDown(); }
 }
 
-void ButiEngine::PlayerBehavior::OnPushW()
+void ButiEngine::PlayerBehavior::OnPushFront()
 {
 	if (fall)
 	{
@@ -185,7 +186,7 @@ void ButiEngine::PlayerBehavior::OnPushW()
 	else if (dir == MoveDirection::Fall) { MoveDownFront(); }
 }
 
-void ButiEngine::PlayerBehavior::OnPushS()
+void ButiEngine::PlayerBehavior::OnPushBack()
 {
 	if (fall)
 	{
@@ -197,6 +198,26 @@ void ButiEngine::PlayerBehavior::OnPushS()
 	else if (dir == MoveDirection::Normal) { MoveBack(); }
 	else if (dir == MoveDirection::Down) { MoveDownBack(); }
 	else if (dir == MoveDirection::Fall) { MoveDownBack(); }
+}
+
+void ButiEngine::PlayerBehavior::Expansion()
+{
+	scale = 1.5f;
+	gameObject.lock()->transform->SetLocalScale(scale);
+}
+
+void ButiEngine::PlayerBehavior::Shrink()
+{
+	if (scale <= 1.0f)
+	{
+		return;
+	}
+	scale -= 0.1f;
+	if (scale < 1.0f)
+	{
+		scale = 1.0f;
+	}
+	gameObject.lock()->transform->SetLocalScale(scale);
 }
 
 void ButiEngine::PlayerBehavior::MoveRightUp()

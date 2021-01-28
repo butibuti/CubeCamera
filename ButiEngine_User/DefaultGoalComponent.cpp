@@ -15,7 +15,8 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 	//ƒJƒƒ‰‚ÉAABB‚ğ“n‚µ‚Ä”»’è
 	//bool ICamera::IsContaineVisibility(std::shared_ptr<Geometry::Box_AABB> arg_checkPrimitive)
 	//‘æˆêˆø”: ”»’è‚Ég‚¤AABB
-	if (gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Player").lock()->GetBehavior<PlayerBehavior>()->IsRollFinish())
+	auto player = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Player").lock();
+	if (player && player->GetBehavior<PlayerBehavior>()->IsRollFinish())
 	{
 		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 0)
 		{

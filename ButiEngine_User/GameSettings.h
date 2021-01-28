@@ -11,6 +11,12 @@ public:
 	static int easyGoal;
 	static int defaultGoal;
 	static int invisibleBlock;
+
+	static bool CheckRight();
+	static bool CheckLeft();
+	static bool CheckFront();
+	static bool CheckBack();
+
 private:
 	GameSettings(){}
 };

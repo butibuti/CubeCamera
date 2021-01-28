@@ -50,14 +50,17 @@ namespace ButiEngine {
 		bool goal;
 		bool fall;
 		Vector3 afterFallPos;
+		float scale;
 
 		std::shared_ptr<RelativeTimer> timer;
 
 		void Contoroll();
-		void OnPushD();
-		void OnPushA();
-		void OnPushW();
-		void OnPushS();
+		void OnPushRight();
+		void OnPushLeft();
+		void OnPushFront();
+		void OnPushBack();
+		void Expansion();
+		void Shrink();
 		void MoveRightUp();
 		void MoveRight();
 		void MoveRightDown();

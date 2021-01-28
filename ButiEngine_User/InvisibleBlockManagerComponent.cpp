@@ -30,6 +30,11 @@ void ButiEngine::InvisibleBlockManagerComponent::Check()
 
 	auto player = GetManager().lock()->GetGameObject("Player");
 
+	if (!player.lock())
+	{
+		return;
+	}
+
 	auto anim = player.lock()->GetGameComponent<CubeTransformAnimation>();
 	auto currenCameraTransform = camera.lock()->shp_transform;
 	if (anim)

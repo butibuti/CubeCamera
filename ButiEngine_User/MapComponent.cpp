@@ -5,23 +5,33 @@
 #include"InvisibleBlockComponent.h"
 #include"InvisibleBlockManagerComponent.h"
 #include "..\..\Header\Common\CerealUtill.h"
+#include"StageSelectManagerComponent.h"
 
 void ButiEngine::MapComponent::OnUpdate()
 {
 	auto player = GetManager().lock()->GetGameObject("Player").lock();
 	if (player && player->GetBehavior<PlayerBehavior>()->GetGoal())
 	{
-		if (GameDevice::GetInput()->TriggerKey(Keys::N))
-		{
-			currentStageNum++;
-			if (currentStageNum >= vec_mapData.size())
-			{
-				currentStageNum--; 
-				return;
-			}
-			PutBlock(currentStageNum);
-		}
+		DestoroyMapChip();
+		auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
+		std::string sceneName = StageSelectManagerComponent::GetNextSceneName();
+		sceneManager->LoadScene(sceneName);
+		sceneManager->ChangeScene(sceneName);
+		//if (GameDevice::GetInput()->TriggerKey(Keys::N))
+		//{
+		//	currentStageNum++;
+		//	if (currentStageNum >= vec_mapData.size())
+		//	{
+		//		currentStageNum--; 
+		//		return;
+		//	}
+		//	PutBlock(currentStageNum);
+		//}
 	}
+
+	auto tag = GetTagManager()->GetObjectTag("MapChip");
+	auto manager = GetManager().lock();
+	std::vector<std::shared_ptr<GameObject>> gameObjects = manager->GetGameObjects(tag);
 }
 
 void ButiEngine::MapComponent::OnSet()
@@ -42,8 +52,6 @@ void ButiEngine::MapComponent::Start()
 	else {
 		vec_mapData.push_back(MapData(0));
 	}
-
-
 
 	playerPos = Vector3::Zero;
 	currentStageNum = 0;
