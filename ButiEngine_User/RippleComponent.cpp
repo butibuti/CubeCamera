@@ -35,9 +35,9 @@ void ButiEngine::RippleComponent::AnimInitialize()
 
 
 	auto anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
-	anim->SetSpeed(1.0f / 30);
+	anim->SetSpeed(1.0f / 60);
 	anim->SetTargetTransform(t->Clone());
-	anim->GetTargetTransform()->SetLocalScale(5.0f);
+	anim->GetTargetTransform()->SetLocalScale(3.0f);
 	anim->GetTargetTransform()->RollLocalRotationX_Degrees(0.1f);
 
 	anim->SetEaseType(Easing::EasingType::EaseOutExpo);

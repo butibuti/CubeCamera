@@ -18,7 +18,7 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 	auto player = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Player").lock();
 	if (player && player->GetBehavior<PlayerBehavior>()->IsRollFinish())
 	{
-		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 1)
+		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 0)
 		{
 			gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>()->Regist();
 			active = true;
