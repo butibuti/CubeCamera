@@ -13,7 +13,6 @@ void ButiEngine::CameraController::OnUpdate()
             anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
             anim->SetTargetTransform(gameObject.lock()->transform->Clone());
             anim->GetTargetTransform()->SetWorldPosition(gameObject.lock()->transform->GetWorldPosition()- gameObject.lock()->transform->GetFront()*5);
-            anim->GetTargetTransform()->RollLocalRotationY_Degrees(0.05);
             anim->SetSpeed(1.0f / 10.0f);
         }
     }
@@ -23,7 +22,6 @@ void ButiEngine::CameraController::OnUpdate()
             anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
             anim->SetTargetTransform(gameObject.lock()->transform->Clone());
             anim->GetTargetTransform()->SetWorldPosition(gameObject.lock()->transform->GetWorldPosition() + gameObject.lock()->transform->GetFront() * 5);
-            anim->GetTargetTransform()->RollLocalRotationY_Degrees(-0.05);
             anim->SetSpeed(1.0f / 10.0f);
         }
     }
