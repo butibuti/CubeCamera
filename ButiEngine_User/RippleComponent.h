@@ -20,8 +20,16 @@ namespace ButiEngine {
 		}
 		void OnShowUI();
 
+		static unsigned char GetCount()
+		{
+			return count; 
+		}
 		void AnimInitialize();
 	private:
+		static unsigned char count;
+		int progressFrame;
+		int life;
+		float scale;
 	};
 
 }
