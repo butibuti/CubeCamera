@@ -18,10 +18,16 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 	auto player = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Player").lock();
 	if (player && player->GetBehavior<PlayerBehavior>()->IsRollFinish())
 	{
-		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 0)
+		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 1)
 		{
 			gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>()->Regist();
 			active = true;
+			auto t = gameObject.lock()->transform;
+			auto pos = t->GetWorldPosition();
+			auto rot = t->GetWorldRotation();
+			auto scale = t->GetLocalScale();
+
+			GetManager().lock()->AddObjectFromCereal("GoalAura", ObjectFactory::Create<Transform>(pos, rot, scale));
 		}
 	}
 	//マテリアル変更

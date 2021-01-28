@@ -3,7 +3,7 @@
 #include"GameSettings.h"
 
 int ButiEngine::StageSelectManagerComponent::stageNum = 0;
-int ButiEngine::StageSelectManagerComponent::maxStageNum = 1;
+int ButiEngine::StageSelectManagerComponent::maxStageNum = 0;
 
 void ButiEngine::StageSelectManagerComponent::OnUpdate()
 {
