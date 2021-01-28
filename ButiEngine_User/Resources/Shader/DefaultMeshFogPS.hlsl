@@ -10,5 +10,5 @@ float4 PSMain(Pixel_UV_Normal_Fog pixel) : SV_TARGET
 	float4 Tex = mainTexture.Sample(mainSampler,pixel.uv);
 	Tex.rgb -= 0.5f;
 	float3 retRGB = lerp(fogColor.rgb, (Tex + Light).rgb, pixel.fog);
-	return float4(retRGB,Tex.a);//,0.5f);
+	return float4(retRGB,ambient.a);//,0.5f);
 }

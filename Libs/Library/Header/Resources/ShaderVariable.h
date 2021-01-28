@@ -60,6 +60,46 @@ namespace ButiEngine {
 			return false;
 		}
 	};
+	struct GausVariable {
+
+		Vector3 gausOffset[16];
+		int sampleCount = 16;
+		float GaussianDistribution(const Vector2& pos, float rho)
+		{
+			 return exp(-(pos.x * pos.x + pos.y * pos.y) / (2.0f * rho * rho));
+		}
+		void CalcGaus(const int width, const int height, const Vector2& dir, const float deviation);
+		bool ShowUI() {
+			static float deviation=0.0f;
+			static Vector2 dir = Vector2(1,0);
+			static Vector2 scale = Vector2(480,270);
+			bool output = false;
+			GUI::Text("Deviation");
+			if (GUI::DragFloat("##deviation", deviation, 0.1f, 0.0f, 1000.0f)) {
+				output = true;
+			}
+			GUI::Text("Direction");
+			if (GUI::DragFloat2("##dir", dir, 0.1f, 0.0f, 1000.0f)) {
+				output = true;
+			}
+			GUI::Text("Scale");
+			if (GUI::DragFloat2("##scale", scale, 0.1f, 0.0f, 1000.0f)) {
+				output = true;
+			}
+
+			if (output) {
+				CalcGaus(scale.x, scale.y, dir, deviation);
+			}
+
+			return output;
+		}
+		template<class Archive>
+		void serialize(Archive& archive)
+		{
+			archive(sampleCount);
+			archive(gausOffset);
+		}
+	};
 
 	struct MaterialVariable {
 		Vector4 emissive;
