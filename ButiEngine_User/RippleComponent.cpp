@@ -1,8 +1,8 @@
 #include "stdafx_u.h"
-#include "GoalAuraComponent.h"
+#include "RippleComponent.h"
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 
-void ButiEngine::GoalAuraComponent::OnUpdate()
+void ButiEngine::RippleComponent::OnUpdate()
 {
 	auto anim = gameObject.lock()->GetGameComponent<TransformAnimation>();
 	if (!anim)
@@ -11,35 +11,34 @@ void ButiEngine::GoalAuraComponent::OnUpdate()
 	}
 }
 
-void ButiEngine::GoalAuraComponent::OnSet()
+void ButiEngine::RippleComponent::OnSet()
 {
 }
 
-void ButiEngine::GoalAuraComponent::Start()
+void ButiEngine::RippleComponent::Start()
 {
 	AnimInitialize();
 }
 
-std::shared_ptr<ButiEngine::GameComponent> ButiEngine::GoalAuraComponent::Clone()
+std::shared_ptr<ButiEngine::GameComponent> ButiEngine::RippleComponent::Clone()
 {
-	return ObjectFactory::Create<GoalAuraComponent>();
+	return ObjectFactory::Create<RippleComponent>();
 }
 
-void ButiEngine::GoalAuraComponent::OnShowUI()
+void ButiEngine::RippleComponent::OnShowUI()
 {
 }
 
-void ButiEngine::GoalAuraComponent::AnimInitialize()
+void ButiEngine::RippleComponent::AnimInitialize()
 {
 	auto t = gameObject.lock()->transform;
 
-	
+
 	auto anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
-	anim->SetSpeed(1.0f / 30);
+	anim->SetSpeed(1.0f / 60);
 	anim->SetTargetTransform(t->Clone());
 	anim->GetTargetTransform()->SetLocalScale(3.0f);
 	anim->GetTargetTransform()->RollLocalRotationX_Degrees(0.1f);
 
-	anim->SetEaseType(Easing::EasingType::EaseOutQuart);
-	
+	anim->SetEaseType(Easing::EasingType::EaseOutExpo);
 }

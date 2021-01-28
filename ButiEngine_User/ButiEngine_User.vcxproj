@@ -172,6 +172,7 @@
     <ClCompile Include="MapEditorComponent.cpp" />
     <ClCompile Include="PlayerBehavior.cpp" />
     <ClCompile Include="PlayerCameraComponent.cpp" />
+    <ClCompile Include="RippleComponent.cpp" />
     <ClCompile Include="StageSelectManagerComponent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -195,6 +196,7 @@
     <ClInclude Include="MapEditorComponent.h" />
     <ClInclude Include="PlayerBehavior.h" />
     <ClInclude Include="PlayerCameraComponent.h" />
+    <ClInclude Include="RippleComponent.h" />
     <ClInclude Include="StageSelectManagerComponent.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stdafx_u.h" />

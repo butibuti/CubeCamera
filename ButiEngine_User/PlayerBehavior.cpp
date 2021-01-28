@@ -10,7 +10,7 @@
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
-#if _DEBUG
+#ifdef DEBUG
 	GUI::Begin("player");
 	GUI::Text(mapPos);
 	if (goal)
@@ -26,6 +26,10 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		timer->Stop();
 		shp_invisibleBlockManager->Check();
 		Expansion();
+
+		auto pos = gameObject.lock()->transform->GetWorldPosition();
+		pos.y -= 0.5f;
+		GetManager().lock()->AddObjectFromCereal("Ripple", ObjectFactory::Create<Transform>(pos, Vector3(90, 0, 0), 1.0f));
 	}
 	Shrink();
 	Contoroll();
