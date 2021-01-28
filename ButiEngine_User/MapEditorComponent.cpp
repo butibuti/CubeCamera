@@ -14,7 +14,9 @@ void ButiEngine::MapEditorComponent::OnUpdate()
     static int blockPos_edgeOne[3];
     static int blockPos_edgeTwo[3];
     static int invisibleID;
-    gameObject.lock()->transform->SetLocalPosition(Vector3(blockPos[0], blockPos[1], blockPos[2])-offset);
+    static int playerDirection = 0;
+    static int goalMode = 0;
+    gameObject.lock()->transform->SetLocalPosition(Vector3(blockPos[0], blockPos[1], blockPos[2]) - offset);
 
     GUI::Begin("Editor");
 
@@ -33,12 +35,60 @@ void ButiEngine::MapEditorComponent::OnUpdate()
     if (GUI::Button("Replace Block")) {
         Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), "Block", GameSettings::block);
     }
+    GUI::BulletText("GoalMode");
+    if (GUI::ArrowButton("##min", GUI::GuiDir_::GuiDir_Left)) {
+        goalMode--;
+        if (goalMode < 0) {
+            goalMode = 2;
+        }
+    }
+    GUI::SameLine();
+    GUI::SameLine();
+    switch (goalMode)
+    {
+    case 0:
+        GUI::Text("Touch Only");
+        break;
+    case 1:
+        GUI::Text("Already Seen");
+        break;
+    case 2:
+        GUI::Text("Hidden");
+        break;
+    default:
+        break;
+    }
+    GUI::SameLine();
+    if (GUI::ArrowButton("##plus", GUI::GuiDir_::GuiDir_Right)) {
+        goalMode++;
+        if (goalMode > 2) {
+            goalMode = 0;
+        }
+    }
+
     if (GUI::Button("Replace Goal")) {
-        Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), "DefaultGoal", GameSettings::defaultGoal);
+        std::string goalObjName;
+
+        switch (goalMode)
+        {
+        case 0:
+            goalObjName = "TutorialGoal";
+            break;
+        case 1:
+            goalObjName = "EasyGoal";
+            break;
+        case 2:
+            goalObjName = "DefaultGoal";
+            break;
+        default:
+            break;
+        }
+
+        Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::tutorialGoal + goalMode);
     }
     if (GUI::Button("Replace InvisibleBlock")) {
-        
-        auto gameObject= Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), "InvisibleBlock", GameSettings::invisibleBlock+invisibleID);
+
+        auto gameObject = Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), "InvisibleBlock", GameSettings::invisibleBlock + invisibleID);
 
 
         gameObject->GetGameComponent<InvisibleBlockComponent>()->SetID(invisibleID);
@@ -52,21 +102,64 @@ void ButiEngine::MapEditorComponent::OnUpdate()
         invisibleBlockManager->Check();
     }
 
+
+
+    GUI::BulletText("PlayerDirection");
+    if (GUI::ArrowButton("##min_dir", GUI::GuiDir_::GuiDir_Left)) {
+        playerDirection--;
+        if (playerDirection < 0) {
+            playerDirection = 3;
+        }
+    }
+
+    GUI::SameLine();
+    switch (playerDirection)
+    {
+    case 0:
+        GUI::Text("Front");
+        break;
+    case 1:
+        GUI::Text("Right");
+        break;
+    case 2:
+        GUI::Text("Back");
+        break;
+
+    case 3:
+        GUI::Text("Left");
+        break;
+    default:
+        break;
+    }
+    GUI::SameLine();
+    if (GUI::ArrowButton("##plus_dir", GUI::GuiDir_::GuiDir_Right)) {
+        playerDirection++;
+        if (playerDirection > 3) {
+            playerDirection = 0;
+        }
+    }
+
     if (GUI::Button("Change PlayerInitPosition")) {
         for (int i = 0; i < p_mapdata->mapData.size(); i++) {
             for (int j = 0; j < p_mapdata->mapData[0].size(); j++) {
                 for (int k = 0; k < p_mapdata->mapData[0][0].size(); k++) {
-
-                    if (p_mapdata->mapData[i][j][k]== GameSettings::player) {
+                    int num = p_mapdata->mapData[i][j][k];
+                    if (num == GameSettings::player || (num >= GameSettings::playerRotate_90 && num <= GameSettings::playerRotate_min90)) {
                         p_mapdata->mapData[i][j][k] = 0;
                         shp_currentMapData->mapData[i][j][k] = 0;
                     }
                 }
             }
         }
+        if (playerDirection == 0) {
+            p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
+            shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
+        }
+        else {
 
-        p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
-        shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
+            p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::playerRotate_90 + playerDirection - 1;
+            shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::playerRotate_90 + playerDirection - 1;
+        }
     }
 
     if (GUI::Button("Remove")) {
@@ -96,7 +189,7 @@ void ButiEngine::MapEditorComponent::OnUpdate()
         blockPos_edgeOne[1] = min(blockPos_edgeOne[1], size.y - 1);
         blockPos_edgeOne[2] = min(blockPos_edgeOne[2], size.z - 1);
     }
-    if(GUI::DragInt3("##position_edgeTwo", blockPos_edgeTwo, 1.0, 0, 300) ){
+    if (GUI::DragInt3("##position_edgeTwo", blockPos_edgeTwo, 1.0, 0, 300)) {
 
         blockPos_edgeTwo[0] = min(blockPos_edgeTwo[0], size.x - 1);
         blockPos_edgeTwo[1] = min(blockPos_edgeTwo[1], size.y - 1);
@@ -203,14 +296,14 @@ void ButiEngine::MapEditorComponent::OnUpdate()
 
         (p_mapdata->mapData.end() - 1)->resize(zsize);
         (shp_currentMapData->mapData.end() - 1)->resize(zsize);
-        ((*p_mapObjectData).end() - 1)->resize(zsize); 
-        for (int i = 0; i < p_mapdata->mapData[0].size();i++) {
+        ((*p_mapObjectData).end() - 1)->resize(zsize);
+        for (int i = 0; i < p_mapdata->mapData[0].size(); i++) {
 
             (p_mapdata->mapData[p_mapdata->mapData.size() - 1][i]).resize(xsize);
             (shp_currentMapData->mapData[p_mapdata->mapData.size() - 1][i]).resize(xsize);
             ((*p_mapObjectData)[p_mapdata->mapData.size() - 1][i]).resize(xsize);
         }
-       
+
     }
     GUI::SameLine();
     if (GUI::Button("Add Z")) {
@@ -223,7 +316,7 @@ void ButiEngine::MapEditorComponent::OnUpdate()
             (p_mapdata->mapData[i].end() - 1)->resize(xsize);
             (shp_currentMapData->mapData[i].end() - 1)->resize(xsize);
             ((*p_mapObjectData)[i].end() - 1)->resize(xsize);
-            
+
         }
     }
 
@@ -238,7 +331,7 @@ void ButiEngine::MapEditorComponent::OnUpdate()
                 }
 
                 (*p_mapObjectData)[i][j].pop_back();
-                
+
             }
         }
 
@@ -253,12 +346,12 @@ void ButiEngine::MapEditorComponent::OnUpdate()
         p_mapdata->mapData.pop_back();
         shp_currentMapData->mapData.pop_back();
 
-        for (int i = p_mapdata->mapData.size(); i < p_mapdata->mapData.size()+1; i++) {
+        for (int i = p_mapdata->mapData.size(); i < p_mapdata->mapData.size() + 1; i++) {
             for (int j = 0; j < p_mapdata->mapData[0].size(); j++) {
 
                 for (int k = 0; k < p_mapdata->mapData[0][0].size(); k++) {
-                    if((*p_mapObjectData)[i][j][k])
-                    (*p_mapObjectData)[i][j][k]->SetIsRemove(true);
+                    if ((*p_mapObjectData)[i][j][k])
+                        (*p_mapObjectData)[i][j][k]->SetIsRemove(true);
                 }
             }
         }
@@ -276,11 +369,11 @@ void ButiEngine::MapEditorComponent::OnUpdate()
 
             p_mapdata->mapData[i].pop_back();
             shp_currentMapData->mapData[i].pop_back();
-            for (int j = p_mapdata->mapData[i].size(); j < p_mapdata->mapData[i].size()+1; j++) {
+            for (int j = p_mapdata->mapData[i].size(); j < p_mapdata->mapData[i].size() + 1; j++) {
 
                 for (int k = 0; k < p_mapdata->mapData[i][0].size(); k++) {
                     if ((*p_mapObjectData)[i][j][k])
-                    (*p_mapObjectData)[i][j][k]->SetIsRemove(true);
+                        (*p_mapObjectData)[i][j][k]->SetIsRemove(true);
                 }
             }
             (*p_mapObjectData)[i].pop_back();
@@ -302,7 +395,7 @@ void ButiEngine::MapEditorComponent::OnUpdate()
         auto output = std::make_shared<MapData>();
         output->mapData = p_mapdata->mapData;
         std::string path = "Scene/" + GetManager().lock()->GetScene().lock()->GetSceneInformation()->GetSceneName() + "/mapInfo.map";
-        OutputCereal(output,path);
+        OutputCereal(output, path);
     }
 
     GUI::End();
@@ -319,7 +412,7 @@ void ButiEngine::MapEditorComponent::Start()
     auto map = GetManager().lock()->GetGameObject("Map");
     shp_mapComponent = map.lock()->GetGameComponent< MapComponent>();
     shp_currentMapData = shp_mapComponent->GetCurrentMapData();
-    p_mapdata =& shp_mapComponent->GetMapData(0);
+    p_mapdata = &shp_mapComponent->GetMapData(0);
     p_mapObjectData = &shp_mapComponent->GetMapObjectData();
     offset = shp_currentMapData->GetSize() / 2;
     offset.Floor();
@@ -336,11 +429,11 @@ void ButiEngine::MapEditorComponent::OnShowUI()
 
 std::shared_ptr<ButiEngine::GameObject> ButiEngine::MapEditorComponent::Replace(const Vector3& arg_pos, const std::string& arg_blockName, const int blockNum)
 {
-    Vector3 position = Vector3(arg_pos.z,arg_pos.x,arg_pos.y);
+    Vector3 position = Vector3(arg_pos.z, arg_pos.x, arg_pos.y);
     Vector3 scale(GameSettings::BlockSize, GameSettings::BlockSize, GameSettings::BlockSize);
     position -= offset;
     position *= GameSettings::BlockSize;
-    p_mapdata->mapData[arg_pos.x][arg_pos.y][arg_pos.z] =blockNum;
+    p_mapdata->mapData[arg_pos.x][arg_pos.y][arg_pos.z] = blockNum;
     shp_currentMapData->mapData[arg_pos.x][arg_pos.y][arg_pos.z] = blockNum;
     auto gameObject = GetManager().lock()->AddObjectFromCereal(arg_blockName);
     gameObject.lock()->transform->SetWorldPosition(position);

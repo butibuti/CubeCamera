@@ -38,13 +38,13 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 
 void ButiEngine::DefaultGoalComponent::OnSet()
 {
-	gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>()->UnRegist();
 }
 
 void ButiEngine::DefaultGoalComponent::Start()
 {
 	active = false;
 
+	gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>()->UnRegist();
 	//“–‚½‚è”»’è—pAABB‚ğì‚é
 	//Collision::CollisionPrimitive_Box_AABB(const Vector3& size,std::shared_ptr<Transform> arg_transform)
 	//‘æˆêˆø”: Še²‚Ì•Ó‚Ì’·‚³

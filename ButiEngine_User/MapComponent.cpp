@@ -105,15 +105,9 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				position *= GameSettings::BlockSize;
 				std::weak_ptr<GameObject> gameObject=std::shared_ptr<GameObject>();
 				int mapNum = mapData[y][z][x];
-				if (mapNum == GameSettings::player)
-				{
-					playerPos = Vector3(x, y, z);
-					gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
-					//auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3(0, 0, -0.1f), Vector3::Zero, scale));
-					auto camera = GetCamera("playerCamera");
-					camera.lock()->shp_transform->SetLocalPosition().z = 0.3f;
-					camera.lock()->shp_transform->SetBaseTransform(gameObject.lock()->transform, true);
-					//cameraMesh.lock()->transform->SetBaseTransform(gameObject.lock()->transform, true);
+				if (mapNum == 0) {
+					mapObjectData[y][z][x] = gameObject.lock();
+					continue;
 				}
 				else if (mapNum == GameSettings::block)
 				{
@@ -141,6 +135,22 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 					int id = mapNum - GameSettings::invisibleBlock;
 					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetID(id);
 					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetMapPos(Vector3(x, y, z));
+				}
+				else
+				if (mapNum == GameSettings::player || (mapNum >= GameSettings::playerRotate_90 && mapNum <= GameSettings::playerRotate_min90))
+					{
+						playerPos = Vector3(x, y, z);
+						gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
+						auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3(0, 0, -0.1f), Vector3::Zero, scale));
+						auto camera = GetCamera("playerCamera");
+						camera.lock()->shp_transform->SetLocalPosition().z = 0.3f;
+						camera.lock()->shp_transform->SetBaseTransform(gameObject.lock()->transform, true);
+						cameraMesh.lock()->transform->SetBaseTransform(gameObject.lock()->transform, true);
+						if (mapNum >= GameSettings::playerRotate_90 && mapNum <= GameSettings::playerRotate_min90) {
+							auto rotation = (mapNum - GameSettings::playerRotate_90 +1)*90;
+							gameObject.lock()->transform->RollLocalRotationY_Degrees(rotation);
+
+						}
 				}
 
 				mapObjectData[y][z][x] = gameObject.lock();
