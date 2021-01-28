@@ -7,6 +7,7 @@
 #include"PlayerCameraComponent.h"
 #include"InvisibleBlockManagerComponent.h"
 #include"GameSettings.h"
+#include"RippleComponent.h"
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
@@ -28,8 +29,9 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		Expansion();
 
 		auto pos = gameObject.lock()->transform->GetWorldPosition();
-		pos.y -= 0.5f;
-		GetManager().lock()->AddObjectFromCereal("Ripple", ObjectFactory::Create<Transform>(pos, Vector3(90, 0, 0), 1.0f));
+		pos.y -= 0.3f;
+		//pos.y += RippleComponent::GetCount() * 0.1f;
+		GetManager().lock()->AddObjectFromCereal("Ripple", ObjectFactory::Create<Transform>(pos, Vector3(90, 0, 0), 0.0f));
 	}
 	Shrink();
 	Contoroll();
