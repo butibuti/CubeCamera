@@ -14,6 +14,8 @@ void ButiEngine::MapEditorComponent::OnUpdate()
     static int blockPos_edgeOne[3];
     static int blockPos_edgeTwo[3];
     static int invisibleID;
+    static int playerDirection = 0;
+    static int goalMode = 0;
     gameObject.lock()->transform->SetLocalPosition(Vector3(blockPos[0], blockPos[1], blockPos[2])-offset);
 
     GUI::Begin("Editor");
@@ -33,8 +35,56 @@ void ButiEngine::MapEditorComponent::OnUpdate()
     if (GUI::Button("Replace Block")) {
         Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), "Block", GameSettings::block);
     }
+    GUI::BulletText("GoalMode");
+    if (GUI::ArrowButton("##min", GUI::GuiDir_::GuiDir_Left)) {
+        goalMode--;
+        if (goalMode < 0) {
+            goalMode = 2;
+        }
+    }
+    GUI::SameLine();
+    GUI::SameLine();
+    switch (goalMode)
+    {
+    case 0:
+        GUI::Text("Touch Only");
+        break;
+    case 1:
+        GUI::Text("Already Seen");
+        break;
+    case 2:
+        GUI::Text("Hidden");
+        break;
+    default:
+        break;
+    }
+    GUI::SameLine();
+    if (GUI::ArrowButton("##plus", GUI::GuiDir_::GuiDir_Right)) {
+        goalMode++;
+        if (goalMode > 2) {
+            goalMode = 0;
+        }
+    }
+
     if (GUI::Button("Replace Goal")) {
-        Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), "DefaultGoal", GameSettings::defaultGoal);
+        std::string goalObjName;
+
+        switch (goalMode)
+        {
+        case 0:
+            goalObjName = "TutorialGoal";
+            break;
+        case 1:
+            goalObjName = "EasyGoal";
+            break;
+        case 2:
+            goalObjName = "DefaultGoal";
+            break;
+        default:
+            break;
+        }
+
+        Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::tutorialGoal +goalMode);
     }
     if (GUI::Button("Replace InvisibleBlock")) {
         
@@ -52,21 +102,64 @@ void ButiEngine::MapEditorComponent::OnUpdate()
         invisibleBlockManager->Check();
     }
 
+
+
+    GUI::BulletText("PlayerDirection");
+    if (GUI::ArrowButton("##min_dir", GUI::GuiDir_::GuiDir_Left)) {
+        playerDirection--;
+        if (playerDirection < 0) {
+            playerDirection = 3;
+        }
+    }
+
+    GUI::SameLine();
+    switch (playerDirection)
+    {
+    case 0:
+        GUI::Text("Front");
+        break;
+    case 1:
+        GUI::Text("Right");
+        break;
+    case 2:
+        GUI::Text("Back");
+        break;
+
+    case 3:
+        GUI::Text("Left");
+        break;
+    default:
+        break;
+    }
+    GUI::SameLine();
+    if (GUI::ArrowButton("##plus_dir", GUI::GuiDir_::GuiDir_Right)) {
+        playerDirection++;
+        if (playerDirection > 3) {
+            playerDirection = 0;
+        }
+    }
+
     if (GUI::Button("Change PlayerInitPosition")) {
         for (int i = 0; i < p_mapdata->mapData.size(); i++) {
             for (int j = 0; j < p_mapdata->mapData[0].size(); j++) {
                 for (int k = 0; k < p_mapdata->mapData[0][0].size(); k++) {
-
-                    if (p_mapdata->mapData[i][j][k]== GameSettings::player) {
+                    int num = p_mapdata->mapData[i][j][k];
+                    if (num== GameSettings::player || (num >= GameSettings::playerRotate_90 && num <= GameSettings::playerRotate_min90)) {
                         p_mapdata->mapData[i][j][k] = 0;
                         shp_currentMapData->mapData[i][j][k] = 0;
                     }
                 }
             }
         }
+        if (playerDirection == 0) {
+            p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
+            shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
+        }
+        else {
 
-        p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
-        shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
+            p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::playerRotate_90+playerDirection-1;
+            shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::playerRotate_90 + playerDirection - 1;
+        }
     }
 
     if (GUI::Button("Remove")) {
