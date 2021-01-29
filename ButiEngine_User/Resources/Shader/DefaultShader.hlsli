@@ -92,7 +92,7 @@ cbuffer ParticleParameter : register(b4)
     float MinRange : packoffset(c3.x);
     float size : packoffset(c3.y);
     float minSize : packoffset(c3.z);
-    float rotationPase : packoffset(c3.w);A
+    float rotationPase : packoffset(c3.w);
 };
 
 Texture2D mainTexture : register(t0);

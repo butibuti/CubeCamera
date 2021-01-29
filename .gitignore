@@ -45,6 +45,7 @@
 *.ttc
 
 *.ini
+*.zip
 
 .vs/
 Temp/

@@ -7,6 +7,6 @@ float4 PSMain(Pixel_UV_Normal_Fog pixel) : SV_TARGET
 
 	Light.rgb += specular.rgb * specular.a;
 	float4 retRGBA = lerp(fogColor, (Light), pixel.fog);
-	retRGBA.a=1.0;
+	retRGBA.a=1.0* lightDir.a;
 	return  retRGBA;//,0.5f);
 }
