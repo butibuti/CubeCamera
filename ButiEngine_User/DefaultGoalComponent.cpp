@@ -20,8 +20,14 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 	{
 		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 0)
 		{
-			gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>()->Regist();
+			auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>();
+			meshDraw->Regist();
 			active = true;
+
+			//マテリアル変更
+			meshDraw->SetMaterialTag(gameObject.lock()->GetResourceContainer()->GetMaterialTag("goalMaterial"));
+			meshDraw->ReRegist();
+
 			auto t = gameObject.lock()->transform;
 			auto pos = t->GetWorldPosition();
 			auto rot = t->GetWorldRotation();
@@ -30,10 +36,6 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 			GetManager().lock()->AddObjectFromCereal("GoalAura", ObjectFactory::Create<Transform>(pos, rot, scale));
 		}
 	}
-	//マテリアル変更
-	//auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>();
-	//meshDraw->SetMaterialTag(gameObject.lock()->GetResourceContainer()->GetMaterialTag("検索する名前"));
-	//meshDraw->ReRegist();
 }
 
 void ButiEngine::DefaultGoalComponent::OnSet()

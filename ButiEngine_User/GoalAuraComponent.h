@@ -22,6 +22,8 @@ namespace ButiEngine {
 
 		void AnimInitialize();
 	private:
+		unsigned int life;
+		unsigned int progressFrame;
 	};
 
 }
