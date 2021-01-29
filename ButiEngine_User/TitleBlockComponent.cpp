@@ -1,5 +1,6 @@
 #include "stdafx_u.h"
 #include "TitleBlockComponent.h"
+#include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent_Static.h"
 
 void ButiEngine::TitleBlockComponent::OnUpdate()
 {
@@ -12,7 +13,13 @@ void ButiEngine::TitleBlockComponent::OnUpdate()
 }
 
 void ButiEngine::TitleBlockComponent::OnSet()
-{
+{/*
+	auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>();
+	if (meshDraw) {
+		auto mesh = gameObject.lock()->GetResourceContainer()->GetMeshTag("Cube_UV_Normal");
+		meshDraw->SetMeshTag(mesh);
+		meshDraw->ReRegist();
+	}*/
 }
 
 void ButiEngine::TitleBlockComponent::Start()

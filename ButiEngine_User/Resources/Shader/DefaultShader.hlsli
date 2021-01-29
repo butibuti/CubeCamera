@@ -59,10 +59,15 @@ cbuffer Fog:register(b2) {
     float4 fogColor:packoffset(c0);
     float4 cameraPos:packoffset(c1);
     float2 fogCoord:packoffset(c2);
+    float2 pixelScale:packoffset(c2.z);
 }
 cbuffer Light : register(b3)
 {
 	float4 lightDir	: packoffset(c0);
+};
+cbuffer GausParameter : register(b4)
+{
+    float4 gausOffset[16]: packoffset(c0);
 };
 cbuffer Bone : register(b4)
 {
@@ -91,19 +96,107 @@ cbuffer ParticleParameter : register(b4)
 };
 
 Texture2D mainTexture : register(t0);
+Texture2D subTexture_1 : register(t1);
+Texture2D subTexture_2 : register(t2);
+Texture2D subTexture_3 : register(t3);
+Texture2D subTexture_4 : register(t4);
+Texture2D subTexture_5 : register(t5);
 
 
 SamplerState mainSampler : register(s0);
 
 
-float3 GetCameraPos() {
-    matrix inversed = inverse(viewMatrix);
-    return float3(inversed[0][3],inversed[1][3], inversed[2][3]);
-}
 float3 GetModelPos() {
     return float3(-modelMatrix[0][3], -modelMatrix[1][3], -modelMatrix[2][3]);
 }
 
+//PostEffect Functions
+float3 RadialBlur(float2 uv) {
+    float3 col = float3(0.0, 0.0, 0.0);
+    float2 d = (float2(0.5, 0.5) - uv) / 32.;
+    float w = 1.0;
+    float2 s = uv;
+    for (int i = 0; i < 32; i++)
+    {
+        float3 res = (mainTexture.Sample(mainSampler, float2(s.x, s.y)).xyz);
+        col += w * smoothstep(0.0, 1.0, res);
+        w *= .985;
+        s += d;
+    }
+    col = col * 4.5 / 32.;
+    return 0.4 * float3(0.2 * col + 0.8 * (mainTexture.Sample(mainSampler, uv).xyz));
+}
+
+
+float WhiteNoise(float2 coord) {
+    return frac(sin(dot(coord, float2(1.9898, 8.233))) * 437.645);
+}
+
+
+#define FXAA_REDUCE_MIN   (0.0078125)//1.0/128
+#define FXAA_REDUCE_MUL   (0.125)//1.0/8.0
+#define FXAA_SPAN_MAX     8.0
+
+float3 FxaaPixelShader(float2 posPos, Texture2D tex, float2 rcpFrame)
+{
+    float2 uv = posPos + float2(0, -rcpFrame.y);
+    float3 rgbN = tex.Sample(mainSampler, uv).xyz;
+    uv = posPos + float2(-rcpFrame.x, 0);
+    float3 rgbW = tex.Sample(mainSampler, uv).xyz;
+    uv = posPos + float2(0, rcpFrame.y);
+    float3 rgbS = tex.Sample(mainSampler, uv).xyz;
+    uv = posPos + float2(rcpFrame.x, 0);
+    float3 rgbE = tex.Sample(mainSampler, uv).xyz;
+    float3 rgbM = tex.Sample(mainSampler, posPos).xyz;
+
+    uv = posPos + float2(-rcpFrame.x, -rcpFrame.y);
+    float3 rgbNW = (rgbN + rgbW + tex.Sample(mainSampler, uv).xyz + rgbM) * 0.25;
+    uv = posPos + float2(rcpFrame.x, -rcpFrame.y);
+    float3 rgbNE = (rgbN + rgbE + tex.Sample(mainSampler, uv).xyz + rgbM) * 0.25;
+    uv = posPos + float2(-rcpFrame.x, rcpFrame.y);
+    float3 rgbSW = (rgbS + rgbW + tex.Sample(mainSampler, uv).xyz + rgbM) * 0.25;
+    uv = posPos + float2(rcpFrame.x, rcpFrame.y);
+    float3 rgbSE = (rgbS + rgbE + tex.Sample(mainSampler, uv).xyz + rgbM) * 0.25;
+
+    /*---------------------------------------------------------*/
+    float3 luma = float3(0.299, 0.587, 0.114);
+    float lumaNW = dot(rgbNW, luma);
+    float lumaNE = dot(rgbNE, luma);
+    float lumaSW = dot(rgbSW, luma);
+    float lumaSE = dot(rgbSE, luma);
+    float lumaM = dot(rgbM, luma);
+
+    float lumaMin = min(lumaM, min(min(lumaNW, lumaNE), min(lumaSW, lumaSE)));
+    float lumaMax = max(lumaM, max(max(lumaNW, lumaNE), max(lumaSW, lumaSE)));
+    /*---------------------------------------------------------*/
+    float2 dir;
+    dir.x = -((lumaNW + lumaNE) - (lumaSW + lumaSE));
+    dir.y = ((lumaNW + lumaSW) - (lumaNE + lumaSE));
+
+    float dirReduce = max(
+        (lumaNW + lumaNE + lumaSW + lumaSE) * (0.25 * FXAA_REDUCE_MUL),
+        FXAA_REDUCE_MIN);
+    float rcpDirMin = 1.0 / (min(abs(dir.x), abs(dir.y)) + dirReduce);
+    dir = min(float2(FXAA_SPAN_MAX, FXAA_SPAN_MAX),
+        max(float2(-FXAA_SPAN_MAX, -FXAA_SPAN_MAX),
+            dir * rcpDirMin)) * rcpFrame;
+    /*--------------------------------------------------------*/
+    float3 rgbA = 0.5 * (
+        tex.Sample(mainSampler, posPos + dir * (-0.1666666666666667)).xyz +
+        tex.Sample(mainSampler, posPos + dir * (0.1666666666666667)).xyz);
+    float3 rgbB = rgbA * (0.5) + (0.25) * (
+        tex.Sample(mainSampler, posPos + dir * (-0.5)).xyz +
+        tex.Sample(mainSampler, posPos + dir * (0.5)).xyz);
+    float lumaB = dot(rgbB, luma);
+
+    bool step = ((lumaB < lumaMin) || (lumaB > lumaMax));
+
+    return rgbA * step + rgbB * (1 - step);
+
+}
+
+
+//Vertex Definition
 struct Vertex_UV
 {
     float4 position : POSITION;
@@ -183,6 +276,7 @@ struct Vertex_UV_Normal_Color
     float4 color:COLOR;
 };
 
+//Pixel Definition
 struct Pixel
 {
     float4 position : SV_POSITION;
@@ -260,6 +354,13 @@ struct Pixel_UV_Normal_Fog
     float2 uv:TEXCOORD;
     float3 normal :  NORMAL;
     float fog : COLOR0;
+};
+struct Pixel_UV_Normal_Phong
+{
+    float4 position : SV_POSITION;
+    float2 uv:TEXCOORD;
+    float3 normal :  NORMAL;
+    float4 modelPosition : MODEL_POSITION;
 };
 struct Pixel_OutLine_Fog
 {
