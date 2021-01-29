@@ -7,8 +7,8 @@ float4 PSMain(Pixel_UV_Normal pixel) : SV_TARGET
 
 	Light.rgb += specular.rgb * specular.a;
 	Light.a = 0;
-	float4 Tex = (mainTexture.Sample(mainSampler,pixel.uv));
-	Tex.rgb *= 0.5f;
+	float4 Tex = (mainTexture.Sample(mainSampler,pixel.uv).rgba);
+	
 	
 	return  float4((Tex * Light).rgb, Tex.a);
 }

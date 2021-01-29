@@ -26,15 +26,14 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	GameDevice::Initialize();
 	GameDevice::GetInput()->Initialize(app);
 
-
-	//ModelFileConverter::FBXtoB3M("InvisibleBlock.fbx", "InvisibleBlock.b3m", "Model/Cubes/");
+	
+	//ModelFileConverter::FBXtoB3M("Player.fbx", "Player.b3m", "Model/Cubes/player/");
 	app->InitLoadResources();
 	//ComponentsLoader::GetInstance()->AddGameComponent<RippleComponent>();
 	
-	//app->GetSceneManager()->LoadScene_Init_EditMode("Stage0Scene");
-	app->GetSceneManager()->LoadScene_Init_EditMode("Stage0Scene");
+	app->GetSceneManager()->LoadScene_Init_EditMode("TitleScene");
 
-	app->GetGraphicDevice()->SetClearColor(Vector4(180.0f / 255, 180.0f / 255, 1, 1));
+	app->GetGraphicDevice()->SetClearColor(Vector4(0, 0, 0, 1));
 	int returnCode = app->Run();
 	
 
