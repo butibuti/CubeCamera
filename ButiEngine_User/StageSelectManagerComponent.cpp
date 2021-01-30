@@ -3,7 +3,7 @@
 #include"GameSettings.h"
 
 int ButiEngine::StageSelectManagerComponent::stageNum = 0;
-int ButiEngine::StageSelectManagerComponent::maxStageNum = 0;
+int ButiEngine::StageSelectManagerComponent::maxStageNum = 3;
 
 void ButiEngine::StageSelectManagerComponent::OnUpdate()
 {
@@ -78,6 +78,9 @@ void ButiEngine::StageSelectManagerComponent::OnPushRight()
 	{
 		stageNum = 0;
 	}
+
+	GetManager().lock()->AddObjectFromCereal("ArrowEffect", ObjectFactory::Create<Transform>(Vector3(500, 0, 10), 0.0f, Vector3(500, 500, 1)));
+
 	RestartTimer();
 }
 
@@ -88,5 +91,8 @@ void ButiEngine::StageSelectManagerComponent::OnPushLeft()
 	{
 		stageNum = maxStageNum;
 	}
+
+	GetManager().lock()->AddObjectFromCereal("ArrowEffect", ObjectFactory::Create<Transform>(Vector3(-500, 0, 10), Vector3(0, 0, 180), Vector3(500, 500, 1)));
+
 	RestartTimer();
 }

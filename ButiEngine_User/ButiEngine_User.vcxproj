@@ -159,6 +159,7 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ArrowEffectComponent.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="CameraMeshComponent.cpp" />
     <ClCompile Include="DefaultGameComponent.cpp" />
@@ -185,6 +186,7 @@
     <ClCompile Include="TitleManagerComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ArrowEffectComponent.h" />
     <ClInclude Include="ButiEngineHeader.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="CameraMeshComponent.h" />
