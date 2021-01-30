@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="CameraMeshComponent.cpp" />
     <ClCompile Include="DefaultGameComponent.cpp" />
     <ClCompile Include="DefaultGoalComponent.cpp" />
     <ClCompile Include="EasyGoalComponent.cpp" />
@@ -186,6 +187,7 @@
   <ItemGroup>
     <ClInclude Include="ButiEngineHeader.h" />
     <ClInclude Include="CameraController.h" />
+    <ClInclude Include="CameraMeshComponent.h" />
     <ClInclude Include="DefaultGoalComponent.h" />
     <ClInclude Include="EasyGoalComponent.h" />
     <ClInclude Include="GameSettings.h" />
