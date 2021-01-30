@@ -13,7 +13,8 @@ public:
 	static const int playerRotate_90 = 6;
 	static const int playerRotate_180 = 7;
 	static const int playerRotate_min90 = 8;
-	static const int invisibleBlock=100;
+	static const int invisibleBlock = 100;
+	static const int playerAndGoal=200;
 
 	static bool CheckRight();
 	static bool CheckLeft();
