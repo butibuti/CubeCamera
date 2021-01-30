@@ -96,15 +96,9 @@ namespace ButiEngine
 		virtual void StopCheck() = 0;
 		virtual void Update() = 0;
 		virtual void ClearCheck() = 0;
-		virtual void Play(SoundTag tag, float volume) = 0;
-		virtual void PlayBGM(SoundTag tag, float volume) = 0;
+		virtual void Play(SoundTag tag, float valume) = 0;
+		virtual void PlayBGM(SoundTag tag, float valume) = 0;
 		virtual void Release() = 0;
-		virtual void Stop() = 0;
-		virtual void StopBGM() = 0;
-		virtual void ReStartSE() = 0;
-		virtual void DestroySE() = 0;
-		virtual void ReStartBGM(float volume) = 0;
-		virtual void SetBGMVolume(float volume) = 0;
 	};
 
 	class ISceneManager :public IObject {

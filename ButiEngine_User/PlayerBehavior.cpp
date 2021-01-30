@@ -8,6 +8,7 @@
 #include"InvisibleBlockManagerComponent.h"
 #include"GameSettings.h"
 #include"RippleComponent.h"
+#include"CameraMeshComponent.h"
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
@@ -28,10 +29,13 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		shp_invisibleBlockManager->Check();
 		Expansion();
 
+		//”g–ä
 		auto pos = gameObject.lock()->transform->GetWorldPosition();
 		pos.y -= 0.3f;
-		//pos.y += RippleComponent::GetCount() * 0.1f;
 		GetManager().lock()->AddObjectFromCereal("Ripple", ObjectFactory::Create<Transform>(pos, Vector3(90, 0, 0), 0.0f));
+
+		//ƒtƒ‰ƒbƒVƒ…
+		GetManager().lock()->GetGameObject("CameraMesh").lock()->GetGameComponent<CameraMeshComponent>()->Flash();
 	}
 	Shrink();
 	Contoroll();
