@@ -83,8 +83,21 @@ void ButiEngine::MapEditorComponent::OnUpdate()
         default:
             break;
         }
+        auto mapNum = p_mapdata->mapData[1][2][0];
+        if (mapNum == GameSettings::player) {
+            Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + (GameSettings::tutorialGoal + goalMode)*10+0);
+        }
+        else if (mapNum >= GameSettings::playerRotate_90&& mapNum <= GameSettings::playerRotate_min90) {
+            Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + (GameSettings::tutorialGoal + goalMode) * 10 + (mapNum+1- GameSettings::playerRotate_90));
+         }
+        else if (mapNum>=GameSettings::playerAndGoal) {
+            int dir = (mapNum - GameSettings::playerAndGoal) % 10;
+            Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + (GameSettings::tutorialGoal + goalMode) * 10 + dir);
+        }
+        else {
+            Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::tutorialGoal + goalMode);
+        }
 
-        Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::tutorialGoal + goalMode);
     }
     if (GUI::Button("Replace InvisibleBlock")) {
 
@@ -141,25 +154,108 @@ void ButiEngine::MapEditorComponent::OnUpdate()
 
     if (GUI::Button("Change PlayerInitPosition")) {
         for (int i = 0; i < p_mapdata->mapData.size(); i++) {
+            bool isBreak = false;
             for (int j = 0; j < p_mapdata->mapData[0].size(); j++) {
                 for (int k = 0; k < p_mapdata->mapData[0][0].size(); k++) {
                     int num = p_mapdata->mapData[i][j][k];
                     if (num == GameSettings::player || (num >= GameSettings::playerRotate_90 && num <= GameSettings::playerRotate_min90)) {
                         p_mapdata->mapData[i][j][k] = 0;
                         shp_currentMapData->mapData[i][j][k] = 0;
+                        isBreak = true;
+                        break;
+                    }
+                    else if (num > GameSettings::playerAndGoal) {
+                        int playerGoalID = num - GameSettings::playerAndGoal;
+                        int goal = playerGoalID / 10;
+                        std::string goalObjName;
+
+                        switch (goal)
+                        {
+                        case  GameSettings::tutorialGoal:
+                            goalObjName = "TutorialGoal";
+                            break;
+                        case  GameSettings::easyGoal:
+                            goalObjName = "EasyGoal";
+                            break;
+                        case  GameSettings::defaultGoal:
+                            goalObjName = "DefaultGoal";
+                            break;
+                        default:
+                            break;
+                        }
+
+                        Replace(Vector3(blockPos[i], blockPos[j], blockPos[k]), goalObjName, goal);
+                        isBreak = true;
+                        break;
                     }
                 }
+
+                if (isBreak) {
+                    break;
+                }
+            }
+
+            if (isBreak) {
+                break;
             }
         }
         if (playerDirection == 0) {
-            p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
-            shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
+            auto mapNum = p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]];
+            if (mapNum >= GameSettings::tutorialGoal && mapNum <= GameSettings::defaultGoal) {
+                std::string goalObjName;
+
+                switch (mapNum)
+                {
+                case  GameSettings::tutorialGoal:
+                    goalObjName = "TutorialGoal";
+                    break;
+                case  GameSettings::easyGoal:
+                    goalObjName = "EasyGoal";
+                    break;
+                case  GameSettings::defaultGoal:
+                    goalObjName = "DefaultGoal";
+                    break;
+                default:
+                    break;
+                }
+
+                Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName,GameSettings::playerAndGoal+ mapNum*10);
+            }
+            else {
+                p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
+                shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
+            }
+
         }
         else {
+            int playerNum = GameSettings::playerRotate_90 + playerDirection - 1;
 
-            p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::playerRotate_90 + playerDirection - 1;
-            shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::playerRotate_90 + playerDirection - 1;
+            auto mapNum = p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]];
+            if ((mapNum >= GameSettings::tutorialGoal && mapNum <= GameSettings::defaultGoal)) {
+                std::string goalObjName;
+
+                switch (mapNum)
+                {
+                case  GameSettings::tutorialGoal:
+                    goalObjName = "TutorialGoal";
+                    break;
+                case  GameSettings::easyGoal:
+                    goalObjName = "EasyGoal";
+                    break;
+                case  GameSettings::defaultGoal:
+                    goalObjName = "DefaultGoal";
+                    break;
+                default:
+                    break;
+                }
+
+                Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + mapNum * 10 + playerNum);
+            }
+
+            p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] =playerNum ;
+            shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = playerNum;
         }
+
     }
 
     if (GUI::Button("Remove")) {
