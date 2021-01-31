@@ -31,6 +31,8 @@ namespace ButiEngine {
 		bool end;
 		unsigned int endTimer;
 
+		float stageNumberObjectScale;
+
 		int pushCount;
 
 		void RestartAnimTimer();
