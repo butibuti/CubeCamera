@@ -2,7 +2,7 @@
 
 float4 PSMain(Pixel_UV pixel) : SV_TARGET
 {
-    float4 output = mainTexture.Sample(mainSampler, pixel.uv) + subTexture_1.Sample(mainSampler, pixel.uv);
+    float4 output = mainTexture.Sample(mainSampler, pixel.uv) + subTexture_1.Sample(mainSampler, pixel.uv)*lightDir.w;
     output.w = 1.0f;
     return output;
 }
