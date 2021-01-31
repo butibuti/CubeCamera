@@ -28,9 +28,12 @@ namespace ButiEngine {
 		static int stageNum;
 		static int maxStageNum;
 
+		bool end;
+		unsigned int endTimer;
+
 		int pushCount;
 
-		void RestartTimer();
+		void RestartAnimTimer();
 		void OnPushRight();
 		void OnPushLeft();
 	};

@@ -3,14 +3,14 @@
 #include"GameSettings.h"
 
 int ButiEngine::StageSelectManagerComponent::stageNum = 0;
-int ButiEngine::StageSelectManagerComponent::maxStageNum = 3;
+int ButiEngine::StageSelectManagerComponent::maxStageNum = 0;
 
 void ButiEngine::StageSelectManagerComponent::OnUpdate()
 {
 	GUI::Begin("StageSelect");
 	GUI::Text(stageNum);
 	GUI::End();
-	if (!animTimer->IsOn())
+	if (!animTimer->IsOn() && !end)
 	{
 		if (GameSettings::CheckRight())
 		{
@@ -22,12 +22,33 @@ void ButiEngine::StageSelectManagerComponent::OnUpdate()
 		}
 		else if (GameDevice::GetInput()->TriggerKey(Keys::Space))
 		{
+			end = true;
+		}
+	}
+
+	if (end)
+	{
+		endTimer++;
+
+		auto player = GetManager().lock()->GetGameObject("PlayerModel");
+		float per = float(endTimer) / 30;
+		float playerX = per;
+		float playerY = Easing::Parabola(per) + (-1.6f);
+		float playerZ = -per + 3.0f;
+		player.lock()->transform->SetWorldPosition(Vector3(playerX, playerY, playerZ));
+
+		player.lock()->transform->RollLocalRotationX_Degrees(-5.0f);
+
+		if (endTimer >= 55)
+		{
+			player.lock()->SetIsRemove(true);
 			auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
 			std::string sceneName = "Stage" + std::to_string(stageNum) + "Scene";
 			sceneManager->LoadScene(sceneName);
 			sceneManager->ChangeScene(sceneName);
 		}
 	}
+
 	if (animTimer->Update())
 	{
 		animTimer->Stop();
@@ -40,8 +61,11 @@ void ButiEngine::StageSelectManagerComponent::OnSet()
 
 void ButiEngine::StageSelectManagerComponent::Start()
 {
+	GetManager().lock()->AddObjectFromCereal("PlayerModel");
 	animTimer = ObjectFactory::Create<RelativeTimer>(10);
-
+	
+	end = false;
+	endTimer = 0;
 	pushCount = 0;
 }
 
@@ -67,7 +91,7 @@ std::string ButiEngine::StageSelectManagerComponent::GetNextSceneName()
 	return nextSceneName;
 }
 
-void ButiEngine::StageSelectManagerComponent::RestartTimer()
+void ButiEngine::StageSelectManagerComponent::RestartAnimTimer()
 {
 	animTimer->Reset();
 	animTimer->Start();
@@ -89,7 +113,7 @@ void ButiEngine::StageSelectManagerComponent::OnPushRight()
 		pushCount = 0;
 	}
 
-	RestartTimer();
+	RestartAnimTimer();
 }
 
 void ButiEngine::StageSelectManagerComponent::OnPushLeft()
@@ -108,5 +132,5 @@ void ButiEngine::StageSelectManagerComponent::OnPushLeft()
 		pushCount = 0;
 	}
 
-	RestartTimer();
+	RestartAnimTimer();
 }
