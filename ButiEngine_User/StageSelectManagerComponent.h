@@ -25,12 +25,19 @@ namespace ButiEngine {
 	private:
 		std::shared_ptr<RelativeTimer> animTimer;
 
-		void RestartTimer();
-		void OnPushRight();
-		void OnPushLeft();
-
 		static int stageNum;
 		static int maxStageNum;
+
+		bool end;
+		unsigned int endTimer;
+
+		float stageNumberObjectScale;
+
+		int pushCount;
+
+		void RestartAnimTimer();
+		void OnPushRight();
+		void OnPushLeft();
 	};
 
 }
