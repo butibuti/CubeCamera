@@ -16,6 +16,7 @@ void ButiEngine::MapComponent::OnUpdate()
 		DestoroyMapChip();
 		auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
 		std::string sceneName = StageSelectManagerComponent::GetNextSceneName();
+		sceneManager->RemoveScene(sceneName);
 		sceneManager->LoadScene(sceneName);
 		sceneManager->ChangeScene(sceneName);
 		//if (GameDevice::GetInput()->TriggerKey(Keys::N))
