@@ -176,6 +176,7 @@
     <ClCompile Include="PlayerCameraComponent.cpp" />
     <ClCompile Include="RippleComponent.cpp" />
     <ClCompile Include="StageSelectManagerComponent.cpp" />
+    <ClCompile Include="StartBlockDirectingComponent.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -202,6 +203,7 @@
     <ClInclude Include="PlayerCameraComponent.h" />
     <ClInclude Include="RippleComponent.h" />
     <ClInclude Include="StageSelectManagerComponent.h" />
+    <ClInclude Include="StartBlockDirectingComponent.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="stdafx_u.h" />
     <ClInclude Include="TestBehavior.h" />

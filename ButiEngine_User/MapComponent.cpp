@@ -272,7 +272,7 @@ void ButiEngine::MapComponent::CreateRandom()
 		std::vector<float> pos;
 		for (unsigned int x = 0; x < mapData[0][z].size(); x++)
 		{
-			pos.push_back(ButiRandom::GetRandom(-30.0f, -15.0f, 100));
+			pos.push_back(ButiRandom::GetRandom(-50.0f, -15.0f, 100));
 		}
 		randomBlockPos.push_back(pos);
 	}
@@ -285,12 +285,12 @@ void ButiEngine::MapComponent::AddTransformAnimation(std::weak_ptr<ButiEngine::G
 	float d = y - t->GetWorldPosition().y;
 
 	auto anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
-	anim->SetSpeed(1.0f / (d * 10));
+	anim->SetSpeed(1.0f / (d * 2));
 	anim->SetTargetTransform(t->Clone());
 	anim->GetTargetTransform()->TranslateY(d);
 	anim->GetTargetTransform()->RollLocalRotationX_Degrees(0.1f);
 
-	anim->SetEaseType(Easing::EasingType::EaseInOutSin);
+	anim->SetEaseType(Easing::EasingType::EaseInOutQuint);
 }
 
 ButiEngine::MapData::MapData(int stageNum)
