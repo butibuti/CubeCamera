@@ -7,6 +7,7 @@
 
 void ButiEngine::DefaultGoalComponent::OnUpdate()
 {
+	shp_AABB->Update();
 	//カメラを検索、保持
 //std::weak_ptr<ICamera> GetCamera(std::string arg_cameraName)
 //第一引数: 検索するカメラの名前
@@ -52,7 +53,6 @@ void ButiEngine::DefaultGoalComponent::Start()
 	//第一引数: 各軸の辺の長さ
 	//第二引数: 計算する姿勢
 	shp_AABB = ObjectFactory::Create<Collision::CollisionPrimitive_Box_AABB>(Vector3(1, 1, 1), gameObject.lock()->transform);
-	shp_AABB->Update();
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::DefaultGoalComponent::Clone()

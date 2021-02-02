@@ -48,12 +48,15 @@ namespace ButiEngine {
 	private:
 		std::vector<MapData> vec_mapData;
 		std::shared_ptr< MapData > currentMapData;
+		std::vector<std::vector<float>> randomBlockPos;
 		std::vector<std::vector<std::vector<std::shared_ptr<GameObject>>>> mapObjectData;
 		
 		Vector3 playerPos;
 		int currentStageNum;
 
 		void DestoroyMapChip();
+		void CreateRandom();
+		void AddTransformAnimation(std::weak_ptr<ButiEngine::GameObject> gameObject, float y);
 	};
 
 	void OutputCereal(const std::shared_ptr<MapData>& v, const std::string& path);

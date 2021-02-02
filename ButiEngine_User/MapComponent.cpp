@@ -6,6 +6,7 @@
 #include"InvisibleBlockManagerComponent.h"
 #include "..\..\Header\Common\CerealUtill.h"
 #include"StageSelectManagerComponent.h"
+#include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 
 void ButiEngine::MapComponent::OnUpdate()
 {
@@ -42,6 +43,7 @@ void ButiEngine::MapComponent::OnSet()
 void ButiEngine::MapComponent::Start()
 {
 	vec_mapData.clear();
+	randomBlockPos.clear();
 	auto mapFilePath = "Scene/" + GetManager().lock()->GetScene().lock()->GetSceneInformation()->GetSceneName() + "/mapInfo.map";
 	if (Util::IsFileExistence(GlobalSettings::GetResourceDirectory()+ mapFilePath)) {
 
@@ -94,6 +96,8 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 	Vector3 scale(GameSettings::BlockSize, GameSettings::BlockSize, GameSettings::BlockSize);
 	Vector3 offset(mapData[0][0].size() / 2, mapData.size() / 2, mapData[0].size() / 2);
 
+	CreateRandom();
+
 	for (unsigned int y = 0; y < mapData.size(); y++)
 	{
 		for (unsigned int z = 0; z < mapData[y].size(); z++)
@@ -111,30 +115,45 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				}
 				else if (mapNum == GameSettings::block)
 				{
+					float targetPosY = position.y;
+					position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("Block", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
+					AddTransformAnimation(gameObject, targetPosY);
 				}
 				else if (mapNum == GameSettings::tutorialGoal)
 				{
+					float targetPosY = position.y;
+					position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("TutorialGoal");
 					gameObject.lock()->transform->SetWorldPosition(position);
+					AddTransformAnimation(gameObject, targetPosY);
 				}
 				else if (mapNum == GameSettings::easyGoal)
 				{
+					float targetPosY = position.y;
+					position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("EasyGoal");
 					gameObject.lock()->transform->SetWorldPosition(position);
+					AddTransformAnimation(gameObject, targetPosY);
 				}
 				else if (mapNum == GameSettings::defaultGoal)
 				{
+					float targetPosY = position.y;
+					position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("DefaultGoal");
 					gameObject.lock()->transform->SetWorldPosition(position);
+					AddTransformAnimation(gameObject, targetPosY);
 				}
 				else if (mapNum >= GameSettings::invisibleBlock&&mapNum<GameSettings::playerAndGoal)
 				{
+					float targetPosY = position.y;
+					position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("InvisibleBlock");
 					gameObject.lock()->transform->SetWorldPosition(position);
 					int id = mapNum - GameSettings::invisibleBlock;
 					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetID(id);
 					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetMapPos(Vector3(x, y, z));
+					AddTransformAnimation(gameObject, targetPosY);
 				}
 				else
 				if (mapNum == GameSettings::player || (mapNum >= GameSettings::playerRotate_90 && mapNum <= GameSettings::playerRotate_min90)|| mapNum > GameSettings::playerAndGoal)
@@ -163,18 +182,27 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 
 						if (mapNum_tenthSpace == GameSettings::tutorialGoal)
 						{
+							float targetPosY = position.y;
+							position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 							gameObject = GetManager().lock()->AddObjectFromCereal("TutorialGoal");
 							gameObject.lock()->transform->SetWorldPosition(position);
+							AddTransformAnimation(gameObject, targetPosY);
 						}
 						else if (mapNum_tenthSpace == GameSettings::easyGoal)
 						{
+							float targetPosY = position.y;
+							position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 							gameObject = GetManager().lock()->AddObjectFromCereal("EasyGoal");
 							gameObject.lock()->transform->SetWorldPosition(position);
+							AddTransformAnimation(gameObject, targetPosY);
 						}
 						else if (mapNum_tenthSpace == GameSettings::defaultGoal)
 						{
+							float targetPosY = position.y;
+							position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 							gameObject = GetManager().lock()->AddObjectFromCereal("DefaultGoal");
 							gameObject.lock()->transform->SetWorldPosition(position);
+							AddTransformAnimation(gameObject, targetPosY);
 						}
 					}
 				}
@@ -233,6 +261,35 @@ void ButiEngine::MapComponent::DestoroyMapChip()
 			(*itr)->SetIsRemove(true);
 		}
 	}
+}
+
+void ButiEngine::MapComponent::CreateRandom()
+{
+	std::vector<std::vector<std::vector<int>>> mapData = currentMapData->mapData;
+	for (unsigned int z = 0; z < mapData[0].size(); z++)
+	{
+		std::vector<float> pos;
+		for (unsigned int x = 0; x < mapData[0][z].size(); x++)
+		{
+			pos.push_back(ButiRandom::GetRandom(-30.0f, -15.0f, 100));
+		}
+		randomBlockPos.push_back(pos);
+	}
+}
+
+void ButiEngine::MapComponent::AddTransformAnimation(std::weak_ptr<ButiEngine::GameObject> gameObject, float y)
+{
+	auto t = gameObject.lock()->transform;
+
+	float d = y - t->GetWorldPosition().y;
+
+	auto anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
+	anim->SetSpeed(1.0f / (d * 10));
+	anim->SetTargetTransform(t->Clone());
+	anim->GetTargetTransform()->TranslateY(d);
+	anim->GetTargetTransform()->RollLocalRotationX_Degrees(0.1f);
+
+	anim->SetEaseType(Easing::EasingType::EaseInOutSin);
 }
 
 ButiEngine::MapData::MapData(int stageNum)
