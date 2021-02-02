@@ -42,7 +42,6 @@ namespace ButiEngine {
 	private:
 		float length;
 		std::shared_ptr<MapComponent> shp_map;
-		std::shared_ptr<PlayerCameraComponent> shp_playerCamera;
 		std::shared_ptr<InvisibleBlockManagerComponent> shp_invisibleBlockManager;
 		Vector3 mapPos;
 		Vector3 nextMapPos;

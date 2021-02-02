@@ -4,7 +4,6 @@
 #include"Header/GameObjects/DefaultGameComponent/CubeTransformAnimation.h"
 #include"EasyGoalComponent.h"
 #include"DefaultGoalComponent.h"
-#include"PlayerCameraComponent.h"
 #include"InvisibleBlockManagerComponent.h"
 #include"GameSettings.h"
 #include"RippleComponent.h"
@@ -60,8 +59,6 @@ void ButiEngine::PlayerBehavior::Start()
 	afterFallPos = Vector3::Zero;
 	length = 1.0f;
 	shp_map = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Map").lock()->GetGameComponent<MapComponent>();
-	shp_playerCamera = gameObject.lock()->GetGameComponent<PlayerCameraComponent>();
-	shp_playerCamera->SetTimer(0);
 	mapPos = shp_map->GetPlayerPos();
 	offset =mapPos-gameObject.lock()->transform->GetWorldPosition();
 	timer = ObjectFactory::Create<RelativeTimer>(9);
@@ -244,7 +241,6 @@ void ButiEngine::PlayerBehavior::MoveRightUp()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -268,7 +264,6 @@ void ButiEngine::PlayerBehavior::MoveRight()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -290,7 +285,6 @@ void ButiEngine::PlayerBehavior::MoveRightDown()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -315,7 +309,6 @@ void ButiEngine::PlayerBehavior::MoveLeftUp()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -339,7 +332,6 @@ void ButiEngine::PlayerBehavior::MoveLeft()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -361,7 +353,6 @@ void ButiEngine::PlayerBehavior::MoveLeftDown()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -386,7 +377,6 @@ void ButiEngine::PlayerBehavior::MoveUpFront()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -410,7 +400,6 @@ void ButiEngine::PlayerBehavior::MoveFront()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -432,7 +421,6 @@ void ButiEngine::PlayerBehavior::MoveDownFront()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -457,7 +445,6 @@ void ButiEngine::PlayerBehavior::MoveUpBack()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -481,7 +468,6 @@ void ButiEngine::PlayerBehavior::MoveBack()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -503,7 +489,6 @@ void ButiEngine::PlayerBehavior::MoveDownBack()
 	{
 		timer->Reset();
 		timer->Start();
-		shp_playerCamera->SetTimer(10);
 		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
 		anim->SetSpeed(1.0f / 10);
 		anim->SetTargetTransform(t->Clone());
@@ -607,7 +592,6 @@ void ButiEngine::PlayerBehavior::Fall()
 		gameObject.lock()->transform->TranslateY(-0.05f);
 		if (gameObject.lock()->transform->GetWorldPosition().y <= afterFallPos.y)
 		{
-			shp_playerCamera->SetTimer(0);
 			gameObject.lock()->transform->SetWorldPosition(afterFallPos);
 			fall = false;
 		}

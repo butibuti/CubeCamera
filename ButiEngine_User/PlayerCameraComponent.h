@@ -20,10 +20,7 @@ namespace ButiEngine {
 		}
 		void OnShowUI();
 
-		void SetTimer(const unsigned int frame);
 	private:
-		std::shared_ptr<RelativeTimer> shp_timer = nullptr;
-		bool isShutter;
 	};
 
 }
