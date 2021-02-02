@@ -7,6 +7,7 @@
 #include "..\..\Header\Common\CerealUtill.h"
 #include"StageSelectManagerComponent.h"
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
+#include"StartPlayerDirectingComponent.h"
 
 void ButiEngine::MapComponent::OnUpdate()
 {
@@ -164,7 +165,13 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				if (mapNum == GameSettings::player || (mapNum >= GameSettings::playerRotate_90 && mapNum <= GameSettings::playerRotate_min90)|| mapNum > GameSettings::playerAndGoal)
 				{
 					playerPos = Vector3(x, y, z);
-					gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
+					Vector3 spawnPos = position;
+					spawnPos.y += 10.0f;
+					gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(spawnPos, Vector3::Zero, scale));
+					auto directing = gameObject.lock()->GetGameComponent<StartPlayerDirectingComponent>();
+					directing->SetSpawnPos(spawnPos);
+					directing->SetStartPos(position);
+
 					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3(0, 0, -0.1f), Vector3::Zero, scale));
 					auto camera = GetCamera("playerCamera");
 					camera.lock()->shp_transform->SetLocalPosition().z = 0.3f;
@@ -289,12 +296,12 @@ void ButiEngine::MapComponent::AddTransformAnimation(std::weak_ptr<ButiEngine::G
 	float d = y - t->GetWorldPosition().y;
 
 	auto anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
-	anim->SetSpeed(1.0f / (d * 10));
+	anim->SetSpeed(1.0f / (d * 2));
 	anim->SetTargetTransform(t->Clone());
 	anim->GetTargetTransform()->TranslateY(d);
 	anim->GetTargetTransform()->RollLocalRotationX_Degrees(0.1f);
 
-	anim->SetEaseType(Easing::EasingType::EaseInOutSin);
+	anim->SetEaseType(Easing::EasingType::EaseInOutQuint);
 }
 
 ButiEngine::MapData::MapData(int stageNum)

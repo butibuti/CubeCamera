@@ -9,6 +9,7 @@
 #include"GameSettings.h"
 #include"RippleComponent.h"
 #include"CameraMeshComponent.h"
+#include"StartPlayerDirectingComponent.h"
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
@@ -23,6 +24,10 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 	}
 	GUI::End();
 #endif
+	if (!gameObject.lock()->GetGameComponent<StartPlayerDirectingComponent>()->IsStart())
+	{
+		return;
+	}
 	if (timer->Update())
 	{
 		timer->Stop();
