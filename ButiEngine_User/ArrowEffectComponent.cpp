@@ -13,7 +13,7 @@ void ButiEngine::ArroweffectComponent::OnUpdate()
 
 	auto t = gameObject.lock()->transform;
 	float per = float(progressFrame) / life;
-	float scale = 500.0f + Easing::Liner(per) * 1500.0f;;
+	float scale = 500.0f + Easing::Liner(per) * 1500.0f;
 	t->SetLocalScale(Vector3(scale, scale, 1));
 
 	auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent>();

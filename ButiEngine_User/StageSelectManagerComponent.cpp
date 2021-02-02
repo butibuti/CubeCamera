@@ -2,9 +2,10 @@
 #include "StageSelectManagerComponent.h"
 #include"GameSettings.h"
 #include"NumberManagerComponent.h"
+#include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent.h"
 
 int ButiEngine::StageSelectManagerComponent::stageNum = 0;
-int ButiEngine::StageSelectManagerComponent::maxStageNum = 20;
+int ButiEngine::StageSelectManagerComponent::maxStageNum = 0;
 
 void ButiEngine::StageSelectManagerComponent::OnUpdate()
 {
@@ -41,9 +42,30 @@ void ButiEngine::StageSelectManagerComponent::OnUpdate()
 		player.lock()->transform->RollLocalRotationX_Degrees(-5.0f);
 
 		auto obj_stageNumber = GetManager().lock()->GetGameObject("StageNumber");
+		if (endTimer < 55)
+		{
+			float alpha = 1.0f - Easing::Liner(per);
+			if (alpha < 0.0f)
+			{
+				alpha = 0.0f;
+			}
+
+			auto rArrow = GetManager().lock()->GetGameObject("RightArrow");
+			auto lArrow = GetManager().lock()->GetGameObject("LeftArrow");
+
+			auto rMeshDraw = rArrow.lock()->GetGameComponent<MeshDrawComponent>();
+			auto lMeshDraw = lArrow.lock()->GetGameComponent<MeshDrawComponent>();
+
+			auto rLightBuff = rMeshDraw->GetCBuffer<LightVariable>("LightBuffer");
+			auto lLightBuff = lMeshDraw->GetCBuffer<LightVariable>("LightBuffer");
+
+			rLightBuff->Get().lightDir.w = alpha;
+			lLightBuff->Get().lightDir.w = alpha;
+		}
 		if (endTimer >= 55)
 		{
 			player.lock()->SetIsRemove(true);
+			obj_stageNumber.lock()->GetGameComponent<NumberManagerComponent>()->Remove();
 			obj_stageNumber.lock()->SetIsRemove(true);
 			auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
 			std::string sceneName = "Stage" + std::to_string(stageNum) + "Scene";

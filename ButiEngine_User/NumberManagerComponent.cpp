@@ -66,3 +66,9 @@ void ButiEngine::NumberManagerComponent::SetScale(Vector3 scale)
 	number1.lock()->transform->SetLocalScale(scale);
 	number10.lock()->transform->SetLocalScale(scale);
 }
+
+void ButiEngine::NumberManagerComponent::Remove()
+{
+	number1.lock()->SetIsRemove(true);
+	number10.lock()->SetIsRemove(true);
+}

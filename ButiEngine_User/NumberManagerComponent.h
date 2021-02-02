@@ -24,6 +24,8 @@ namespace ButiEngine {
 
 		void TranslateY(float y);
 		void SetScale(Vector3 scale);
+
+		void Remove();
 	private:
 		std::weak_ptr<GameObject> number1;
 		std::weak_ptr<GameObject> number10;
