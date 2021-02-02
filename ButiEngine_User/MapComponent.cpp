@@ -70,6 +70,10 @@ std::shared_ptr<ButiEngine::GameComponent> ButiEngine::MapComponent::Clone()
 
 void ButiEngine::MapComponent::OnShowUI()
 {
+	GUI::BulletText("MapStartColor");
+	GUI::DragFloat4("##mapstartColor", mapStartColor, 0.001f, 0, 1.0f);
+	GUI::BulletText("MapEndColor");
+	GUI::DragFloat4("##mapendColor", mapEndColor, 0.001f, 0, 1.0f);
 }
 
 void ButiEngine::MapComponent::PutBlock(int stageNum)

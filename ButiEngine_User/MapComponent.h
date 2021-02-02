@@ -45,12 +45,16 @@ namespace ButiEngine {
 		std::vector<std::vector<std::vector<std::shared_ptr<GameObject>>>>& GetMapObjectData() { return mapObjectData; }
 		Vector3 GetPlayerPos() { return playerPos; }
 		void ChangeBlock(Vector3 mapPos, int mapChipNum);
+		const Vector4& GetMapEndColor() { return mapEndColor; }
+		const Vector4& GetMapStartColor() { return mapStartColor; }
 	private:
 		std::vector<MapData> vec_mapData;
 		std::shared_ptr< MapData > currentMapData;
 		std::vector<std::vector<std::vector<std::shared_ptr<GameObject>>>> mapObjectData;
 		
 		Vector3 playerPos;
+		Vector4 mapEndColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+		Vector4 mapStartColor=Vector4(1.0f,1.0f,1.0f,1.0f);
 		int currentStageNum;
 
 		void DestoroyMapChip();
