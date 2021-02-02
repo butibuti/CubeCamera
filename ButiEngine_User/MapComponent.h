@@ -49,6 +49,9 @@ namespace ButiEngine {
 		const Vector4& GetMapStartColor() { return mapStartColor; }
 		void SetMapEndColor(const Vector4& arg_color) { mapEndColor = arg_color; }
 		void SetMapStartColor(const Vector4& arg_color) { mapStartColor = arg_color; }
+
+		void ShakeStart(float arg_amplitude);
+		void ShakeStop();
 	private:
 		std::vector<MapData> vec_mapData;
 		std::shared_ptr< MapData > currentMapData;

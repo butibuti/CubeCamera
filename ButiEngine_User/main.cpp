@@ -28,7 +28,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	//ModelFileConverter::FBXtoB3M("Player.fbx", "Player.b3m", "Model/Cubes/player/");
 	app->InitLoadResources();
-	//ComponentsLoader::GetInstance()->AddGameComponent<StartPlayerDirectingComponent>();
+	//ComponentsLoader::GetInstance()->AddGameComponent<ShakeComponent>();
 	
 	app->GetSceneManager()->LoadScene_Init_EditMode("Stage0Scene");
 

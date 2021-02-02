@@ -8,6 +8,7 @@
 #include"StageSelectManagerComponent.h"
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 #include"StartPlayerDirectingComponent.h"
+#include"ShakeComponent.h"
 
 void ButiEngine::MapComponent::OnUpdate()
 {
@@ -121,10 +122,11 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				}
 				else if (mapNum == GameSettings::block)
 				{
-					float targetPosY = position.y;
+					Vector3 targetPos = position;
 					position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("Block", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
-					AddTransformAnimation(gameObject, targetPosY);
+					AddTransformAnimation(gameObject, targetPos.y);
+					gameObject.lock()->GetGameComponent<ShakeComponent>()->SetDefaultPos(targetPos);
 				}
 				else if (mapNum == GameSettings::tutorialGoal)
 				{
@@ -152,14 +154,15 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				}
 				else if (mapNum >= GameSettings::invisibleBlock&&mapNum<GameSettings::playerAndGoal)
 				{
-					float targetPosY = position.y;
+					Vector3 targetPos = position;
 					position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("InvisibleBlock");
 					gameObject.lock()->transform->SetWorldPosition(position);
 					int id = mapNum - GameSettings::invisibleBlock;
 					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetID(id);
 					gameObject.lock()->GetGameComponent<InvisibleBlockComponent>()->SetMapPos(Vector3(x, y, z));
-					AddTransformAnimation(gameObject, targetPosY);
+					AddTransformAnimation(gameObject, targetPos.y);
+					gameObject.lock()->GetGameComponent<ShakeComponent>()->SetDefaultPos(targetPos);
 				}
 				else
 				if (mapNum == GameSettings::player || (mapNum >= GameSettings::playerRotate_90 && mapNum <= GameSettings::playerRotate_min90)|| mapNum > GameSettings::playerAndGoal)
@@ -237,6 +240,56 @@ void ButiEngine::MapComponent::ChangeBlock(Vector3 mapPos, int mapChipNum)
 		return;
 	}
 	currentMapData->mapData[mapPos.y][mapPos.z][mapPos.x] = mapChipNum;
+}
+
+void ButiEngine::MapComponent::ShakeStart(float arg_amplitude)
+{
+	auto endY = mapObjectData.end();
+	for (auto itrY = mapObjectData.begin(); itrY != endY; ++itrY)
+	{
+		auto endZ = itrY->end();
+		for (auto itrZ = itrY->begin(); itrZ != endZ; ++itrZ)
+		{
+			auto endX = itrZ->end();
+			for (auto itrX = itrZ->begin(); itrX != endX; ++itrX)
+			{
+				if (!(*itrX))
+				{
+					continue;
+				}
+				auto shake = (*itrX)->GetGameComponent<ShakeComponent>();
+				if (shake)
+				{
+					shake->Start(arg_amplitude);
+				}
+			}
+		}
+	}
+}
+
+void ButiEngine::MapComponent::ShakeStop()
+{
+	auto endY = mapObjectData.end();
+	for (auto itrY = mapObjectData.begin(); itrY != endY; ++itrY)
+	{
+		auto endZ = itrY->end();
+		for (auto itrZ = itrY->begin(); itrZ != endZ; ++itrZ)
+		{
+			auto endX = itrZ->end();
+			for (auto itrX = itrZ->begin(); itrX != endX; ++itrX)
+			{
+				if (!(*itrX))
+				{
+					continue;
+				}
+				auto shake = (*itrX)->GetGameComponent<ShakeComponent>();
+				if (shake)
+				{
+					shake->Stop();
+				}
+			}
+		}
+	}
 }
 
 void ButiEngine::MapComponent::DestoroyMapChip()
