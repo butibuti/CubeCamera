@@ -57,7 +57,7 @@ void ButiEngine::MapComponent::Start()
 	currentStageNum = 0;
 	auto invManager= GetManager().lock()->AddObjectFromCereal("InvisibleBlockManager");
 	PutBlock(currentStageNum);
-
+	mapEndColor = Vector4(0.2f, 0.2f, 0.9f, 1.0f);
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::MapComponent::Clone()

@@ -4,6 +4,7 @@
 #include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent_Static.h"
 #include"Header/GameObjects/DefaultGameComponent/CubeTransformAnimation.h"
 #include"PlayerBehavior.h"
+#include"MapComponent.h"
 
 void ButiEngine::DefaultGoalComponent::OnUpdate()
 {
@@ -34,6 +35,10 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 			auto scale = t->GetLocalScale();
 
 			GetManager().lock()->AddObjectFromCereal("GoalAura", ObjectFactory::Create<Transform>(pos, rot, scale));
+
+			auto map = GetManager().lock()->GetGameObject("Map");
+			auto mapComponent = map.lock()->GetGameComponent< MapComponent>();
+			mapComponent->SetMapEndColor(Vector4(0.95,0.7,0.4,1.0));
 		}
 	}
 }
