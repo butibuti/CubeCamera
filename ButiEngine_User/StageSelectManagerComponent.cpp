@@ -46,6 +46,7 @@ void ButiEngine::StageSelectManagerComponent::OnUpdate()
 			obj_stageNumber.lock()->SetIsRemove(true);
 			auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
 			std::string sceneName = "Stage" + std::to_string(stageNum) + "Scene";
+			sceneManager->RemoveScene(sceneName);
 			sceneManager->LoadScene(sceneName);
 			sceneManager->ChangeScene(sceneName);
 		}

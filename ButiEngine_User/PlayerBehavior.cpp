@@ -79,15 +79,16 @@ void ButiEngine::PlayerBehavior::OnCollisionEnter(std::weak_ptr<GameObject> arg_
 
 	std::vector<std::vector<std::vector<int>>>& mapData = shp_map->GetCurrentMapData()->mapData;
 	int mapNum = mapData[mapPos.y][mapPos.z][mapPos.x];
-	if (mapNum == GameSettings::tutorialGoal)
+	int mapNum_tenthSpace = (mapNum - GameSettings::playerAndGoal) / 10;
+	if (mapNum_tenthSpace == GameSettings::tutorialGoal)
 	{
 		goal = true;
 	}
-	else if (mapNum == GameSettings::easyGoal && arg_other.lock()->GetGameComponent<EasyGoalComponent>()->IsActive())
+	else if (mapNum_tenthSpace == GameSettings::easyGoal && arg_other.lock()->GetGameComponent<EasyGoalComponent>()->IsActive())
 	{
 		goal = true;
 	}
-	else if (mapNum == GameSettings::defaultGoal && arg_other.lock()->GetGameComponent<DefaultGoalComponent>()->IsActive())
+	else if (mapNum_tenthSpace == GameSettings::defaultGoal && arg_other.lock()->GetGameComponent<DefaultGoalComponent>()->IsActive())
 	{
 		goal = true;
 	}
