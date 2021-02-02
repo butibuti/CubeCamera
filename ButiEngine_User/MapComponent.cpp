@@ -123,8 +123,9 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				else if (mapNum == GameSettings::block)
 				{
 					Vector3 targetPos = position;
-					position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("Block", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
+					position.y = randomBlockPos[z][x] - (mapData.size() - y) * 3.5f;
+					gameObject.lock()->transform->SetWorldPosition(position);
 					AddTransformAnimation(gameObject, targetPos.y);
 					gameObject.lock()->GetGameComponent<ShakeComponent>()->SetDefaultPos(targetPos);
 				}
@@ -169,7 +170,7 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				{
 					playerPos = Vector3(x, y, z);
 					Vector3 spawnPos = position;
-					spawnPos.y += 10.0f;
+					spawnPos.y += 15.0f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(spawnPos, Vector3::Zero, scale));
 					auto directing = gameObject.lock()->GetGameComponent<StartPlayerDirectingComponent>();
 					directing->SetSpawnPos(spawnPos);
