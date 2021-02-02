@@ -21,6 +21,9 @@ namespace ButiEngine {
 		void OnShowUI();
 
 		void SetNumber(int arg_number);
+
+		void TranslateY(float y);
+		void SetScale(Vector3 scale);
 	private:
 		std::weak_ptr<GameObject> number1;
 		std::weak_ptr<GameObject> number10;

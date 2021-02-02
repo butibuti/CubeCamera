@@ -54,3 +54,15 @@ void ButiEngine::NumberManagerComponent::SetNumber(int arg_number)
 	meshDraw1->SetMaterialTag(gameObject.lock()->GetResourceContainer()->GetMaterialTag(name1));
 	meshDraw1->ReRegist();
 }
+
+void ButiEngine::NumberManagerComponent::TranslateY(float y)
+{
+	number1.lock()->transform->TranslateY(y);
+	number10.lock()->transform->TranslateY(y);
+}
+
+void ButiEngine::NumberManagerComponent::SetScale(Vector3 scale)
+{
+	number1.lock()->transform->SetLocalScale(scale);
+	number10.lock()->transform->SetLocalScale(scale);
+}

@@ -54,14 +54,16 @@ void ButiEngine::StageSelectManagerComponent::OnUpdate()
 		else if (endTimer >= 7)
 		{
 			stageNumberObjectScale += 50;
-			obj_stageNumber.lock()->transform->SetLocalScale(Vector3(500.0f, stageNumberObjectScale, 1.0f));
-			obj_stageNumber.lock()->transform->TranslateY(50.0f);
+			auto numManager = obj_stageNumber.lock()->GetGameComponent<NumberManagerComponent>();
+			numManager->SetScale(Vector3(500.0f, stageNumberObjectScale, 1.0f));
+			numManager->TranslateY(50.0f);
 		}
 		else if (endTimer >= 0)
 		{
 			stageNumberObjectScale -= 60;
-			obj_stageNumber.lock()->transform->SetLocalScale(Vector3(500.0f, stageNumberObjectScale, 1.0f));
-			obj_stageNumber.lock()->transform->TranslateY(20.0f);
+			auto numManager = obj_stageNumber.lock()->GetGameComponent<NumberManagerComponent>();
+			numManager->SetScale(Vector3(500.0f, stageNumberObjectScale, 1.0f));
+			numManager->TranslateY(20.0f);
 		}
 	}
 
