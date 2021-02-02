@@ -2,9 +2,9 @@
 #include "DefaultGoalComponent.h"
 #include"Header/Common/CollisionPrimitive.h"
 #include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent_Static.h"
-#include"Header/GameObjects/DefaultGameComponent/CubeTransformAnimation.h"
 #include"PlayerBehavior.h"
 #include"MapComponent.h"
+#include"StartPlayerDirectingComponent.h"
 
 void ButiEngine::DefaultGoalComponent::OnUpdate()
 {
@@ -18,6 +18,10 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 	//bool ICamera::IsContaineVisibility(std::shared_ptr<Geometry::Box_AABB> arg_checkPrimitive)
 	//‘æˆêˆø”: ”»’è‚ÉŽg‚¤AABB
 	auto player = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Player").lock();
+	if (!player->GetGameComponent<StartPlayerDirectingComponent>()->IsStart())
+	{
+		return;
+	}
 	if (player && player->GetBehavior<PlayerBehavior>()->IsRollFinish())
 	{
 		if (!active && camera.lock()->IsContaineVisibility(shp_AABB) == 0)
