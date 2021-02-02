@@ -5,6 +5,7 @@
 #include"PlayerBehavior.h"
 #include"MapComponent.h"
 #include"StartPlayerDirectingComponent.h"
+#include"CameraController.h"
 
 void ButiEngine::DefaultGoalComponent::OnUpdate()
 {
@@ -45,6 +46,8 @@ void ButiEngine::DefaultGoalComponent::OnUpdate()
 			auto mapComponent = map.lock()->GetGameComponent< MapComponent>();
 			mapComponent->SetMapEndColor(Vector4(0.95,0.7,0.4,1.0));
 			mapComponent->ShakeStart(0.01f);
+
+			GetManager().lock()->GetGameObject("MainCamera").lock()->GetGameComponent<CameraController>()->ZoomInOut();
 		}
 	}
 }

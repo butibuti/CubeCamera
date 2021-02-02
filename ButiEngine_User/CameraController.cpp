@@ -77,11 +77,10 @@ void ButiEngine::CameraController::ZoomInOut()
     if (!anim)
     {
         anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
-        anim->SetSpeed(1.0f / 60);
         anim->SetTargetTransform(t->Clone());
-        anim->GetTargetTransform()->SetLocalScale(0.5f);
-        anim->GetTargetTransform()->RollLocalRotationX_Degrees(0.1f);
+        anim->GetTargetTransform()->SetWorldPosition(t->GetWorldPosition() - t->GetFront() * 2.5f);
+        anim->SetSpeed(1.0f / 50.0f);
 
-        anim->SetEaseType(Easing::EasingType::Parabola);
+        anim->SetEaseType(Easing::EasingType::EaseOutBack);
     }
 }
