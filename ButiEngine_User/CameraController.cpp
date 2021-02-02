@@ -68,3 +68,7 @@ std::shared_ptr<ButiEngine::GameComponent> ButiEngine::CameraController::Clone()
 void ButiEngine::CameraController::OnShowUI()
 {
 }
+
+void ButiEngine::CameraController::ZoomInOut()
+{
+}

@@ -20,6 +20,8 @@ namespace ButiEngine {
 			archive(pase);
 		}
 		void OnShowUI();
+
+		void ZoomInOut();
 	private:
 		Vector3 offset;
 		std::shared_ptr<GameObject> shp_cameraAxis;
