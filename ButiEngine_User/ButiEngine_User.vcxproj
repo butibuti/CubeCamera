@@ -173,6 +173,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MapComponent.cpp" />
     <ClCompile Include="MapEditorComponent.cpp" />
+    <ClCompile Include="NumberManagerComponent.cpp" />
     <ClCompile Include="PlayerBehavior.cpp" />
     <ClCompile Include="PlayerCameraComponent.cpp" />
     <ClCompile Include="RippleComponent.cpp" />
@@ -202,6 +203,7 @@
     <ClInclude Include="InvisibleBlockManagerComponent.h" />
     <ClInclude Include="MapComponent.h" />
     <ClInclude Include="MapEditorComponent.h" />
+    <ClInclude Include="NumberManagerComponent.h" />
     <ClInclude Include="PlayerBehavior.h" />
     <ClInclude Include="PlayerCameraComponent.h" />
     <ClInclude Include="RippleComponent.h" />

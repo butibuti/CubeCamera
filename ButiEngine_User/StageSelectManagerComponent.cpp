@@ -1,9 +1,10 @@
 #include "stdafx_u.h"
 #include "StageSelectManagerComponent.h"
 #include"GameSettings.h"
+#include"NumberManagerComponent.h"
 
 int ButiEngine::StageSelectManagerComponent::stageNum = 0;
-int ButiEngine::StageSelectManagerComponent::maxStageNum = 0;
+int ButiEngine::StageSelectManagerComponent::maxStageNum = 20;
 
 void ButiEngine::StageSelectManagerComponent::OnUpdate()
 {
@@ -77,8 +78,8 @@ void ButiEngine::StageSelectManagerComponent::OnSet()
 void ButiEngine::StageSelectManagerComponent::Start()
 {
 	GetManager().lock()->AddObjectFromCereal("PlayerModel");
-	GetManager().lock()->AddObjectFromCereal("StageNumber");
-	animTimer = ObjectFactory::Create<RelativeTimer>(10);
+	obj_stageNumber = GetManager().lock()->AddObjectFromCereal("StageNumber");
+	animTimer = ObjectFactory::Create<RelativeTimer>(15);
 	
 	end = false;
 	endTimer = 0;
@@ -121,6 +122,7 @@ void ButiEngine::StageSelectManagerComponent::OnPushRight()
 	{
 		stageNum = 0;
 	}
+	obj_stageNumber.lock()->GetGameComponent<NumberManagerComponent>()->SetNumber(stageNum);
 
 	GetManager().lock()->AddObjectFromCereal("ArrowEffect", ObjectFactory::Create<Transform>(Vector3(500, 0, 9 - pushCount), 0.0f, Vector3(500, 500, 1)));
 
@@ -140,6 +142,7 @@ void ButiEngine::StageSelectManagerComponent::OnPushLeft()
 	{
 		stageNum = maxStageNum;
 	}
+	obj_stageNumber.lock()->GetGameComponent<NumberManagerComponent>()->SetNumber(stageNum);
 
 	GetManager().lock()->AddObjectFromCereal("ArrowEffect", ObjectFactory::Create<Transform>(Vector3(-500, 0, 9 - pushCount), Vector3(0, 0, 180), Vector3(500, 500, 1)));
 

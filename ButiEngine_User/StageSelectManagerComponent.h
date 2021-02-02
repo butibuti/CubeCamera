@@ -24,6 +24,7 @@ namespace ButiEngine {
 
 	private:
 		std::shared_ptr<RelativeTimer> animTimer;
+		std::weak_ptr<GameObject> obj_stageNumber;
 
 		static int stageNum;
 		static int maxStageNum;

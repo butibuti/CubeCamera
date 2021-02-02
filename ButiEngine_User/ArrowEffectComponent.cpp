@@ -18,7 +18,11 @@ void ButiEngine::ArroweffectComponent::OnUpdate()
 
 	auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent>();
 	auto lightBuff = meshDraw->GetCBuffer<LightVariable>("LightBuffer");
-	float alpha = 1.0f - Easing::Liner(per);
+	float alpha = 0.3f - Easing::Liner(per) * 0.3f;
+	if (alpha < 0.0f)
+	{
+		alpha = 0.0f;
+	}
 	lightBuff->Get().lightDir.w = alpha;
 }
 
