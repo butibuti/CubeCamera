@@ -43,7 +43,13 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 	}
 	Shrink();
 	Contoroll();
-	CheckExistUnderBlock(mapPos);
+	if (!CheckExistUnderBlock(mapPos))
+	{
+		Vector3 tmp = mapPos;
+		tmp.y -= 10;
+		afterFallPos = (tmp - offset) * GameSettings::BlockSize;
+		fall = true;
+	}
 	Fall();
 }
 
