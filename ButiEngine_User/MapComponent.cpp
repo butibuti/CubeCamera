@@ -47,8 +47,10 @@ void ButiEngine::MapComponent::OnUpdate()
 	}
 	else if (abs( stageEndTimer->GetRemainFrame() -60)<=0.001)
 	{
-			GetManager().lock()->GetGameObject("BurstManager").lock()->GetGameComponent<BurstManagerComponent>()->Burst();
-			GetManager().lock()->GetGameObject("BackGroundController").lock()->GetGameComponent<BackGround>()->Brast();
+		auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/Burst.wav");
+		gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
+		GetManager().lock()->GetGameObject("BurstManager").lock()->GetGameComponent<BurstManagerComponent>()->Burst();
+		GetManager().lock()->GetGameObject("BackGroundController").lock()->GetGameComponent<BackGround>()->Brast();
 
 	}
 	else if (abs(stageEndTimer->GetRemainFrame() - 20) <= 0.001)

@@ -131,6 +131,12 @@ void ButiEngine::PlayerBehavior::OnCollision(std::weak_ptr<GameObject> arg_other
 	{
 		goal = true;
 	}
+
+	if (goal)
+	{
+		auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/TouchGoal.wav");
+		gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
+	}
 }
 
 void ButiEngine::PlayerBehavior::OnCollisionEnd(std::weak_ptr<GameObject> arg_other)
