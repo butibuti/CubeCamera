@@ -10,6 +10,7 @@
 #include"CameraMeshComponent.h"
 #include"StartPlayerDirectingComponent.h"
 #include"InvisibleBlockComponent.h"
+#include"ShakeComponent.h"
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
@@ -24,7 +25,23 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 	}
 	GUI::End();
 #endif
-	if (!gameObject.lock()->GetGameComponent<StartPlayerDirectingComponent>()->IsStart())
+	auto directing = gameObject.lock()->GetGameComponent<StartPlayerDirectingComponent>();
+	if (gameObject.lock()->transform->GetWorldPosition().y < -40.0f)
+	{
+		fallTimer->Stop();
+		fall = false;
+		fallStart = false;
+		mapPos = shp_map->GetPlayerPos();
+		auto rotation = gameObject.lock()->transform->GetLocalRotation().GetEulerOneValue_local();
+		rotation.x = 0;
+		rotation.y = MathHelper::ToRadian(startRotation);
+		rotation.z = 0;
+		gameObject.lock()->transform->SetLocalRotation(Matrix4x4().CreateFromEuler_local(rotation));
+		gameObject.lock()->transform->SetWorldPosition(directing->GetSpawnPos());
+		directing->Animation();
+	}
+
+	if (!directing->IsStart())
 	{
 		return;
 	}
@@ -44,9 +61,9 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		CheckLookBlock();
 		shp_invisibleBlockManager->CheckSeen();
 	}
+	CheckExistUnderBlock(mapPos);
 	Shrink();
 	Contoroll();
-	CheckExistUnderBlock(mapPos);
 	Fall();
 }
 
@@ -59,13 +76,16 @@ void ButiEngine::PlayerBehavior::Start()
 	gameObject.lock()->SetObjectName("Player");
 	goal = false;
 	fall = false;
+	fallStart = false;
 	afterFallPos = Vector3::Zero;
 	length = 1.0f;
 	shp_map = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Map").lock()->GetGameComponent<MapComponent>();
 	mapPos = shp_map->GetPlayerPos();
 	offset = mapPos - startPos;
 	timer = ObjectFactory::Create<RelativeTimer>(9);
-	shp_invisibleBlockManager= gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
+	fallTimer = ObjectFactory::Create<RelativeTimer>(24);
+	fallTimer->Stop();
+	shp_invisibleBlockManager = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
 }
 
 std::shared_ptr<ButiEngine::Behavior> ButiEngine::PlayerBehavior::Clone()
@@ -272,7 +292,6 @@ void ButiEngine::PlayerBehavior::OnPushRight()
 {
 	if (fall)
 	{
-		RotationRight();
 		return;
 	}
 
@@ -287,7 +306,6 @@ void ButiEngine::PlayerBehavior::OnPushLeft()
 {
 	if (fall)
 	{
-		RotationLeft();
 		return;
 	}
 	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x - 1, mapPos.y, mapPos.z));
@@ -301,7 +319,6 @@ void ButiEngine::PlayerBehavior::OnPushFront()
 {
 	if (fall)
 	{
-		RotationFront();
 		return;
 	}
 	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x, mapPos.y, mapPos.z + 1));
@@ -315,7 +332,6 @@ void ButiEngine::PlayerBehavior::OnPushBack()
 {
 	if (fall)
 	{
-		RotationBack();
 		return;
 	}
 	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x, mapPos.y, mapPos.z - 1));
@@ -617,86 +633,6 @@ void ButiEngine::PlayerBehavior::MoveDownBack()
 	}
 }
 
-void ButiEngine::PlayerBehavior::RotationRight()
-{
-	auto t = gameObject.lock()->transform;
-	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
-	if (!anim)
-	{
-		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
-		anim->SetSpeed(1.0f / 10);
-		anim->SetTargetTransform(t->Clone());
-		anim->GetTargetTransform()->TranslateY(-10 * 0.05f);
-		if (anim->GetTargetTransform()->GetWorldPosition().y < afterFallPos.y)
-		{
-			anim->GetTargetTransform()->SetWorldPosition(afterFallPos);
-		}
-
-		anim->GetTargetTransform()->RollWorldRotationZ_Degrees(-90.0f);
-		anim->SetEaseType(Easing::EasingType::Liner);
-	}
-}
-
-void ButiEngine::PlayerBehavior::RotationLeft()
-{
-	auto t = gameObject.lock()->transform;
-	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
-	if (!anim)
-	{
-		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
-		anim->SetSpeed(1.0f / 10);
-		anim->SetTargetTransform(t->Clone());
-		anim->GetTargetTransform()->TranslateY(-10 * 0.05f);
-		if (anim->GetTargetTransform()->GetWorldPosition().y < afterFallPos.y)
-		{
-			anim->GetTargetTransform()->SetWorldPosition(afterFallPos);
-		}
-
-		anim->GetTargetTransform()->RollWorldRotationZ_Degrees(90.0f);
-		anim->SetEaseType(Easing::EasingType::Liner);
-	}
-}
-
-void ButiEngine::PlayerBehavior::RotationFront()
-{
-	auto t = gameObject.lock()->transform;
-	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
-	if (!anim)
-	{
-		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
-		anim->SetSpeed(1.0f / 10);
-		anim->SetTargetTransform(t->Clone());
-		anim->GetTargetTransform()->TranslateY(-10 * 0.05f);
-		if (anim->GetTargetTransform()->GetWorldPosition().y < afterFallPos.y)
-		{
-			anim->GetTargetTransform()->SetWorldPosition(afterFallPos);
-		}
-
-		anim->GetTargetTransform()->RollWorldRotationX_Degrees(90.0f);
-		anim->SetEaseType(Easing::EasingType::Liner);
-	}
-}
-
-void ButiEngine::PlayerBehavior::RotationBack()
-{
-	auto t = gameObject.lock()->transform;
-	auto anim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
-	if (!anim)
-	{
-		anim = gameObject.lock()->AddGameComponent<CubeTransformAnimation>();
-		anim->SetSpeed(1.0f / 10);
-		anim->SetTargetTransform(t->Clone());
-		anim->GetTargetTransform()->TranslateY(-10 * 0.05f);
-		if (anim->GetTargetTransform()->GetWorldPosition().y < afterFallPos.y)
-		{
-			anim->GetTargetTransform()->SetWorldPosition(afterFallPos);
-		}
-
-		anim->GetTargetTransform()->RollWorldRotationX_Degrees(-90.0f);
-		anim->SetEaseType(Easing::EasingType::Liner);
-	}
-}
-
 std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetRightBlock(Vector3 mapPos)
 {
 	auto mapData = shp_map->GetCurrentMapData()->mapData;
@@ -789,9 +725,30 @@ std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetBackBlock(V
 
 void ButiEngine::PlayerBehavior::Fall()
 {
+	auto shake = gameObject.lock()->GetGameComponent<ShakeComponent>();
+	if (!fall && fallStart && !fallTimer->IsOn())
+	{
+		fallTimer->Reset();
+		fallTimer->Start();
+		shake->SetDefaultPos(gameObject.lock()->transform->GetWorldPosition());
+		shake->Start(0.06f);
+		fallStart = false;
+	}
+
+	if (!fall && fallTimer->Update())
+	{
+		fallTimer->Stop();
+		fall = true;
+	}
+
+	if (!fall && fallTimer->GetRemainFrame() == 6)
+	{
+		shake->Stop();
+	}
+
 	if (fall)
 	{
-		gameObject.lock()->transform->TranslateY(-0.05f);
+		gameObject.lock()->transform->TranslateY(-3.0f);
 		if (gameObject.lock()->transform->GetWorldPosition().y <= afterFallPos.y)
 		{
 			gameObject.lock()->transform->SetWorldPosition(afterFallPos);
@@ -835,10 +792,6 @@ ButiEngine::MoveDirection ButiEngine::PlayerBehavior::CheckMoveDirection(Vector3
 	{
 		output = MoveDirection::Down;
 	}
-	else if(CheckExistUnderBlock(movePos))
-	{
-		output = MoveDirection::Fall;
-	}
 	else
 	{
 		output = MoveDirection::No;
@@ -847,16 +800,23 @@ ButiEngine::MoveDirection ButiEngine::PlayerBehavior::CheckMoveDirection(Vector3
 	return output;
 }
 
-bool ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
+void ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
 {
+	if (fallTimer->IsOn())
+	{
+		return;
+	}
 	if (movePos.y - 2 < 0)
 	{
-		return false; 
+		fallStart = true;
+		afterFallPos = gameObject.lock()->transform->GetWorldPosition();
+		afterFallPos.y = -500.0f;
+		return; 
 	}
 	std::vector<std::vector<std::vector<int>>>& mapData = shp_map->GetCurrentMapData()->mapData;
 	if (mapData[movePos.y - 1][movePos.z][movePos.x] == GameSettings::block)
 	{
-		return false; 
+		return; 
 	}
 	//Vector3 offset(mapData[0][0].size() / 2, mapData.size() / 2, mapData[0].size() / 2);
 
@@ -866,10 +826,11 @@ bool ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
 		{
 			mapPos = Vector3(movePos.x, y + 1, movePos.z);
 			afterFallPos = (mapPos - offset) * GameSettings::BlockSize;
-			fall = true;
-			return true;
+			fallStart = true;
+			return;
 		}
 	}
-	fall = false;
-	return false;
+	fallStart = true;
+	afterFallPos = gameObject.lock()->transform->GetWorldPosition();
+	afterFallPos.y = -500.0f;
 }

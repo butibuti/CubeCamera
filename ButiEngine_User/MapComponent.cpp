@@ -169,10 +169,11 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 				{
 					playerPos = Vector3(x, y, z);
 					Vector3 spawnPos = position;
-					spawnPos.y += 15.0f;
+					spawnPos.y += 30.0f;
 					gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
 					gameObject.lock()->transform->SetWorldPosition(spawnPos);
-					gameObject.lock()->GetBehavior<PlayerBehavior>()->SetStartPos(position);
+					auto playerBehavior = gameObject.lock()->GetBehavior<PlayerBehavior>();
+					playerBehavior->SetStartPos(position);
 					auto directing = gameObject.lock()->GetGameComponent<StartPlayerDirectingComponent>();
 					directing->SetSpawnPos(spawnPos);
 					directing->SetStartPos(position);
@@ -186,6 +187,7 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 					if (mapNum >= GameSettings::playerRotate_90 && mapNum <= GameSettings::playerRotate_min90) {
 						auto rotation = (mapNum - GameSettings::playerRotate_90 +1)*90;
 						gameObject.lock()->transform->RollLocalRotationY_Degrees(rotation);
+						playerBehavior->SetStartRotation(rotation);
 
 						//gameObject = std::weak_ptr<GameObject>();
 					}else
@@ -197,6 +199,7 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 
 						auto rotation = mapNum_onceSpace * 90;
 						gameObject.lock()->transform->RollLocalRotationY_Degrees(rotation);
+						playerBehavior->SetStartRotation(rotation);
 
 						if (mapNum_tenthSpace == GameSettings::tutorialGoal)
 						{
@@ -253,7 +256,7 @@ void ButiEngine::MapComponent::ShakeStart(float arg_amplitude)
 			auto endX = itrZ->end();
 			for (auto itrX = itrZ->begin(); itrX != endX; ++itrX)
 			{
-				if (!(*itrX))
+				if (!(*itrX) || (*itrX)->GetGameObjectName() == "Player")
 				{
 					continue;
 				}
