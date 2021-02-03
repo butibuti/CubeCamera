@@ -6,6 +6,7 @@
 #include"CameraController.h"
 #include"ThanksSceneManager.h"
 //#include"Header/GameObjects/DefaultGameComponent/ChaseComponent.h"
+#include"InvisibleBlockAuraComponent.h"
 
 using namespace::ButiEngine;
 
@@ -28,7 +29,11 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	//ModelFileConverter::FBXtoB3M("Player.fbx", "Player.b3m", "Model/Cubes/player/");
 	app->InitLoadResources();
+<<<<<<< HEAD
 	//ComponentsLoader::GetInstance()->AddGameComponent<ThanksSceneManager>();
+=======
+	ComponentsLoader::GetInstance()->AddGameComponent<InvisibleBlockAuraComponent>();
+>>>>>>> 268a1845b06874291b163db627200c1a6a8b493d
 	
 	app->GetSceneManager()->LoadScene_Init_EditMode("TitleScene");
 

@@ -20,7 +20,7 @@ void ButiEngine::StageSelectManagerComponent::OnUpdate()
 		{
 			OnPushLeft();
 		}
-		else if (!end&& GameDevice::GetInput()->TriggerKey(Keys::Space))
+		else if (!end&& GameSettings::TriggerDecision())
 		{
 
 			auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/potion.wav");

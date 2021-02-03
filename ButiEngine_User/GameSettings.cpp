@@ -15,6 +15,14 @@ bool GameSettings::IsBlock(int i)
 	return false;
 }
 
+bool GameSettings::TriggerDecision()
+{
+	bool key = GameDevice::GetInput()->TriggerKey(Keys::Space);
+	bool button = GameDevice::GetInput()->GetAnyButtonTrigger();
+
+	return (key || button);
+}
+
 bool GameSettings::CheckRight()
 {
 	bool dKey = GameDevice::GetInput()->CheckKey(Keys::D);

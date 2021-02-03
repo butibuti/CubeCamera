@@ -29,7 +29,11 @@
     <ClCompile Include="TestGameComponent.cpp" />
     <ClCompile Include="TitleBlockComponent.cpp" />
     <ClCompile Include="TitleManagerComponent.cpp" />
+<<<<<<< HEAD
     <ClCompile Include="ThanksSceneManager.cpp" />
+=======
+    <ClCompile Include="InvisibleBlockAuraComponent.cpp" />
+>>>>>>> 268a1845b06874291b163db627200c1a6a8b493d
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrowEffectComponent.h" />
@@ -60,6 +64,10 @@
     <ClInclude Include="TestGameComponent.h" />
     <ClInclude Include="TitleBlockComponent.h" />
     <ClInclude Include="TitleManagerComponent.h" />
+<<<<<<< HEAD
     <ClInclude Include="ThanksSceneManager.h" />
+=======
+    <ClInclude Include="InvisibleBlockAuraComponent.h" />
+>>>>>>> 268a1845b06874291b163db627200c1a6a8b493d
   </ItemGroup>
 </Project>

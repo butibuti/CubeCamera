@@ -1,10 +1,11 @@
 #include "stdafx_u.h"
 #include "TitleManagerComponent.h"
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
+#include"GameSettings.h"
 
 void ButiEngine::TitleManagerComponent::OnUpdate()
 {
-	if (GameDevice::GetInput()->GetAnyButtonTrigger() || GameDevice::GetInput()->TriggerKey(Keys::Space))
+	if (GameSettings::TriggerDecision())
 	{
 		auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/potion.wav");
 
