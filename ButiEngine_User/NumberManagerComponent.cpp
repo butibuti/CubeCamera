@@ -12,8 +12,8 @@ void ButiEngine::NumberManagerComponent::OnSet()
 
 void ButiEngine::NumberManagerComponent::Start()
 {
-	number1 = GetManager().lock()->AddObjectFromCereal("Number1", ObjectFactory::Create<Transform>(Vector3(0, 0, 9), Vector3::Zero, Vector3(500, 500, 1)));
-	number10 = GetManager().lock()->AddObjectFromCereal("Number10", ObjectFactory::Create<Transform>(Vector3(-150, 0, 10), Vector3::Zero, Vector3(500, 500, 1)));
+	number1 = GetManager().lock()->AddObjectFromCereal("Number1", ObjectFactory::Create<Transform>(Vector3(0, 100, 9), Vector3::Zero, Vector3(300, 300, 1)));
+	number10 = GetManager().lock()->AddObjectFromCereal("Number10", ObjectFactory::Create<Transform>(Vector3(-150, 100, 10), Vector3::Zero, Vector3(300, 300, 1)));
 	SetNumber(0);
 }
 
@@ -38,12 +38,12 @@ void ButiEngine::NumberManagerComponent::SetNumber(int arg_number)
 
 	if (number < 10)
 	{
-		number1.lock()->transform->SetWorldPosition(Vector3(0, 0, 9));
+		number1.lock()->transform->SetWorldPosition(Vector3(0, 100, 9));
 		number10.lock()->GetGameComponent<MeshDrawComponent>()->UnRegist();
 	}
 	else
 	{
-		number1.lock()->transform->SetWorldPosition(Vector3(150, 0, 9));
+		number1.lock()->transform->SetWorldPosition(Vector3(150, 100, 9));
 		number10.lock()->GetGameComponent<MeshDrawComponent>()->Regist();
 		std::string name10 = "number_" + std::to_string(ten);
 		meshDraw10->SetMaterialTag(gameObject.lock()->GetResourceContainer()->GetMaterialTag(name10));

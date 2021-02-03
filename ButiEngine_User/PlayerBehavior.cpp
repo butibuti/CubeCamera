@@ -33,6 +33,10 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		timer->Stop();
 		Expansion();
 
+		int rand = ButiRandom::GetRandom(0, 2, 1);
+
+		gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(moveSounds[rand], 0.1f);
+
 		//”g–ä
 		auto pos = gameObject.lock()->transform->GetWorldPosition();
 		pos.y -= 0.3f;
@@ -56,6 +60,13 @@ void ButiEngine::PlayerBehavior::OnSet()
 
 void ButiEngine::PlayerBehavior::Start()
 {
+	for (int i = 0; i < 3; i++) {
+
+		auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/Move_"+std::to_string(i)+".wav");
+
+		moveSounds[i] = seTag;
+	}
+
 	gameObject.lock()->SetObjectName("Player");
 	goal = false;
 	fall = false;

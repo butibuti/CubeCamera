@@ -43,7 +43,6 @@ void ButiEngine::StageSelectManagerComponent::OnUpdate()
 		float playerY = Easing::Parabola(per) + (-1.6f);
 		float playerZ = -per + 3.0f;
 		player.lock()->transform->SetWorldPosition(Vector3(playerX, playerY, playerZ));
-
 		player.lock()->transform->RollLocalRotationX_Degrees(-5.0f);
 
 		auto obj_stageNumber = GetManager().lock()->GetGameObject("StageNumber");
@@ -82,14 +81,14 @@ void ButiEngine::StageSelectManagerComponent::OnUpdate()
 		{
 			stageNumberObjectScale += 50;
 			auto numManager = obj_stageNumber.lock()->GetGameComponent<NumberManagerComponent>();
-			numManager->SetScale(Vector3(500.0f, stageNumberObjectScale, 1.0f));
+			numManager->SetScale(Vector3(300.0f, stageNumberObjectScale, 1.0f));
 			numManager->TranslateY(50.0f);
 		}
 		else if (endTimer >= 0)
 		{
 			stageNumberObjectScale -= 60;
 			auto numManager = obj_stageNumber.lock()->GetGameComponent<NumberManagerComponent>();
-			numManager->SetScale(Vector3(500.0f, stageNumberObjectScale, 1.0f));
+			numManager->SetScale(Vector3(300.0f, stageNumberObjectScale, 1.0f));
 			numManager->TranslateY(20.0f);
 		}
 	}
@@ -106,8 +105,11 @@ void ButiEngine::StageSelectManagerComponent::OnSet()
 
 void ButiEngine::StageSelectManagerComponent::Start()
 {
-	GetManager().lock()->AddObjectFromCereal("PlayerModel");
+	auto player=GetManager().lock()->AddObjectFromCereal("PlayerModel");
+
+	player.lock()->transform->SetLocalScale(Vector3(0.5, 0.5, 0.5));
 	obj_stageNumber = GetManager().lock()->AddObjectFromCereal("StageNumber");
+	obj_stageNumber.lock()->transform->SetLocalScale(Vector3(300, 300, 300));
 	animTimer = ObjectFactory::Create<RelativeTimer>(15);
 	
 	end = false;
@@ -166,7 +168,7 @@ void ButiEngine::StageSelectManagerComponent::OnPushRight()
 	}
 	obj_stageNumber.lock()->GetGameComponent<NumberManagerComponent>()->SetNumber(stageNum);
 
-	GetManager().lock()->AddObjectFromCereal("ArrowEffect", ObjectFactory::Create<Transform>(Vector3(500, 0, 9 - pushCount), 0.0f, Vector3(500, 500, 1)));
+	GetManager().lock()->AddObjectFromCereal("ArrowEffect", ObjectFactory::Create<Transform>(Vector3(500, 100, 9 - pushCount), 0.0f, Vector3(300, 300, 1)));
 
 	pushCount++;
 	if (pushCount > 5)
@@ -189,7 +191,7 @@ void ButiEngine::StageSelectManagerComponent::OnPushLeft()
 	}
 	obj_stageNumber.lock()->GetGameComponent<NumberManagerComponent>()->SetNumber(stageNum);
 
-	GetManager().lock()->AddObjectFromCereal("ArrowEffect", ObjectFactory::Create<Transform>(Vector3(-500, 0, 9 - pushCount), Vector3(0, 0, 180), Vector3(500, 500, 1)));
+	GetManager().lock()->AddObjectFromCereal("ArrowEffect", ObjectFactory::Create<Transform>(Vector3(-500, 100, 9 - pushCount), Vector3(0, 0, 180), Vector3(300, 300, 1)));
 
 	pushCount++;
 	if (pushCount > 5)

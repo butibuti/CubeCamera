@@ -21,6 +21,13 @@ void ButiEngine::MapComponent::OnUpdate()
 		sceneManager->RemoveScene(sceneName);
 		sceneManager->LoadScene(sceneName);
 		sceneManager->ChangeScene(sceneName);
+
+		if (sceneName == "StageSelectScene") {
+
+			auto bgmTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/cube_BGM.wav");
+			gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->PlayBGM(bgmTag, 0);
+		}
+
 		//if (GameDevice::GetInput()->TriggerKey(Keys::N))
 		//{
 		//	currentStageNum++;
@@ -63,6 +70,11 @@ void ButiEngine::MapComponent::Start()
 	auto invManager= GetManager().lock()->AddObjectFromCereal("InvisibleBlockManager");
 	PutBlock(currentStageNum);
 	mapEndColor = Vector4(0.2f, 0.2f, 0.9f, 1.0f);
+
+
+	auto bgmTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/cube_BGM.wav");
+
+	gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->PlayBGM(bgmTag, 0.1f);
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::MapComponent::Clone()

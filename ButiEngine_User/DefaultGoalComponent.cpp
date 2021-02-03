@@ -47,6 +47,14 @@ void ButiEngine::DefaultGoalComponent::Seen()
 	meshDraw->Regist();
 	active = true;
 
+
+	auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/potion.wav");
+
+	gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
+	//seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/bubble.wav");
+
+	//gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
+
 	//マテリアル変更
 	meshDraw->SetMaterialTag(gameObject.lock()->GetResourceContainer()->GetMaterialTag("goalMaterial"));
 	meshDraw->ReRegist();
