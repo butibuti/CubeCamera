@@ -18,6 +18,7 @@ public:
 
 	static bool IsBlock(int i);
 
+	static bool TriggerDecision();
 	static bool CheckRight();
 	static bool CheckLeft();
 	static bool CheckFront();
