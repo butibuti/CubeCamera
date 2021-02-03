@@ -25,10 +25,8 @@ namespace ButiEngine {
 	private:
 		std::weak_ptr<MapComponent> wkp_mapComponent;
 		float pase;
-		float current=0.5f;
+		float current = 0.5f;
 		std::shared_ptr<CBuffer<LightVariable>> shp_lightBuffer;
 	};
-
 }
 BUTI_REGIST_GAMECOMPONENT(ButiEngine::BlockComponent)
-

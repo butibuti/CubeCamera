@@ -4,7 +4,7 @@
 #include"Header/Scene/ComponentsLoader.h"
 #include"Header/Device/ModelFileConverter.h"
 #include"CameraController.h"
-#include"BlockComponent.h"
+#include"BackGround.h"
 //#include"Header/GameObjects/DefaultGameComponent/ChaseComponent.h"
 
 using namespace::ButiEngine;
@@ -28,7 +28,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	//ModelFileConverter::FBXtoB3M("Player.fbx", "Player.b3m", "Model/Cubes/player/");
 	app->InitLoadResources();
-	//ComponentsLoader::GetInstance()->AddGameComponent<NumberManagerComponent>();
+	ComponentsLoader::GetInstance()->AddGameComponent<BackGround>();
 	
 	app->GetSceneManager()->LoadScene_Init_EditMode("Stage0Scene");
 

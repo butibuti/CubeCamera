@@ -160,6 +160,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ArrowEffectComponent.cpp" />
+    <ClCompile Include="BackGround.cpp" />
     <ClCompile Include="BlockComponent.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="CameraMeshComponent.cpp" />
@@ -191,6 +192,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ArrowEffectComponent.h" />
+    <ClInclude Include="BackGround.h" />
     <ClInclude Include="BlockComponent.h" />
     <ClInclude Include="ButiEngineHeader.h" />
     <ClInclude Include="CameraController.h" />

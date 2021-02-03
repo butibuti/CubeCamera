@@ -23,6 +23,5 @@ namespace ButiEngine {
 		int life;
 		int progressFrame;
 	};
-
 }
 BUTI_REGIST_GAMECOMPONENT(ButiEngine::ArroweffectComponent)
