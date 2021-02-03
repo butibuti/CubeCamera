@@ -1,6 +1,6 @@
 #include"DefaultShader.hlsli"
 
-#define Distortion	0.25
+#define Distortion	0.125
 float4 PSMain(Pixel_UV pixel) : SV_TARGET
 {
 	float2 samplePoint = pixel.uv;

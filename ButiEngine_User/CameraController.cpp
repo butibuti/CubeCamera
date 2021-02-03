@@ -80,7 +80,7 @@ void ButiEngine::CameraController::ZoomInOut()
         anim->SetTargetTransform(t->Clone());
         anim->GetTargetTransform()->SetWorldPosition(t->GetWorldPosition() - t->GetFront() * 2.5f);
         anim->SetSpeed(1.0f / 50.0f);
-
+        //anim->SetReverse(true);
         anim->SetEaseType(Easing::EasingType::EaseOutBack);
     }
 }
