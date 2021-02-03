@@ -28,6 +28,8 @@ namespace ButiEngine {
 		void OnShowUI();
 
 		bool IsActive() { return active; }
+
+		void Seen();
 	private:
 		bool active;
 		std::shared_ptr<Collision::CollisionPrimitive_Box_AABB> shp_AABB;

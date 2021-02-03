@@ -84,7 +84,6 @@ void ButiEngine::MapComponent::OnShowUI()
 void ButiEngine::MapComponent::PutBlock(int stageNum)
 {
 	auto invisibleBlockManager = GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
-	invisibleBlockManager->ClearBlocks();
 	DestoroyMapChip();
 
 	*currentMapData = vec_mapData[stageNum];
@@ -171,15 +170,18 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 					playerPos = Vector3(x, y, z);
 					Vector3 spawnPos = position;
 					spawnPos.y += 15.0f;
-					gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(spawnPos, Vector3::Zero, scale));
+					gameObject = GetManager().lock()->AddObjectFromCereal("Player", ObjectFactory::Create<Transform>(position, Vector3::Zero, scale));
+					gameObject.lock()->transform->SetWorldPosition(spawnPos);
+					gameObject.lock()->GetBehavior<PlayerBehavior>()->SetStartPos(position);
 					auto directing = gameObject.lock()->GetGameComponent<StartPlayerDirectingComponent>();
 					directing->SetSpawnPos(spawnPos);
 					directing->SetStartPos(position);
 
 					auto cameraMesh = GetManager().lock()->AddObjectFromCereal("CameraMesh", ObjectFactory::Create<Transform>(Vector3(0, 0, -0.1f), Vector3::Zero, scale));
 					auto camera = GetCamera("playerCamera");
-					camera.lock()->shp_transform->SetLocalPosition().z = 0.3f;
+					camera.lock()->shp_transform->SetLocalPosition().z = 0.5f;
 					camera.lock()->shp_transform->SetBaseTransform(gameObject.lock()->transform, true);
+					cameraMesh.lock()->transform->SetLocalPosition().z = 0.5f;
 					cameraMesh.lock()->transform->SetBaseTransform(gameObject.lock()->transform, true);
 					if (mapNum >= GameSettings::playerRotate_90 && mapNum <= GameSettings::playerRotate_min90) {
 						auto rotation = (mapNum - GameSettings::playerRotate_90 +1)*90;
@@ -227,9 +229,6 @@ void ButiEngine::MapComponent::PutBlock(int stageNum)
 			}
 		}
 	}
-	
-	invisibleBlockManager->RegistBlocks();
-	invisibleBlockManager->Check();
 }
 
 void ButiEngine::MapComponent::ChangeBlock(Vector3 mapPos, int mapChipNum)

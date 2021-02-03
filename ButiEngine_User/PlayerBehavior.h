@@ -14,6 +14,16 @@ namespace ButiEngine {
 		No,
 	};
 
+	enum class LookDirection
+	{
+		Right,
+		Left,
+		Up,
+		Down,
+		Front,
+		Back,
+	};
+
 	class PlayerBehavior :public Behavior
 	{
 	public:
@@ -39,6 +49,8 @@ namespace ButiEngine {
 		bool IsRollFinish();
 		const Vector3 &GetMapPos() const{ return mapPos; }
 		const Vector3 &GetNextMapPos() { return nextMapPos; }
+
+		void SetStartPos(Vector3 pos) { startPos = pos; }
 	private:
 		float length;
 		std::shared_ptr<MapComponent> shp_map;
@@ -46,13 +58,17 @@ namespace ButiEngine {
 		Vector3 mapPos;
 		Vector3 nextMapPos;
 		Vector3 offset;
+		Vector3 startPos;
 		bool goal;
 		bool fall;
 		Vector3 afterFallPos;
 		float scale;
+		LookDirection lookDirection;
 
 		std::shared_ptr<RelativeTimer> timer;
 
+		void CheckLookBlock();
+		void CheckLookDirection();
 		void Contoroll();
 		void OnPushRight();
 		void OnPushLeft();
@@ -76,6 +92,12 @@ namespace ButiEngine {
 		void RotationLeft();
 		void RotationFront();
 		void RotationBack();
+		std::weak_ptr<GameObject> GetRightBlock(Vector3 mapPos);
+		std::weak_ptr<GameObject> GetLeftBlock(Vector3 mapPos);
+		std::weak_ptr<GameObject> GetUpBlock(Vector3 mapPos);
+		std::weak_ptr<GameObject> GetDownBlock(Vector3 mapPos);
+		std::weak_ptr<GameObject> GetFrontBlock(Vector3 mapPos);
+		std::weak_ptr<GameObject> GetBackBlock(Vector3 mapPos);
 		void Fall();
 		MoveDirection CheckMoveDirection(Vector3 movePos);
 		bool CheckExistUnderBlock(Vector3 movePos);

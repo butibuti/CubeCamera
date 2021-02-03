@@ -6,7 +6,6 @@
 
 void ButiEngine::InvisibleBlockManagerComponent::OnUpdate()
 {
-
 }
 
 void ButiEngine::InvisibleBlockManagerComponent::OnSet()
@@ -22,108 +21,50 @@ std::shared_ptr<ButiEngine::GameComponent> ButiEngine::InvisibleBlockManagerComp
 	return ObjectFactory::Create<InvisibleBlockManagerComponent>();
 }
 
-void ButiEngine::InvisibleBlockManagerComponent::Check()
-{
-	auto end = vec_vec_invBlocks.end();
-
-	auto camera = GetCamera("playerCamera");
-
-	auto player = GetManager().lock()->GetGameObject("Player");
-
-	if (!player.lock())
-	{
-		return;
-	}
-
-	auto anim = player.lock()->GetGameComponent<CubeTransformAnimation>();
-	auto currenCameraTransform = camera.lock()->shp_transform;
-	if (anim)
-	{
-		auto target = anim->GetTargetTransform();
-		camera.lock()->shp_transform = target;
-	}
-
-	std::vector<bool> vec_seens ;
-	vec_seens.resize(vec_vec_invBlocks.size());
-
-	auto endItr = vec_invBlocks.end();
-	InvisibleBlockComponent::SetCameraInv(camera.lock()->shp_transform->ToMatrix().GetInverse());
-	std::sort(vec_invBlocks.begin(), endItr, [](const std::shared_ptr<InvisibleBlockComponent> pmX, const std::shared_ptr<InvisibleBlockComponent> pmY) {
-
-		return pmX->GetCameraLocalPos().z < pmX->GetCameraLocalPos().z;
-	});
-
-
-	for (auto itr = vec_invBlocks.begin(); itr != endItr;itr++) {
-		if (vec_seens[(*itr)->GetID()]) {
-			continue;
-		}
-		vec_seens[(*itr)->GetID()] = (*itr)->IsContaineVisibility();
-
-	}
-
-	auto seensEnd = vec_seens.size();
-	
-	for ( int i = 0;i<seensEnd ; i++) {
-
-		auto blockItrEnd = vec_vec_invBlocks[i].end();
-		if (vec_seens[i]) {
-			for (auto blockItr = vec_vec_invBlocks[i].begin(); blockItr != blockItrEnd; blockItr++) {
-
-				(*blockItr)->SetActive(true);
-			}
-		}
-		else {
-			for (auto blockItr = vec_vec_invBlocks[i].begin(); blockItr != blockItrEnd; blockItr++) {
-
-				(*blockItr)->SetActive(false);
-			}
-
-		}
-	}
-	camera.lock()->shp_transform = currenCameraTransform;
-}
-
 void ButiEngine::InvisibleBlockManagerComponent::OnShowUI()
 {
 }
 
-void ButiEngine::InvisibleBlockManagerComponent::RegistBlocks()
+void ButiEngine::InvisibleBlockManagerComponent::CheckSeen()
 {
-	GameObjectTag tag = gameObject.lock()->GetApplication().lock()->GetGameObjectTagManager()->GetObjectTag("InvisibleBlock");
-	auto invBlocks = GetManager().lock()->GetGameObjects(tag);
-	vec_invBlocks.reserve( invBlocks.size());
-	for (auto itr = invBlocks.begin(); itr != invBlocks.end();itr++) {
-		if (!(*itr)->GetIsRemove()) {
-			vec_invBlocks.push_back((*itr)->GetGameComponent<InvisibleBlockComponent>());
-		}
-	}
-
-	vec_vec_invBlocks.resize(32);
-	auto endItr = vec_invBlocks.end();
-	for (auto itr = vec_invBlocks.begin(); itr != endItr; itr++) {
-		auto component = (*itr);
-		if (component) {
-			vec_vec_invBlocks.at(component->GetID()).push_back(component);
-		}
-	}
-}
-
-void ButiEngine::InvisibleBlockManagerComponent::ClearBlocks()
-{
-	vec_invBlocks.clear();
-	vec_vec_invBlocks.clear();
-}
-
-void ButiEngine::InvisibleBlockManagerComponent::SetActive(std::vector<std::shared_ptr<GameObject>> invBlocks, int id, bool flag)
-{
-	auto end = invBlocks.end();
-	for (auto itr = invBlocks.begin(); itr != end; ++itr)
+	std::vector<int> IDs;
+	auto blocks = GetManager().lock()->GetGameObjects(GetTagManager()->GetObjectTag("InvisibleBlock"));
+	auto end = blocks.end();
+	for (auto itr = blocks.begin(); itr != end; ++itr)
 	{
-		auto inv = (*itr)->GetGameComponent<InvisibleBlockComponent>();
-		if (inv->GetID() == id)
+		auto invBlockComp = (*itr)->GetGameComponent<InvisibleBlockComponent>();
+		if (invBlockComp->GetSeen())
 		{
-			inv->SetActive(flag);
+			int id = invBlockComp->GetID();
+			if (std::find(IDs.begin(), IDs.end(), id) == IDs.end())
+			{
+				IDs.push_back(id);
+			}
 		}
+	}
+	auto idEnd = IDs.end();
+	for (auto idItr = IDs.begin(); idItr != idEnd; ++idItr)
+	{
+		for (auto itr = blocks.begin(); itr != end; ++itr)
+		{
+			auto invBlockComp = (*itr)->GetGameComponent<InvisibleBlockComponent>();
+
+			if (invBlockComp->GetID() == *idItr)
+			{
+				invBlockComp->Active();
+			}
+		}
+	}
+}
+
+void ButiEngine::InvisibleBlockManagerComponent::Reset()
+{
+	auto blocks = GetManager().lock()->GetGameObjects(GetTagManager()->GetObjectTag("InvisibleBlock"));
+	auto end = blocks.end();
+	for (auto itr = blocks.begin(); itr != end; ++itr)
+	{
+		auto invBlockComp = (*itr)->GetGameComponent<InvisibleBlockComponent>();
+		invBlockComp->UnActive();
+		invBlockComp->SetSeen(false);
 	}
 }
