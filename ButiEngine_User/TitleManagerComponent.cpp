@@ -39,6 +39,10 @@ void ButiEngine::TitleManagerComponent::Start()
 {
 	//gameObject.lock()->GetApplication().lock()->GetGraphicDevice()->SetClearColor(Vector4(0.025f, 0.025f, 0.025f, 1.0f));
 	shp_timer = ObjectFactory::Create<RelativeTimer>(60);
+
+	auto bgmTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/cube_BGM.wav");
+
+	gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->PlayBGM(bgmTag, 0.1f);
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::TitleManagerComponent::Clone()

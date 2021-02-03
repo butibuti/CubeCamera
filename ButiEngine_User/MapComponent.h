@@ -57,6 +57,7 @@ namespace ButiEngine {
 		std::shared_ptr< MapData > currentMapData;
 		std::vector<std::vector<float>> randomBlockPos;
 		std::vector<std::vector<std::vector<std::shared_ptr<GameObject>>>> mapObjectData;
+		std::shared_ptr<RelativeTimer> stageEndTimer;
 		
 		Vector3 playerPos;
 		Vector4 mapEndColor = Vector4(0.2f, 0.2f, 0.9f, 1.0f);

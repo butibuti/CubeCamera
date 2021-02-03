@@ -9,13 +9,28 @@
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 #include"StartPlayerDirectingComponent.h"
 #include"ShakeComponent.h"
+#include"BurstManagerComponent.h"
+#include"BackGround.h"
+#include"CameraController.h"
 
 void ButiEngine::MapComponent::OnUpdate()
 {
 	auto player = GetManager().lock()->GetGameObject("Player").lock();
 	if (player && player->GetBehavior<PlayerBehavior>()->GetGoal())
 	{
-		DestoroyMapChip();
+		if (!stageEndTimer->IsOn())
+		{
+			stageEndTimer->Start();
+			ShakeStop();
+			ShakeStart(0.06f);
+			GetManager().lock()->GetGameObject("MainCamera").lock()->GetGameComponent<CameraController>()->ZoomIn();
+			return;
+		}
+	}
+
+	if (stageEndTimer->Update())
+	{
+		stageEndTimer->Stop();
 		auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
 		std::string sceneName = StageSelectManagerComponent::GetNextSceneName();
 		sceneManager->RemoveScene(sceneName);
@@ -24,25 +39,22 @@ void ButiEngine::MapComponent::OnUpdate()
 
 		if (sceneName == "StageSelectScene") {
 
-			auto bgmTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/cube_BGM.wav");
-			gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->PlayBGM(bgmTag, 0);
 		}
-
-		//if (GameDevice::GetInput()->TriggerKey(Keys::N))
-		//{
-		//	currentStageNum++;
-		//	if (currentStageNum >= vec_mapData.size())
-		//	{
-		//		currentStageNum--; 
-		//		return;
-		//	}
-		//	PutBlock(currentStageNum);
-		//}
 	}
+	if (abs(stageEndTimer->GetRemainFrame() - 80) <= 0.001)
+	{
+		GetManager().lock()->GetGameObject("MainCamera").lock()->GetGameComponent<CameraController>()->ZoomOut();
+	}
+	else if (abs( stageEndTimer->GetRemainFrame() -60)<=0.001)
+	{
+			GetManager().lock()->GetGameObject("BurstManager").lock()->GetGameComponent<BurstManagerComponent>()->Burst();
+			GetManager().lock()->GetGameObject("BackGroundController").lock()->GetGameComponent<BackGround>()->Brast();
 
-	auto tag = GetTagManager()->GetObjectTag("MapChip");
-	auto manager = GetManager().lock();
-	std::vector<std::shared_ptr<GameObject>> gameObjects = manager->GetGameObjects(tag);
+	}
+	else if (abs(stageEndTimer->GetRemainFrame() - 20) <= 0.001)
+	{
+		DestoroyMapChip();
+	}
 }
 
 void ButiEngine::MapComponent::OnSet()
@@ -52,6 +64,7 @@ void ButiEngine::MapComponent::OnSet()
 
 void ButiEngine::MapComponent::Start()
 {
+	stageEndTimer = ObjectFactory::Create<RelativeTimer>(120);
 	vec_mapData.clear();
 	randomBlockPos.clear();
 	auto mapFilePath = "Scene/" + GetManager().lock()->GetScene().lock()->GetSceneInformation()->GetSceneName() + "/mapInfo.map";
@@ -68,13 +81,11 @@ void ButiEngine::MapComponent::Start()
 	playerPos = Vector3::Zero;
 	currentStageNum = 0;
 	auto invManager= GetManager().lock()->AddObjectFromCereal("InvisibleBlockManager");
-	PutBlock(currentStageNum);
-	mapEndColor = Vector4(0.2f, 0.2f, 0.9f, 1.0f);
+	PutBlock(currentStageNum); 
+	mapStartColor = Vector4(0.0f, 0.0f, 0.2f, 1.0f);
+	mapEndColor = Vector4(0.0f, 0.3f, 1.0f, 1.0f);
 
 
-	auto bgmTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/cube_BGM.wav");
-
-	gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->PlayBGM(bgmTag, 0.1f);
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::MapComponent::Clone()
@@ -293,7 +304,7 @@ void ButiEngine::MapComponent::ShakeStop()
 			auto endX = itrZ->end();
 			for (auto itrX = itrZ->begin(); itrX != endX; ++itrX)
 			{
-				if (!(*itrX))
+				if (!(*itrX) || (*itrX)->GetGameObjectName() == "Player")
 				{
 					continue;
 				}

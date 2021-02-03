@@ -93,7 +93,11 @@
     <ClCompile Include="NumberManagerComponent.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="BackGround.cpp">
+=======
+    <ClCompile Include="BurstManagerComponent.cpp">
+>>>>>>> origin/dev_burst
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -176,7 +180,11 @@
     <ClInclude Include="NumberManagerComponent.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="BackGround.h">
+=======
+    <ClInclude Include="BurstManagerComponent.h">
+>>>>>>> origin/dev_burst
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

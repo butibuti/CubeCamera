@@ -6,13 +6,10 @@
 
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 int ButiEngine::StageSelectManagerComponent::stageNum = 0;
-int ButiEngine::StageSelectManagerComponent::maxStageNum = 0;
+int ButiEngine::StageSelectManagerComponent::maxStageNum = 1;
 
 void ButiEngine::StageSelectManagerComponent::OnUpdate()
 {
-	GUI::Begin("StageSelect");
-	GUI::Text(stageNum);
-	GUI::End();
 	if (!animTimer->IsOn() && !end)
 	{
 		if (GameSettings::CheckRight())
