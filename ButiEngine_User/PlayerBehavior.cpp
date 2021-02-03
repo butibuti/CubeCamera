@@ -34,7 +34,10 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 	{
 		return;
 	}
-	Contoroll();
+	if (!goal)
+	{
+		Contoroll();
+	}
 	if (timer->Update())
 	{
 		timer->Stop();
