@@ -6,6 +6,7 @@
 #include"CameraController.h"
 #include"BurstManagerComponent.h"
 //#include"Header/GameObjects/DefaultGameComponent/ChaseComponent.h"
+#include"InvisibleBlockAuraComponent.h"
 
 using namespace::ButiEngine;
 
@@ -28,9 +29,9 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	//ModelFileConverter::FBXtoB3M("Player.fbx", "Player.b3m", "Model/Cubes/player/");
 	app->InitLoadResources();
-	//ComponentsLoader::GetInstance()->AddGameComponent<BurstManagerComponent>();
+	ComponentsLoader::GetInstance()->AddGameComponent<InvisibleBlockAuraComponent>();
 	
-	app->GetSceneManager()->LoadScene_Init("TitleScene");
+	app->GetSceneManager()->LoadScene_Init_EditMode("Stage0Scene");
 
 	app->GetGraphicDevice()->SetClearColor(Vector4(0, 0, 0, 1));
 	int returnCode = app->Run();

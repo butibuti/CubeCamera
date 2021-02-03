@@ -6,6 +6,7 @@
 #include"PlayerBehavior.h"
 #include"MapComponent.h"
 #include"GameSettings.h"
+#include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 
 
 void ButiEngine::InvisibleBlockComponent::OnUpdate()
@@ -37,6 +38,18 @@ void ButiEngine::InvisibleBlockComponent::Active()
 	{
 		return;
 	}
+
+	auto t = gameObject.lock()->transform;
+
+
+	auto anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
+	anim->SetSpeed(1.0f / 10);
+	anim->SetTargetTransform(t->Clone());
+	anim->GetTargetTransform()->SetLocalScale(1.1f);
+	anim->GetTargetTransform()->RollLocalRotationX_Degrees(0.1f);
+
+	anim->SetEaseType(Easing::EasingType::Parabola);
+
 	auto mapComp = GetManager().lock()->GetGameObject("Map").lock()->GetGameComponent<MapComponent>();
 	mapComp->ChangeBlock(mapPos, GameSettings::block);
 	active = true;
@@ -54,6 +67,7 @@ void ButiEngine::InvisibleBlockComponent::UnActive()
 	{
 		return;
 	}
+
 	auto mapComp = GetManager().lock()->GetGameObject("Map").lock()->GetGameComponent<MapComponent>();
 	mapComp->ChangeBlock(mapPos, GameSettings::invisibleBlock + id);
 	active = false;

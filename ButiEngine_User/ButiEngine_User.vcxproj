@@ -170,6 +170,7 @@
     <ClCompile Include="EasyGoalComponent.cpp" />
     <ClCompile Include="GameSettings.cpp" />
     <ClCompile Include="GoalAuraComponent.cpp" />
+    <ClCompile Include="InvisibleBlockAuraComponent.cpp" />
     <ClCompile Include="InvisibleBlockComponent.cpp" />
     <ClCompile Include="InvisibleBlockManagerComponent.cpp" />
     <ClCompile Include="main.cpp" />
@@ -203,6 +204,7 @@
     <ClInclude Include="EasyGoalComponent.h" />
     <ClInclude Include="GameSettings.h" />
     <ClInclude Include="GoalAuraComponent.h" />
+    <ClInclude Include="InvisibleBlockAuraComponent.h" />
     <ClInclude Include="InvisibleBlockComponent.h" />
     <ClInclude Include="InvisibleBlockManagerComponent.h" />
     <ClInclude Include="MapComponent.h" />
