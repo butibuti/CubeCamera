@@ -4,6 +4,7 @@
 #include"NumberManagerComponent.h"
 #include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent.h"
 
+#include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 int ButiEngine::StageSelectManagerComponent::stageNum = 0;
 int ButiEngine::StageSelectManagerComponent::maxStageNum = 0;
 
@@ -22,8 +23,12 @@ void ButiEngine::StageSelectManagerComponent::OnUpdate()
 		{
 			OnPushLeft();
 		}
-		else if (GameDevice::GetInput()->TriggerKey(Keys::Space))
+		else if (!end&& GameDevice::GetInput()->TriggerKey(Keys::Space))
 		{
+
+			auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/potion.wav");
+
+			gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
 			end = true;
 		}
 	}
@@ -109,6 +114,15 @@ void ButiEngine::StageSelectManagerComponent::Start()
 	endTimer = 0;
 	stageNumberObjectScale = 500.0f;
 	pushCount = 0;
+
+	auto finalScreen = GetManager().lock()->GetGameObject("FinalScreen");
+	auto anim=finalScreen.lock()->AddGameComponent<TransformAnimation>();
+
+	anim->SetSpeed(1 / 60.0f);
+	anim->SetTargetTransform(finalScreen.lock()->transform->Clone());
+	anim->GetTargetTransform()->SetLocalScale(Vector3(1980, 1080,1));
+	anim->SetEaseType(Easing::EasingType:: EaseOutCirc);
+
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::StageSelectManagerComponent::Clone()
@@ -141,6 +155,10 @@ void ButiEngine::StageSelectManagerComponent::RestartAnimTimer()
 
 void ButiEngine::StageSelectManagerComponent::OnPushRight()
 {
+	auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/Move_2.wav");
+
+	gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag,0.1f);
+
 	stageNum++;
 	if (stageNum > maxStageNum)
 	{
@@ -161,6 +179,9 @@ void ButiEngine::StageSelectManagerComponent::OnPushRight()
 
 void ButiEngine::StageSelectManagerComponent::OnPushLeft()
 {
+	auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/Move_2.wav");
+
+	gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
 	stageNum--;
 	if (stageNum < 0)
 	{

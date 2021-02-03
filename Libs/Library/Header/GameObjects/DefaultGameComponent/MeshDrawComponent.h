@@ -27,8 +27,8 @@ namespace ButiEngine {
 		void SetBlendMode(const BlendMode& arg_blendMode);
 		void SetMaterialTag(MaterialTag  arg_materialTag);
 		void SetMeshTag(MeshTag  arg_meshTag);
-		void SetShaderTag(ShaderTag  arg_shaderTag);
 		void SetModelTag(ModelTag  arg_modelTag);
+		void SetShaderTag(ShaderTag  arg_shaderTag);
 		std::shared_ptr<GameComponent> Clone()override;
 		void Regist();
 		void ReRegist();

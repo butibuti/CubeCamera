@@ -21,7 +21,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 #endif
 
-	auto app = CreateDefaultApplicationInstance("cubegame_editor", WindowPopType::max, 1080,720, false);
+	auto app = CreateDefaultApplicationInstance("Find", WindowPopType::max, 1080,720, false);
 	GameDevice::Initialize();
 	GameDevice::GetInput()->Initialize(app);
 
@@ -30,7 +30,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	app->InitLoadResources();
 	//ComponentsLoader::GetInstance()->AddGameComponent<NumberManagerComponent>();
 	
-	app->GetSceneManager()->LoadScene_Init_EditMode("StageSelectScene");
+	app->GetSceneManager()->LoadScene_Init_EditMode("TitleScene");
 
 	app->GetGraphicDevice()->SetClearColor(Vector4(0, 0, 0, 1));
 	int returnCode = app->Run();

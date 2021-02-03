@@ -13,11 +13,11 @@ void ButiEngine::TitleBlockComponent::OnUpdate()
 }
 
 void ButiEngine::TitleBlockComponent::OnSet()
-{/*
-	auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>();
+{
+	/*auto meshDraw = gameObject.lock()->GetGameComponent<MeshDrawComponent_Static>();
 	if (meshDraw) {
-		auto mesh = gameObject.lock()->GetResourceContainer()->GetMeshTag("Cube_UV_Normal");
-		meshDraw->SetMeshTag(mesh);
+		auto mesh = gameObject.lock()->GetResourceContainer()->GetModelTag("Model/Cubes/NormalBlock.b3m");
+		meshDraw->SetModelTag(mesh);
 		meshDraw->ReRegist();
 	}*/
 }

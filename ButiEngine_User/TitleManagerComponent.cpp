@@ -1,13 +1,33 @@
 #include "stdafx_u.h"
 #include "TitleManagerComponent.h"
+#include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 
 void ButiEngine::TitleManagerComponent::OnUpdate()
 {
 	if (GameDevice::GetInput()->GetAnyButtonTrigger() || GameDevice::GetInput()->TriggerKey(Keys::Space))
 	{
+		auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/potion.wav");
+
+		gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
+		shp_timer->Start();
+		auto mainCam = GetCamera("main");
+		auto camera = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Camera");
+		auto anim= camera.lock()->AddGameComponent<TransformAnimation>();
+
+		mainCam.lock()->shp_transform = camera.lock()->transform;
+
+		anim->SetTargetTransform(camera.lock()->transform->Clone());
+		anim->GetTargetTransform()->TranslateZ(20);
+		anim->SetEaseType(Easing::EasingType::EaseInBack);
+		anim->SetSpeed(1.0f / 60.0f);
+	}
+	if (shp_timer->Update()) {
+		shp_timer->Stop();
 		auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
+		sceneManager->RemoveScene("StageSelectScene");
 		sceneManager->LoadScene("StageSelectScene");
 		sceneManager->ChangeScene("StageSelectScene");
+
 	}
 }
 
@@ -17,7 +37,8 @@ void ButiEngine::TitleManagerComponent::OnSet()
 
 void ButiEngine::TitleManagerComponent::Start()
 {
-	gameObject.lock()->GetApplication().lock()->GetGraphicDevice()->SetClearColor(Vector4(0.025f, 0.025f, 0.025f, 1.0f));
+	//gameObject.lock()->GetApplication().lock()->GetGraphicDevice()->SetClearColor(Vector4(0.025f, 0.025f, 0.025f, 1.0f));
+	shp_timer = ObjectFactory::Create<RelativeTimer>(60);
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::TitleManagerComponent::Clone()

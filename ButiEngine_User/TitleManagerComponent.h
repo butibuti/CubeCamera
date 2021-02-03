@@ -20,6 +20,7 @@ namespace ButiEngine {
 		}
 		void OnShowUI();
 	private:
+		std::shared_ptr<RelativeTimer>shp_timer;
 	};
 
 }
