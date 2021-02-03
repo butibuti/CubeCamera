@@ -2,6 +2,8 @@
 #include "StartPlayerDirectingComponent.h"
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 #include"CameraMeshComponent.h"
+#include"PlayerBehavior.h"
+#include"InvisibleBlockManagerComponent.h"
 
 void ButiEngine::StartPlayerDirectingComponent::OnUpdate()
 {
@@ -13,15 +15,8 @@ void ButiEngine::StartPlayerDirectingComponent::OnUpdate()
 	{
 		timer->Stop();
 		fallStart = true;
-		auto t = gameObject.lock()->transform;
 
-		auto anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
-		anim->SetSpeed(1.0f / 20);
-		anim->SetTargetTransform(t->Clone());
-		anim->GetTargetTransform()->TranslateY(startPos.y - spawnPos.y);
-		anim->GetTargetTransform()->RollLocalRotationX_Degrees(0.1f);
-
-		anim->SetEaseType(Easing::EasingType::EaseInQuad);
+		Animation();
 	}
 	auto anim = gameObject.lock()->GetGameComponent<TransformAnimation>();
 	if (fallStart && !anim)
@@ -33,6 +28,10 @@ void ButiEngine::StartPlayerDirectingComponent::OnUpdate()
 
 		//ƒtƒ‰ƒbƒVƒ…
 		GetManager().lock()->GetGameObject("CameraMesh").lock()->GetGameComponent<CameraMeshComponent>()->Flash();
+
+		gameObject.lock()->GetBehavior<PlayerBehavior>()->CheckLookBlock();
+		GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>()->CheckSeen();
+
 		start = true;
 	}
 }
@@ -56,4 +55,19 @@ std::shared_ptr<ButiEngine::GameComponent> ButiEngine::StartPlayerDirectingCompo
 
 void ButiEngine::StartPlayerDirectingComponent::OnShowUI()
 {
+}
+
+void ButiEngine::StartPlayerDirectingComponent::Animation()
+{
+	start = false;
+
+	auto t = gameObject.lock()->transform;
+
+	auto anim = gameObject.lock()->AddGameComponent<TransformAnimation>();
+	anim->SetSpeed(1.0f / 15);
+	anim->SetTargetTransform(t->Clone());
+	anim->GetTargetTransform()->TranslateY(startPos.y - spawnPos.y);
+	anim->GetTargetTransform()->RollLocalRotationX_Degrees(0.1f);
+
+	anim->SetEaseType(Easing::EasingType::EaseInQuad);
 }

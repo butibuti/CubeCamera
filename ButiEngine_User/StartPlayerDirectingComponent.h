@@ -22,7 +22,10 @@ namespace ButiEngine {
 
 		bool IsStart() { return start; }
 		void SetSpawnPos(Vector3 v) { spawnPos = v; }
+		Vector3 GetSpawnPos() { return spawnPos; }
 		void SetStartPos(Vector3 v) { startPos = v; }
+
+		void Animation();
 	private:
 		std::shared_ptr<RelativeTimer> timer;
 		bool start;
