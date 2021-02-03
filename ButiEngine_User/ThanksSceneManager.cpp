@@ -5,8 +5,12 @@
 
 void ButiEngine::ThanksSceneManager::OnUpdate()
 {
-    if (GameDevice::GetInput()->TriggerKey(Keys::Space)|| GameDevice::GetInput()->GetAnyButtonTrigger()) {
+    if (!isClicked &&(GameDevice::GetInput()->TriggerKey(Keys::Space)|| GameDevice::GetInput()->GetAnyButtonTrigger())) {
         isClicked = true;
+        
+
+        auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/thanks.wav");
+        gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
     }
 
 

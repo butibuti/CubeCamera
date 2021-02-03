@@ -4,6 +4,7 @@ namespace ButiEngine {
 	class StageSelectManagerComponent :public GameComponent
 	{
 	public:
+		static int stageNum;
 		StageSelectManagerComponent() {}
 
 		void OnUpdate()override;
@@ -27,7 +28,6 @@ namespace ButiEngine {
 		std::shared_ptr<RelativeTimer> animTimer;
 		std::weak_ptr<GameObject> obj_stageNumber;
 
-		static int stageNum;
 		static int maxStageNum;
 
 		bool end;

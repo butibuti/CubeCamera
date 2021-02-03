@@ -22,20 +22,17 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 #endif
 
-	auto app = CreateDefaultApplicationInstance("Find", WindowPopType::max, 1080,720, false);
+	auto app = CreateDefaultApplicationInstance("Find", WindowPopType::normal, 1920,1080, true);
 	GameDevice::Initialize();
 	GameDevice::GetInput()->Initialize(app);
+	GameDevice::GetInput()->SetCursorHide(true);
 
 	
 	//ModelFileConverter::FBXtoB3M("Player.fbx", "Player.b3m", "Model/Cubes/player/");
 	app->InitLoadResources();
-<<<<<<< HEAD
 	//ComponentsLoader::GetInstance()->AddGameComponent<ThanksSceneManager>();
-=======
-	ComponentsLoader::GetInstance()->AddGameComponent<InvisibleBlockAuraComponent>();
->>>>>>> 268a1845b06874291b163db627200c1a6a8b493d
 	
-	app->GetSceneManager()->LoadScene_Init_EditMode("TitleScene");
+	app->GetSceneManager()->LoadScene_Init("TitleScene");
 
 	app->GetGraphicDevice()->SetClearColor(Vector4(0, 0, 0, 1));
 	int returnCode = app->Run();

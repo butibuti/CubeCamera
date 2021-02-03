@@ -6,7 +6,7 @@
 
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 int ButiEngine::StageSelectManagerComponent::stageNum = 0;
-int ButiEngine::StageSelectManagerComponent::maxStageNum = 1;//15;
+int ButiEngine::StageSelectManagerComponent::maxStageNum = 15;
 
 void ButiEngine::StageSelectManagerComponent::OnUpdate()
 {
@@ -23,7 +23,7 @@ void ButiEngine::StageSelectManagerComponent::OnUpdate()
 		else if (!end&& GameSettings::TriggerDecision())
 		{
 
-			auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/potion.wav");
+			auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/decide.wav");
 
 			gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
 			end = true;
@@ -154,7 +154,7 @@ void ButiEngine::StageSelectManagerComponent::RestartAnimTimer()
 
 void ButiEngine::StageSelectManagerComponent::OnPushRight()
 {
-	auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/Move_2.wav");
+	auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/select.wav");
 
 	gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag,0.1f);
 
@@ -178,7 +178,7 @@ void ButiEngine::StageSelectManagerComponent::OnPushRight()
 
 void ButiEngine::StageSelectManagerComponent::OnPushLeft()
 {
-	auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/Move_2.wav");
+	auto seTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/select.wav");
 
 	gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->Play(seTag, 0.1f);
 	stageNum--;

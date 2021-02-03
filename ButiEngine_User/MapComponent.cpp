@@ -87,6 +87,9 @@ void ButiEngine::MapComponent::Start()
 	mapStartColor = Vector4(0.0f, 0.0f, 0.2f, 1.0f);
 	mapEndColor = Vector4(0.0f, 0.3f, 1.0f, 1.0f);
 
+	auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
+	std::string sceneName = "Stage" + std::to_string(StageSelectManagerComponent::stageNum-1) + "Scene";
+	sceneManager->RemoveScene(sceneName);
 
 }
 
