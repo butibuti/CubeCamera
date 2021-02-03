@@ -30,7 +30,7 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	app->InitLoadResources();
 	//ComponentsLoader::GetInstance()->AddGameComponent<NumberManagerComponent>();
 	
-	app->GetSceneManager()->LoadScene_Init_EditMode("Stage0Scene");
+	app->GetSceneManager()->LoadScene_Init_EditMode("StageSelectScene");
 
 	app->GetGraphicDevice()->SetClearColor(Vector4(0, 0, 0, 1));
 	int returnCode = app->Run();
