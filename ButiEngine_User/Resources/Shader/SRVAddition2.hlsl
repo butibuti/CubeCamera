@@ -12,10 +12,10 @@ float4 PSMain(Pixel_UV pixel) : SV_TARGET
 
     float4 output = mainTexture.Sample(mainSampler, samplePoint) + subTexture_1.Sample(mainSampler, samplePoint)*lightDir.w;
 
-	float vignette = length(float2(0.5, 0.5) - pixel.uv);
+	//float vignette = length(float2(0.5, 0.5) - pixel.uv);
 
-	vignette = clamp(vignette - 0.2, 0, 1);
-	output.rgb -= vignette;
+	//vignette = clamp(vignette - 0.2, 0, 1);
+	//output.rgb -= vignette;
     output.w = 1.0f;
     return output;
 }

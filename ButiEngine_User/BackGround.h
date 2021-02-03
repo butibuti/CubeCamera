@@ -10,6 +10,7 @@ namespace ButiEngine {
 		float moveTime = 0.0;
 		float moveMax;
 		Vector3 initPos;
+		Vector3 initScale;
 	};
 
 	class BackGround :public GameComponent
@@ -23,6 +24,7 @@ namespace ButiEngine {
 		std::string GetGameComponentName()override {
 			return "BackGround";
 		}
+		void SetIsClear(const bool arg_isClear);
 		std::shared_ptr<GameComponent> Clone()override;
 		template<class Archive>
 		void serialize(Archive& archive)
@@ -33,14 +35,20 @@ namespace ButiEngine {
 			archive(startColor);
 		}
 		void OnShowUI();
-
+		void Brast();
+		void SetStartColor(const Vector4& arg_color);
+		void SetEndColor(const Vector4 & arg_color);
 	private:
 		Vector3 center;
 		float pase;
 		Vector4 endColor;
 		Vector4 startColor;
-		
+		float scale = 0.0f;
+		bool isClear = false;
+		bool isBrast = false;
+
 		std::vector<std::shared_ptr<Transform>> vec_shp_transform;
+		std::vector<std::shared_ptr<GameObject>> vec_gameObjects;
 		std::vector<FloatBlockData> vec_blockData;
 		std::vector<std::shared_ptr<CBuffer<LightVariable>>>vec_shp_lightBuffer;
 	};

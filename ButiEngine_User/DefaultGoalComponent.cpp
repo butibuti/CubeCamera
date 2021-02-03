@@ -4,8 +4,8 @@
 #include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent_Static.h"
 #include"PlayerBehavior.h"
 #include"MapComponent.h"
-#include"StartPlayerDirectingComponent.h"
 #include"CameraController.h"
+#include"BackGround.h"
 
 void ButiEngine::DefaultGoalComponent::OnUpdate()
 {
@@ -67,9 +67,14 @@ void ButiEngine::DefaultGoalComponent::Seen()
 	GetManager().lock()->AddObjectFromCereal("GoalAura", ObjectFactory::Create<Transform>(pos, rot, scale));
 
 	auto map = GetManager().lock()->GetGameObject("Map");
-	auto mapComponent = map.lock()->GetGameComponent< MapComponent>();
-	mapComponent->SetMapEndColor(Vector4(0.95, 0.7, 0.4, 1.0));
+	auto mapComponent = map.lock()->GetGameComponent< MapComponent>(); 
+	mapComponent->SetMapEndColor(Vector4(1.0f, 1.0f, 0.5f, 1.0f));
+	mapComponent->SetMapStartColor(Vector4(0.7f, 0.5f, 0.0f, 1.0f));
 	mapComponent->ShakeStart(0.01f);
 
 	GetManager().lock()->GetGameObject("MainCamera").lock()->GetGameComponent<CameraController>()->ZoomInOut();
+	auto backGround = GetManager().lock()->GetGameObject("BackGroundController").lock()->GetGameComponent<BackGround>();
+	backGround->SetEndColor(Vector4(1.0f, 1.0f, 0.5f, 1.0f));
+	backGround->SetStartColor(Vector4(0.7f, 0.5f, 0.0f, 1.0f));
+	backGround->SetIsClear(true);
 }

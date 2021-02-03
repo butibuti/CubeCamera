@@ -14,17 +14,6 @@
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
-#ifdef DEBUG
-	GUI::Begin("player");
-	GUI::Text(mapPos);
-	if (goal)
-	{
-		GUI::Text("Clear");
-		GUI::End();
-		return; 
-	}
-	GUI::End();
-#endif
 	auto directing = gameObject.lock()->GetGameComponent<StartPlayerDirectingComponent>();
 	if (gameObject.lock()->transform->GetWorldPosition().y < -40.0f)
 	{
@@ -105,6 +94,14 @@ std::shared_ptr<ButiEngine::Behavior> ButiEngine::PlayerBehavior::Clone()
 
 void ButiEngine::PlayerBehavior::OnCollisionEnter(std::weak_ptr<GameObject> arg_other)
 {
+}
+
+void ButiEngine::PlayerBehavior::OnCollision(std::weak_ptr<GameObject> arg_other)
+{
+	if (!IsRollFinish() || goal)
+	{
+		return;
+	}
 	GameObjectTag tag = arg_other.lock()->GetGameObjectTag();
 	std::string tagStr = GetTagManager()->GetTagName(tag);
 	if (tagStr != "Goal")
@@ -131,10 +128,6 @@ void ButiEngine::PlayerBehavior::OnCollisionEnter(std::weak_ptr<GameObject> arg_
 	{
 		goal = true;
 	}
-}
-
-void ButiEngine::PlayerBehavior::OnCollision(std::weak_ptr<GameObject> arg_other)
-{
 }
 
 void ButiEngine::PlayerBehavior::OnCollisionEnd(std::weak_ptr<GameObject> arg_other)

@@ -162,6 +162,7 @@
     <ClCompile Include="ArrowEffectComponent.cpp" />
     <ClCompile Include="BackGround.cpp" />
     <ClCompile Include="BlockComponent.cpp" />
+    <ClCompile Include="BurstManagerComponent.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="CameraMeshComponent.cpp" />
     <ClCompile Include="DefaultGameComponent.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="ArrowEffectComponent.h" />
     <ClInclude Include="BackGround.h" />
     <ClInclude Include="BlockComponent.h" />
+    <ClInclude Include="BurstManagerComponent.h" />
     <ClInclude Include="ButiEngineHeader.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="CameraMeshComponent.h" />

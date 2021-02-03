@@ -1,6 +1,7 @@
 #include "stdafx_u.h"
 #include "NumberManagerComponent.h"
 #include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent.h"
+#include"StageSelectManagerComponent.h"
 
 void ButiEngine::NumberManagerComponent::OnUpdate()
 {
@@ -14,7 +15,7 @@ void ButiEngine::NumberManagerComponent::Start()
 {
 	number1 = GetManager().lock()->AddObjectFromCereal("Number1", ObjectFactory::Create<Transform>(Vector3(0, 100, 9), Vector3::Zero, Vector3(300, 300, 1)));
 	number10 = GetManager().lock()->AddObjectFromCereal("Number10", ObjectFactory::Create<Transform>(Vector3(-150, 100, 10), Vector3::Zero, Vector3(300, 300, 1)));
-	SetNumber(0);
+	SetNumber(StageSelectManagerComponent::GetStageNum());
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::NumberManagerComponent::Clone()
