@@ -102,17 +102,8 @@ void ButiEngine::MapEditorComponent::OnUpdate()
     if (GUI::Button("Replace InvisibleBlock")) {
 
         auto gameObject = Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), "InvisibleBlock", GameSettings::invisibleBlock + invisibleID);
-
-
         gameObject->GetGameComponent<InvisibleBlockComponent>()->SetID(invisibleID);
         gameObject->GetGameComponent<InvisibleBlockComponent>()->SetMapPos(Vector3(blockPos[0], blockPos[1], blockPos[2]));
-
-
-        auto invisibleBlockManager = GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
-        invisibleBlockManager->ClearBlocks();
-
-        invisibleBlockManager->RegistBlocks();
-        invisibleBlockManager->Check();
     }
 
 
@@ -267,12 +258,6 @@ void ButiEngine::MapEditorComponent::OnUpdate()
 
             (*p_mapObjectData)[blockPos[1]][blockPos[2]][blockPos[0]]->SetIsRemove(true);
             (*p_mapObjectData)[blockPos[1]][blockPos[2]][blockPos[0]] = nullptr;
-
-            auto invisibleBlockManager = GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
-            invisibleBlockManager->ClearBlocks();
-
-            invisibleBlockManager->RegistBlocks();
-            invisibleBlockManager->Check();
         }
 
     }
@@ -321,19 +306,11 @@ void ButiEngine::MapEditorComponent::OnUpdate()
                 for (int x = min.x; x <= max.x; x++) {
                     auto pos = Vector3(y, z, x);
                     auto gameObject = Replace(pos, "InvisibleBlock", GameSettings::invisibleBlock + invisibleID);
-
                     gameObject->GetGameComponent<InvisibleBlockComponent>()->SetID(invisibleID);
-                    gameObject->GetGameComponent<InvisibleBlockComponent>()->SetMapPos(Vector3(x, y, z));
-
+                    gameObject->GetGameComponent<InvisibleBlockComponent>()->SetMapPos(Vector3(blockPos[0], blockPos[1], blockPos[2]));
                 }
             }
         }
-
-        auto invisibleBlockManager = GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
-        invisibleBlockManager->ClearBlocks();
-
-        invisibleBlockManager->RegistBlocks();
-        invisibleBlockManager->Check();
     }
 
 
@@ -359,12 +336,6 @@ void ButiEngine::MapEditorComponent::OnUpdate()
                 }
             }
         }
-
-        auto invisibleBlockManager = GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
-        invisibleBlockManager->ClearBlocks();
-
-        invisibleBlockManager->RegistBlocks();
-        invisibleBlockManager->Check();
     }
 
 
@@ -430,12 +401,6 @@ void ButiEngine::MapEditorComponent::OnUpdate()
 
             }
         }
-
-        auto invisibleBlockManager = GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
-        invisibleBlockManager->ClearBlocks();
-
-        invisibleBlockManager->RegistBlocks();
-        invisibleBlockManager->Check();
     }
     GUI::SameLine();
     if (GUI::Button("Remove Y")) {
@@ -452,12 +417,6 @@ void ButiEngine::MapEditorComponent::OnUpdate()
             }
         }
         (*p_mapObjectData).pop_back();
-
-        auto invisibleBlockManager = GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
-        invisibleBlockManager->ClearBlocks();
-
-        invisibleBlockManager->RegistBlocks();
-        invisibleBlockManager->Check();
     }
     GUI::SameLine();
     if (GUI::Button("Remove Z")) {
@@ -474,12 +433,6 @@ void ButiEngine::MapEditorComponent::OnUpdate()
             }
             (*p_mapObjectData)[i].pop_back();
         }
-
-        auto invisibleBlockManager = GetManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
-        invisibleBlockManager->ClearBlocks();
-
-        invisibleBlockManager->RegistBlocks();
-        invisibleBlockManager->Check();
     }
     if (GUI::Button("MapReload")) {
         shp_mapComponent->PutBlock(0);

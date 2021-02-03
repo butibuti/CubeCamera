@@ -28,30 +28,19 @@ namespace ButiEngine {
 		}
 		void OnShowUI();
 
-		void SetID(int i) { id = i; }
+		void SetID(int arg_id) { id = arg_id; }
 		int GetID() { return id; }
-		void SetActive(bool active);
-		bool IsActive() { return active; }
-		void SetSeen(bool flag) { seen = flag; }
-		bool IsSeen() { return seen; }
-		bool IsHitPlayer() { return hitPlayer; }
-		void SetMapPos(Vector3 mapPos) { this->mapPos = mapPos; }
-		const Vector3& GetMapPos()const {
-			return mapPos;
-		}
-		Vector3 GetCameraLocalPos()const;
-		static void SetCameraInv(const Matrix4x4& arg_cameraInv) {
-			cameraInv = arg_cameraInv;
-		}
+		void Active();
+		void UnActive();
+		void SetSeen(bool arg_flag) { seen = arg_flag; }
+		bool GetSeen() { return seen; }
+		void SetMapPos(Vector3 arg_mapPos) { mapPos = arg_mapPos; }
+		void Seen();
 	private:
-		static Matrix4x4 cameraInv;
-		std::shared_ptr<MapComponent> shp_map;
-		Vector3 mapPos;
 		int id;
-		std::shared_ptr<Collision::CollisionPrimitive_Box_AABB> shp_AABB;
 		bool active;
 		bool seen;
-		bool hitPlayer;
+		Vector3 mapPos;
 	};
 
 }

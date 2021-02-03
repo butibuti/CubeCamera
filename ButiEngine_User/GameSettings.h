@@ -16,6 +16,8 @@ public:
 	static const int invisibleBlock = 100;
 	static const int playerAndGoal=200;
 
+	static bool IsBlock(int i);
+
 	static bool CheckRight();
 	static bool CheckLeft();
 	static bool CheckFront();

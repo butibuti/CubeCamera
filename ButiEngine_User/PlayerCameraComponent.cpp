@@ -12,7 +12,7 @@ void ButiEngine::PlayerCameraComponent::OnSet()
 void ButiEngine::PlayerCameraComponent::Start()
 {
 	auto camera = GetCamera("playerCamera");
-	camera.lock()->SetActive(false);
+	//camera.lock()->SetActive(false);
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::PlayerCameraComponent::Clone()

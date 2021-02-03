@@ -5,6 +5,16 @@ using namespace ButiEngine;
 
 float GameSettings::BlockSize = 1.0f;
 
+bool GameSettings::IsBlock(int i)
+{
+	if (i == block) { return true; }
+	if (i == tutorialGoal) { return true; }
+	if (i == easyGoal) { return true; }
+	if (i == defaultGoal) { return true; }
+	if (i >= invisibleBlock) { return true; }
+	return false;
+}
+
 bool GameSettings::CheckRight()
 {
 	bool dKey = GameDevice::GetInput()->CheckKey(Keys::D);

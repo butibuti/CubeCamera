@@ -9,6 +9,7 @@
 #include"RippleComponent.h"
 #include"CameraMeshComponent.h"
 #include"StartPlayerDirectingComponent.h"
+#include"InvisibleBlockComponent.h"
 
 void ButiEngine::PlayerBehavior::OnUpdate()
 {
@@ -30,7 +31,6 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 	if (timer->Update())
 	{
 		timer->Stop();
-		shp_invisibleBlockManager->Check();
 		Expansion();
 
 		//”g–ä
@@ -40,6 +40,9 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 
 		//ƒtƒ‰ƒbƒVƒ…
 		GetManager().lock()->GetGameObject("CameraMesh").lock()->GetGameComponent<CameraMeshComponent>()->Flash();
+
+		CheckLookBlock();
+		shp_invisibleBlockManager->CheckSeen();
 	}
 	Shrink();
 	Contoroll();
@@ -60,7 +63,7 @@ void ButiEngine::PlayerBehavior::Start()
 	length = 1.0f;
 	shp_map = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Map").lock()->GetGameComponent<MapComponent>();
 	mapPos = shp_map->GetPlayerPos();
-	offset =mapPos-gameObject.lock()->transform->GetWorldPosition();
+	offset = mapPos - startPos;
 	timer = ObjectFactory::Create<RelativeTimer>(9);
 	shp_invisibleBlockManager= gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
 }
@@ -115,6 +118,111 @@ void ButiEngine::PlayerBehavior::OnShowUI()
 bool ButiEngine::PlayerBehavior::IsRollFinish()
 {
 	return !timer->IsOn();
+}
+
+void ButiEngine::PlayerBehavior::CheckLookBlock()
+{
+	shp_invisibleBlockManager->Reset();
+	CheckLookDirection();
+	std::weak_ptr<GameObject> hitObj;
+	if (lookDirection == LookDirection::Right)
+	{
+		hitObj = GetRightBlock(mapPos);
+	}
+	else if (lookDirection == LookDirection::Left)
+	{
+		hitObj = GetLeftBlock(mapPos);
+	}
+	else if (lookDirection == LookDirection::Up)
+	{
+		hitObj = GetUpBlock(mapPos);
+	}
+	else if (lookDirection == LookDirection::Down)
+	{
+		hitObj = GetDownBlock(mapPos);
+	}
+	else if (lookDirection == LookDirection::Front)
+	{
+		hitObj = GetFrontBlock(mapPos);
+	}
+	else if (lookDirection == LookDirection::Back)
+	{
+		hitObj = GetBackBlock(mapPos);
+	}
+
+	if (!hitObj.lock())
+	{
+		return;
+	}
+
+	auto objTag = hitObj.lock()->GetGameObjectTag();
+	if (objTag == GetTagManager()->GetObjectTag("Goal"))
+	{
+		auto eGoalComp = hitObj.lock()->GetGameComponent<EasyGoalComponent>();
+		auto dGoalComp = hitObj.lock()->GetGameComponent<DefaultGoalComponent>();
+		if (eGoalComp)
+		{
+			eGoalComp->Seen();
+		}
+		else if (dGoalComp)
+		{
+			dGoalComp->Seen();
+		}
+	}
+	else if (objTag == GetTagManager()->GetObjectTag("InvisibleBlock"))
+	{
+		auto invBlockComp = hitObj.lock()->GetGameComponent<InvisibleBlockComponent>();
+		if (invBlockComp)
+		{
+			invBlockComp->Seen();
+		}
+	}
+}
+
+void ButiEngine::PlayerBehavior::CheckLookDirection()
+{
+	Vector3 front = gameObject.lock()->transform->GetFront() * 10.0f;
+	Vector3 dir = front - gameObject.lock()->transform->GetWorldPosition();
+	
+	float x = abs(dir.x);
+	float y = abs(dir.y);
+	float z = abs(dir.z);
+
+	if (x > y && x > z)
+	{
+		if (dir.x > 0)
+		{
+			lookDirection = LookDirection::Right;
+		}
+		if (dir.x < 0)
+		{
+			lookDirection = LookDirection::Left;
+		}
+	}
+
+	if (y > x && y > z)
+	{
+		if (dir.y > 0)
+		{
+			lookDirection = LookDirection::Up;
+		}
+		if (dir.y < 0)
+		{
+			lookDirection = LookDirection::Down;
+		}
+	}
+
+	if (z > x && z > y)
+	{
+		if (dir.z > 0)
+		{
+			lookDirection = LookDirection::Front;
+		}
+		if (dir.z < 0)
+		{
+			lookDirection = LookDirection::Back;
+		}
+	}
 }
 
 void ButiEngine::PlayerBehavior::Contoroll()
@@ -587,6 +695,96 @@ void ButiEngine::PlayerBehavior::RotationBack()
 		anim->GetTargetTransform()->RollWorldRotationX_Degrees(-90.0f);
 		anim->SetEaseType(Easing::EasingType::Liner);
 	}
+}
+
+std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetRightBlock(Vector3 mapPos)
+{
+	auto mapData = shp_map->GetCurrentMapData()->mapData;
+	for (unsigned int i = mapPos.x + 1; i < mapData[mapPos.y][mapPos.z].size() - 1; i++)
+	{
+		if (GameSettings::IsBlock(mapData[mapPos.y][mapPos.z][i]))
+		{
+			auto mapObjectData = shp_map->GetMapObjectData();
+			return mapObjectData[mapPos.y][mapPos.z][i];
+		}
+	}
+
+	return std::weak_ptr<GameObject>();
+}
+
+std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetLeftBlock(Vector3 mapPos)
+{
+	auto mapData = shp_map->GetCurrentMapData()->mapData;
+	for (int i = mapPos.x - 1; i >= 0; i--)
+	{
+		if (GameSettings::IsBlock(mapData[mapPos.y][mapPos.z][i]))
+		{
+			auto mapObjectData = shp_map->GetMapObjectData();
+			return mapObjectData[mapPos.y][mapPos.z][i];
+		}
+	}
+
+	return std::weak_ptr<GameObject>();
+}
+
+std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetUpBlock(Vector3 mapPos)
+{
+	auto mapData = shp_map->GetCurrentMapData()->mapData;
+	for (unsigned int i = mapPos.y + 1; i < mapData.size() - 1; i++)
+	{
+		if (GameSettings::IsBlock(mapData[i][mapPos.z][mapPos.x]))
+		{
+			auto mapObjectData = shp_map->GetMapObjectData();
+			return mapObjectData[i][mapPos.z][mapPos.x];
+		}
+	}
+
+	return std::weak_ptr<GameObject>();
+}
+
+std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetDownBlock(Vector3 mapPos)
+{
+	auto mapData = shp_map->GetCurrentMapData()->mapData;
+	for (int i = mapPos.y - 1; i >= 0; i--)
+	{
+		if (GameSettings::IsBlock(mapData[i][mapPos.z][mapPos.x]))
+		{
+			auto mapObjectData = shp_map->GetMapObjectData();
+			return mapObjectData[i][mapPos.z][mapPos.x];
+		}
+	}
+
+	return std::weak_ptr<GameObject>();
+}
+
+std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetFrontBlock(Vector3 mapPos)
+{
+	auto mapData = shp_map->GetCurrentMapData()->mapData;
+	for (unsigned int i = mapPos.z + 1; i < mapData[mapPos.y].size() - 1; i++)
+	{
+		if (GameSettings::IsBlock(mapData[mapPos.y][i][mapPos.x]))
+		{
+			auto mapObjectData = shp_map->GetMapObjectData();
+			return mapObjectData[mapPos.y][i][mapPos.x];
+		}
+	}
+
+	return std::weak_ptr<GameObject>();
+}
+
+std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetBackBlock(Vector3 mapPos)
+{
+	auto mapData = shp_map->GetCurrentMapData()->mapData;
+	for (int i = mapPos.z - 1; i >= 0; i--)
+	{
+		if (GameSettings::IsBlock(mapData[mapPos.y][i][mapPos.x]))
+		{
+			auto mapObjectData = shp_map->GetMapObjectData();
+			return mapObjectData[mapPos.y][i][mapPos.x];
+		}
+	}
+
+	return std::weak_ptr<GameObject>();
 }
 
 void ButiEngine::PlayerBehavior::Fall()
