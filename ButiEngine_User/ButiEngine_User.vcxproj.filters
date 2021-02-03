@@ -1,191 +1,65 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
+    <ClCompile Include="ArrowEffectComponent.cpp" />
+    <ClCompile Include="BackGround.cpp" />
+    <ClCompile Include="BlockComponent.cpp" />
+    <ClCompile Include="BurstManagerComponent.cpp" />
+    <ClCompile Include="CameraController.cpp" />
+    <ClCompile Include="CameraMeshComponent.cpp" />
+    <ClCompile Include="DefaultGameComponent.cpp" />
+    <ClCompile Include="DefaultGoalComponent.cpp" />
+    <ClCompile Include="EasyGoalComponent.cpp" />
+    <ClCompile Include="GameSettings.cpp" />
+    <ClCompile Include="GoalAuraComponent.cpp" />
+    <ClCompile Include="InvisibleBlockComponent.cpp" />
+    <ClCompile Include="InvisibleBlockManagerComponent.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="MapComponent.cpp" />
+    <ClCompile Include="MapEditorComponent.cpp" />
+    <ClCompile Include="NumberManagerComponent.cpp" />
+    <ClCompile Include="PlayerBehavior.cpp" />
+    <ClCompile Include="PlayerCameraComponent.cpp" />
+    <ClCompile Include="RippleComponent.cpp" />
+    <ClCompile Include="ShakeComponent.cpp" />
+    <ClCompile Include="StageSelectManagerComponent.cpp" />
+    <ClCompile Include="StartPlayerDirectingComponent.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="TestBehavior.cpp" />
+    <ClCompile Include="TestGameComponent.cpp" />
+    <ClCompile Include="TitleBlockComponent.cpp" />
+    <ClCompile Include="TitleManagerComponent.cpp" />
+    <ClCompile Include="ThanksSceneManager.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="stdafx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DefaultGameComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestGameComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TestBehavior.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerBehavior.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MapComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GameSettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="DefaultGoalComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="EasyGoalComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PlayerCameraComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InvisibleBlockComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InvisibleBlockManagerComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MapEditorComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleManagerComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TitleBlockComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraController.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StageSelectManagerComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GoalAuraComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="RippleComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="CameraMeshComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ArrowEffectComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="BlockComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StartPlayerDirectingComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ShakeComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="NumberManagerComponent.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-<<<<<<< HEAD
-    <ClCompile Include="BackGround.cpp">
-=======
-    <ClCompile Include="BurstManagerComponent.cpp">
->>>>>>> origin/dev_burst
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="stdafx_u.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ButiEngineHeader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="stdafx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestGameComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TestBehavior.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerBehavior.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GameSettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="DefaultGoalComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="EasyGoalComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="PlayerCameraComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InvisibleBlockComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InvisibleBlockManagerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MapEditorComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleManagerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="TitleBlockComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StageSelectManagerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="GoalAuraComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RippleComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CameraMeshComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ArrowEffectComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BlockComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StartPlayerDirectingComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ShakeComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="NumberManagerComponent.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-<<<<<<< HEAD
-    <ClInclude Include="BackGround.h">
-=======
-    <ClInclude Include="BurstManagerComponent.h">
->>>>>>> origin/dev_burst
-      <Filter>Header Files</Filter>
-    </ClInclude>
+    <ClInclude Include="ArrowEffectComponent.h" />
+    <ClInclude Include="BackGround.h" />
+    <ClInclude Include="BlockComponent.h" />
+    <ClInclude Include="BurstManagerComponent.h" />
+    <ClInclude Include="ButiEngineHeader.h" />
+    <ClInclude Include="CameraController.h" />
+    <ClInclude Include="CameraMeshComponent.h" />
+    <ClInclude Include="DefaultGoalComponent.h" />
+    <ClInclude Include="EasyGoalComponent.h" />
+    <ClInclude Include="GameSettings.h" />
+    <ClInclude Include="GoalAuraComponent.h" />
+    <ClInclude Include="InvisibleBlockComponent.h" />
+    <ClInclude Include="InvisibleBlockManagerComponent.h" />
+    <ClInclude Include="MapComponent.h" />
+    <ClInclude Include="MapEditorComponent.h" />
+    <ClInclude Include="NumberManagerComponent.h" />
+    <ClInclude Include="PlayerBehavior.h" />
+    <ClInclude Include="PlayerCameraComponent.h" />
+    <ClInclude Include="RippleComponent.h" />
+    <ClInclude Include="ShakeComponent.h" />
+    <ClInclude Include="StageSelectManagerComponent.h" />
+    <ClInclude Include="StartPlayerDirectingComponent.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="stdafx_u.h" />
+    <ClInclude Include="TestBehavior.h" />
+    <ClInclude Include="TestGameComponent.h" />
+    <ClInclude Include="TitleBlockComponent.h" />
+    <ClInclude Include="TitleManagerComponent.h" />
+    <ClInclude Include="ThanksSceneManager.h" />
   </ItemGroup>
 </Project>

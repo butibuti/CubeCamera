@@ -188,6 +188,7 @@
     </ClCompile>
     <ClCompile Include="TestBehavior.cpp" />
     <ClCompile Include="TestGameComponent.cpp" />
+    <ClCompile Include="ThanksSceneManager.cpp" />
     <ClCompile Include="TitleBlockComponent.cpp" />
     <ClCompile Include="TitleManagerComponent.cpp" />
   </ItemGroup>
@@ -218,6 +219,7 @@
     <ClInclude Include="stdafx_u.h" />
     <ClInclude Include="TestBehavior.h" />
     <ClInclude Include="TestGameComponent.h" />
+    <ClInclude Include="ThanksSceneManager.h" />
     <ClInclude Include="TitleBlockComponent.h" />
     <ClInclude Include="TitleManagerComponent.h" />
   </ItemGroup>

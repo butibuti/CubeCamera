@@ -1,0 +1,59 @@
+#include "stdafx_u.h"
+#include "ThanksSceneManager.h"
+#include"Header/GameObjects/DefaultGameComponent/MeshDrawComponent.h"
+#include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
+
+void ButiEngine::ThanksSceneManager::OnUpdate()
+{
+    if (GameDevice::GetInput()->TriggerKey(Keys::Space)|| GameDevice::GetInput()->GetAnyButtonTrigger()) {
+        isClicked = true;
+    }
+
+    if (isClicked) {
+        t -= 0.02f;
+
+        
+        buffer->Get().lightDir.x = t;
+        buffer->Get().lightDir.y = t;
+        buffer->Get().lightDir.z = t;
+        buffer->Get().lightDir.w = t;
+
+        if (t <=- 0.5) {
+
+            auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
+            std::string sceneName = "TitleScene";
+            sceneManager->RemoveScene(sceneName);
+            sceneManager->LoadScene(sceneName);
+            sceneManager->ChangeScene(sceneName);
+        }
+
+    }
+
+
+}
+
+void ButiEngine::ThanksSceneManager::OnSet()
+{
+}
+
+void ButiEngine::ThanksSceneManager::Start()
+{
+    buffer = gameObject.lock()->GetGameComponent<MeshDrawComponent>()->GetCBuffer<LightVariable>("LightBuffer");
+
+    auto finalScreen = GetManager().lock()->GetGameObject("FinalScreen");
+    auto anim = finalScreen.lock()->AddGameComponent<TransformAnimation>();
+
+    anim->SetSpeed(1 / 60.0f);
+    anim->SetTargetTransform(finalScreen.lock()->transform->Clone());
+    anim->GetTargetTransform()->SetLocalScale(Vector3(1980, 1080, 1));
+    anim->SetEaseType(Easing::EasingType::EaseOutCirc);
+}
+
+std::shared_ptr<ButiEngine::GameComponent> ButiEngine::ThanksSceneManager::Clone()
+{
+    return ObjectFactory::Create<ThanksSceneManager>();
+}
+
+void ButiEngine::ThanksSceneManager::OnShowUI()
+{
+}
