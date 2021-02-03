@@ -4,7 +4,7 @@
 
 void ButiEngine::CameraMeshComponent::OnUpdate()
 {
-	alpha -= 0.06f;
+	alpha -= 0.1f;
 	if (alpha < 0)
 	{
 		alpha = 0;

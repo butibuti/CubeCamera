@@ -60,10 +60,9 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 		pos.y -= 0.3f;
 		GetManager().lock()->AddObjectFromCereal("Ripple", ObjectFactory::Create<Transform>(pos, Vector3(90, 0, 0), 0.0f));
 
+		CheckLookBlock();
 		//ƒtƒ‰ƒbƒVƒ…
 		GetManager().lock()->GetGameObject("CameraMesh").lock()->GetGameComponent<CameraMeshComponent>()->Flash();
-
-		CheckLookBlock();
 		shp_invisibleBlockManager->CheckSeen();
 		CheckExistUnderBlock(mapPos);
 	}
@@ -156,30 +155,64 @@ void ButiEngine::PlayerBehavior::CheckLookBlock()
 	shp_invisibleBlockManager->Reset();
 	CheckLookDirection();
 	std::weak_ptr<GameObject> hitObj;
+
+	Vector3 pos = gameObject.lock()->transform->GetWorldPosition();
+	Vector3 bPos = pos;
+
 	if (lookDirection == LookDirection::Right)
 	{
+		bPos.x += 100;
 		hitObj = GetRightBlock(mapPos);
 	}
 	else if (lookDirection == LookDirection::Left)
 	{
+		bPos.x -= 100;
 		hitObj = GetLeftBlock(mapPos);
 	}
 	else if (lookDirection == LookDirection::Up)
 	{
+		bPos.y += 100;
 		hitObj = GetUpBlock(mapPos);
 	}
 	else if (lookDirection == LookDirection::Down)
 	{
+		bPos.y -= 100;
 		hitObj = GetDownBlock(mapPos);
 	}
 	else if (lookDirection == LookDirection::Front)
 	{
+		bPos.z += 100;
 		hitObj = GetFrontBlock(mapPos);
 	}
 	else if (lookDirection == LookDirection::Back)
 	{
+		bPos.z -= 100;
 		hitObj = GetBackBlock(mapPos);
 	}
+
+	if (hitObj.lock())
+	{
+		bPos = hitObj.lock()->transform->GetWorldPosition();
+	}
+	Vector3 midPoint = Vector3((pos.x + bPos.x) * 0.5f, (pos.y + bPos.y) * 0.5f, (pos.z + bPos.z) * 0.5f);
+
+	auto cameraMesh = GetManager().lock()->GetGameObject("CameraMesh");
+	cameraMesh.lock()->transform->SetWorldPosition(midPoint);
+
+	Vector3 cameraMeshScale = Vector3::Zero;
+	if (lookDirection == LookDirection::Right || lookDirection == LookDirection::Left)
+	{
+		cameraMeshScale = Vector3(pos.Distance(bPos), 0.1f, 0.1f);
+	}
+	else if (lookDirection == LookDirection::Up || lookDirection == LookDirection::Down)
+	{
+		cameraMeshScale = Vector3(0.1f, pos.Distance(bPos), 0.1f);
+	}
+	else if (lookDirection == LookDirection::Front || lookDirection == LookDirection::Back)
+	{
+		cameraMeshScale = Vector3(0.1f, 0.1f, pos.Distance(bPos));
+	}
+	cameraMesh.lock()->transform->SetLocalScale(cameraMeshScale);
 
 	if (!hitObj.lock())
 	{
