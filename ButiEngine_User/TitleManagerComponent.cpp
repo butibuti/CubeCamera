@@ -43,6 +43,16 @@ void ButiEngine::TitleManagerComponent::Start()
 	auto bgmTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/cube_BGM.wav");
 
 	gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->PlayBGM(bgmTag, 0.1f);
+
+
+	auto finalScreen = GetManager().lock()->GetGameObject("FinalScreen");
+	finalScreen.lock()->transform->SetLocalScale(Vector3());
+	auto anim = finalScreen.lock()->AddGameComponent<TransformAnimation>();
+
+	anim->SetSpeed(1 / 60.0f);
+	anim->SetTargetTransform(finalScreen.lock()->transform->Clone());
+	anim->GetTargetTransform()->SetLocalScale(Vector3(1980, 1080, 1));
+	anim->SetEaseType(Easing::EasingType::EaseOutCirc);
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::TitleManagerComponent::Clone()

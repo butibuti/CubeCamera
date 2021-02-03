@@ -6,7 +6,7 @@
 
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 int ButiEngine::StageSelectManagerComponent::stageNum = 0;
-int ButiEngine::StageSelectManagerComponent::maxStageNum = 1;
+int ButiEngine::StageSelectManagerComponent::maxStageNum = 1;//15;
 
 void ButiEngine::StageSelectManagerComponent::OnUpdate()
 {
@@ -139,7 +139,7 @@ std::string ButiEngine::StageSelectManagerComponent::GetNextSceneName()
 	if (stageNum > maxStageNum)
 	{
 		stageNum--;
-		return "StageSelectScene";
+		return "ThanksScene";
 	}
 
 	std::string nextSceneName = "Stage" + std::to_string(stageNum) + "Scene";

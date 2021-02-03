@@ -4,7 +4,7 @@
 #include"Header/Scene/ComponentsLoader.h"
 #include"Header/Device/ModelFileConverter.h"
 #include"CameraController.h"
-#include"BurstManagerComponent.h"
+#include"ThanksSceneManager.h"
 //#include"Header/GameObjects/DefaultGameComponent/ChaseComponent.h"
 
 using namespace::ButiEngine;
@@ -28,9 +28,9 @@ int APIENTRY WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	
 	//ModelFileConverter::FBXtoB3M("Player.fbx", "Player.b3m", "Model/Cubes/player/");
 	app->InitLoadResources();
-	//ComponentsLoader::GetInstance()->AddGameComponent<BurstManagerComponent>();
+	//ComponentsLoader::GetInstance()->AddGameComponent<ThanksSceneManager>();
 	
-	app->GetSceneManager()->LoadScene_Init_EditMode("Stage0Scene");
+	app->GetSceneManager()->LoadScene_Init_EditMode("TitleScene");
 
 	app->GetGraphicDevice()->SetClearColor(Vector4(0, 0, 0, 1));
 	int returnCode = app->Run();
