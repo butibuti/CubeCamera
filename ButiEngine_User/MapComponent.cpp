@@ -9,13 +9,27 @@
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 #include"StartPlayerDirectingComponent.h"
 #include"ShakeComponent.h"
+#include"BurstManagerComponent.h"
+#include"CameraController.h"
 
 void ButiEngine::MapComponent::OnUpdate()
 {
 	auto player = GetManager().lock()->GetGameObject("Player").lock();
 	if (player && player->GetBehavior<PlayerBehavior>()->GetGoal())
 	{
-		DestoroyMapChip();
+		if (!stageEndTimer->IsOn())
+		{
+			stageEndTimer->Start();
+			ShakeStop();
+			ShakeStart(0.06f);
+			GetManager().lock()->GetGameObject("MainCamera").lock()->GetGameComponent<CameraController>()->ZoomIn();
+			return;
+		}
+	}
+
+	if (stageEndTimer->Update())
+	{
+		stageEndTimer->Stop();
 		auto sceneManager = gameObject.lock()->GetApplication().lock()->GetSceneManager();
 		std::string sceneName = StageSelectManagerComponent::GetNextSceneName();
 		sceneManager->RemoveScene(sceneName);
@@ -27,22 +41,19 @@ void ButiEngine::MapComponent::OnUpdate()
 			auto bgmTag = gameObject.lock()->GetResourceContainer()->GetSoundTag("Sound/cube_BGM.wav");
 			gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSoundManager()->PlayBGM(bgmTag, 0);
 		}
-
-		//if (GameDevice::GetInput()->TriggerKey(Keys::N))
-		//{
-		//	currentStageNum++;
-		//	if (currentStageNum >= vec_mapData.size())
-		//	{
-		//		currentStageNum--; 
-		//		return;
-		//	}
-		//	PutBlock(currentStageNum);
-		//}
 	}
-
-	auto tag = GetTagManager()->GetObjectTag("MapChip");
-	auto manager = GetManager().lock();
-	std::vector<std::shared_ptr<GameObject>> gameObjects = manager->GetGameObjects(tag);
+	if (stageEndTimer->GetRemainFrame() == 80)
+	{
+		GetManager().lock()->GetGameObject("MainCamera").lock()->GetGameComponent<CameraController>()->ZoomOut();
+	}
+	else if (stageEndTimer->GetRemainFrame() == 60)
+	{
+			GetManager().lock()->GetGameObject("BurstManager").lock()->GetGameComponent<BurstManagerComponent>()->Burst();	
+	}
+	else if (stageEndTimer->GetRemainFrame() == 20)
+	{
+		DestoroyMapChip();
+	}
 }
 
 void ButiEngine::MapComponent::OnSet()
@@ -52,6 +63,7 @@ void ButiEngine::MapComponent::OnSet()
 
 void ButiEngine::MapComponent::Start()
 {
+	stageEndTimer = ObjectFactory::Create<RelativeTimer>(120);
 	vec_mapData.clear();
 	randomBlockPos.clear();
 	auto mapFilePath = "Scene/" + GetManager().lock()->GetScene().lock()->GetSceneInformation()->GetSceneName() + "/mapInfo.map";
@@ -293,7 +305,7 @@ void ButiEngine::MapComponent::ShakeStop()
 			auto endX = itrZ->end();
 			for (auto itrX = itrZ->begin(); itrX != endX; ++itrX)
 			{
-				if (!(*itrX))
+				if (!(*itrX) || (*itrX)->GetGameObjectName() == "Player")
 				{
 					continue;
 				}

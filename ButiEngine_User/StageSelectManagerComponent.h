@@ -20,6 +20,7 @@ namespace ButiEngine {
 		}
 		void OnShowUI();
 
+		static int GetStageNum() { return stageNum; }
 		static std::string GetNextSceneName();
 
 	private:

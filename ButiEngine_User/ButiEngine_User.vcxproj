@@ -161,6 +161,7 @@
   <ItemGroup>
     <ClCompile Include="ArrowEffectComponent.cpp" />
     <ClCompile Include="BlockComponent.cpp" />
+    <ClCompile Include="BurstManagerComponent.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="CameraMeshComponent.cpp" />
     <ClCompile Include="DefaultGameComponent.cpp" />
@@ -192,6 +193,7 @@
   <ItemGroup>
     <ClInclude Include="ArrowEffectComponent.h" />
     <ClInclude Include="BlockComponent.h" />
+    <ClInclude Include="BurstManagerComponent.h" />
     <ClInclude Include="ButiEngineHeader.h" />
     <ClInclude Include="CameraController.h" />
     <ClInclude Include="CameraMeshComponent.h" />
