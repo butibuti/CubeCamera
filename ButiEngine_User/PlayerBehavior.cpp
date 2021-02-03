@@ -45,6 +45,7 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 	{
 		return;
 	}
+	Contoroll();
 	if (timer->Update())
 	{
 		timer->Stop();
@@ -64,10 +65,9 @@ void ButiEngine::PlayerBehavior::OnUpdate()
 
 		CheckLookBlock();
 		shp_invisibleBlockManager->CheckSeen();
+		CheckExistUnderBlock(mapPos);
 	}
-	CheckExistUnderBlock(mapPos);
 	Shrink();
-	Contoroll();
 	Fall();
 }
 
@@ -93,7 +93,7 @@ void ButiEngine::PlayerBehavior::Start()
 	shp_map = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Map").lock()->GetGameComponent<MapComponent>();
 	mapPos = shp_map->GetPlayerPos();
 	offset = mapPos - startPos;
-	timer = ObjectFactory::Create<RelativeTimer>(9);
+	timer = ObjectFactory::Create<RelativeTimer>(10);
 	fallTimer = ObjectFactory::Create<RelativeTimer>(24);
 	fallTimer->Stop();
 	shp_invisibleBlockManager = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("InvisibleBlockManager").lock()->GetGameComponent<InvisibleBlockManagerComponent>();
@@ -647,7 +647,7 @@ void ButiEngine::PlayerBehavior::MoveDownBack()
 std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetRightBlock(Vector3 mapPos)
 {
 	auto mapData = shp_map->GetCurrentMapData()->mapData;
-	for (unsigned int i = mapPos.x + 1; i < mapData[mapPos.y][mapPos.z].size() - 1; i++)
+	for (unsigned int i = mapPos.x + 1; i < mapData[mapPos.y][mapPos.z].size(); i++)
 	{
 		if (GameSettings::IsBlock(mapData[mapPos.y][mapPos.z][i]))
 		{
@@ -677,7 +677,7 @@ std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetLeftBlock(V
 std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetUpBlock(Vector3 mapPos)
 {
 	auto mapData = shp_map->GetCurrentMapData()->mapData;
-	for (unsigned int i = mapPos.y + 1; i < mapData.size() - 1; i++)
+	for (unsigned int i = mapPos.y + 1; i < mapData.size(); i++)
 	{
 		if (GameSettings::IsBlock(mapData[i][mapPos.z][mapPos.x]))
 		{
@@ -707,7 +707,7 @@ std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetDownBlock(V
 std::weak_ptr<ButiEngine::GameObject> ButiEngine::PlayerBehavior::GetFrontBlock(Vector3 mapPos)
 {
 	auto mapData = shp_map->GetCurrentMapData()->mapData;
-	for (unsigned int i = mapPos.z + 1; i < mapData[mapPos.y].size() - 1; i++)
+	for (unsigned int i = mapPos.z + 1; i < mapData[mapPos.y].size(); i++)
 	{
 		if (GameSettings::IsBlock(mapData[mapPos.y][i][mapPos.x]))
 		{
@@ -817,29 +817,10 @@ void ButiEngine::PlayerBehavior::CheckExistUnderBlock(Vector3 movePos)
 	{
 		return;
 	}
-	if (movePos.y - 2 < 0)
-	{
-		fallStart = true;
-		afterFallPos = gameObject.lock()->transform->GetWorldPosition();
-		afterFallPos.y = -500.0f;
-		return; 
-	}
 	std::vector<std::vector<std::vector<int>>>& mapData = shp_map->GetCurrentMapData()->mapData;
 	if (mapData[movePos.y - 1][movePos.z][movePos.x] == GameSettings::block)
 	{
 		return; 
-	}
-	//Vector3 offset(mapData[0][0].size() / 2, mapData.size() / 2, mapData[0].size() / 2);
-
-	for (int y = movePos.y - 2; y >= 0; y--)
-	{
-		if (mapData[y][movePos.z][movePos.x] == GameSettings::block)
-		{
-			mapPos = Vector3(movePos.x, y + 1, movePos.z);
-			afterFallPos = (mapPos - offset) * GameSettings::BlockSize;
-			fallStart = true;
-			return;
-		}
 	}
 	fallStart = true;
 	afterFallPos = gameObject.lock()->transform->GetWorldPosition();
