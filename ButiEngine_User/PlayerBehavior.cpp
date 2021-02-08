@@ -245,6 +245,17 @@ void ButiEngine::PlayerBehavior::CheckLookBlock()
 	}
 }
 
+void ButiEngine::PlayerBehavior::RollCameraDirection(const int rotateDir)
+{
+	cameraDirection = (CameraDirection)((int)cameraDirection + rotateDir);
+
+	if (cameraDirection > CameraDirection::Right) {
+		cameraDirection =(CameraDirection)( (int)cameraDirection % 4);
+	}else if (cameraDirection < CameraDirection::Front) {
+		cameraDirection = (CameraDirection)((int)cameraDirection + 4);
+	}
+}
+
 void ButiEngine::PlayerBehavior::CheckLookDirection()
 {
 	Vector3 front = gameObject.lock()->transform->GetFront() * 10.0f;
@@ -297,38 +308,116 @@ void ButiEngine::PlayerBehavior::Contoroll()
 	if (anim) { return; }
 	if (GameSettings::CheckRight())
 	{
-		OnPushRight();
-		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
-		if (cubeAnim) {
-			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
-			nextMapPos += offset;
+		switch (cameraDirection)
+		{
+		case CameraDirection::Front:
+		{
+			OnPushRight();
+		}
+		break;
+		case CameraDirection::Right:
+		{
+			OnPushFront();
+		}
+		break;
+		case CameraDirection::Back:
+		{
+			OnPushLeft();
+		}
+		break;
+		case CameraDirection::Left:
+		{
+			OnPushBack();
+		}
+		break;
+		default:
+			break;
 		}
 	}
 	if (GameSettings::CheckLeft())
 	{
-		OnPushLeft();
-		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
-		if (cubeAnim) {
-			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
-			nextMapPos += offset;
+
+		switch (cameraDirection)
+		{
+		case CameraDirection::Front:
+		{
+			OnPushLeft();
+		}
+		break;
+		case CameraDirection::Right:
+		{
+			OnPushBack();
+		}
+		break;
+		case CameraDirection::Back:
+		{
+			OnPushRight();
+		}
+		break;
+		case CameraDirection::Left:
+		{
+			OnPushFront();
+		}
+		break;
+		default:
+			break;
 		}
 	}
 	if (GameSettings::CheckFront())
 	{
-		OnPushFront();
-		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
-		if (cubeAnim) {
-			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
-			nextMapPos += offset;
+		switch (cameraDirection)
+		{
+		case CameraDirection::Front:
+		{
+			OnPushFront();
 		}
+		break;
+		case CameraDirection::Right:
+		{
+			OnPushLeft();
+		}
+		break;
+		case CameraDirection::Back:
+		{
+			OnPushBack();
+		}
+		break;
+		case CameraDirection::Left:
+		{
+			OnPushRight();
+		}
+		break;
+		default:
+			break;
+		}
+
 	}
 	if (GameSettings::CheckBack())
 	{
-		OnPushBack();
-		auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
-		if (cubeAnim) {
-			nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
-			nextMapPos += offset;
+		switch (cameraDirection)
+		{
+		case CameraDirection::Front:
+		{
+			OnPushBack();
+		}
+		break;
+		case CameraDirection::Right:
+		{
+			OnPushRight();
+		}
+		break;
+		case CameraDirection::Back:
+		{
+			OnPushFront();
+		}
+		break;
+		case CameraDirection::Left:
+		{
+			OnPushLeft();
+		}
+		break;
+		default:
+			break;
 		}
 	}
 	
@@ -336,55 +425,76 @@ void ButiEngine::PlayerBehavior::Contoroll()
 
 void ButiEngine::PlayerBehavior::OnPushRight()
 {
-	if (fall)
+	if (!fall)
 	{
-		return;
+		MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x + 1, mapPos.y, mapPos.z));
+		if (dir == MoveDirection::Up) { MoveRightUp(); }
+		else if (dir == MoveDirection::Normal) { MoveRight(); }
+		else if (dir == MoveDirection::Down) { MoveRightDown(); }
+		else if (dir == MoveDirection::Fall) { MoveRightDown(); }
 	}
 
-	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x + 1, mapPos.y, mapPos.z));
-	if (dir == MoveDirection::Up) { MoveRightUp(); }
-	else if (dir == MoveDirection::Normal) { MoveRight(); }
-	else if (dir == MoveDirection::Down) { MoveRightDown(); }
-	else if (dir == MoveDirection::Fall) { MoveRightDown(); }
+
+	auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+	if (cubeAnim) {
+		nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
+		nextMapPos += offset;
+	}
 }
 
 void ButiEngine::PlayerBehavior::OnPushLeft()
 {
-	if (fall)
+	if (!fall)
 	{
-		return;
+		MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x - 1, mapPos.y, mapPos.z));
+		if (dir == MoveDirection::Up) { MoveLeftUp(); }
+		else if (dir == MoveDirection::Normal) { MoveLeft(); }
+		else if (dir == MoveDirection::Down) { MoveLeftDown(); }
+		else if (dir == MoveDirection::Fall) { MoveLeftDown(); }
 	}
-	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x - 1, mapPos.y, mapPos.z));
-	if (dir == MoveDirection::Up) { MoveLeftUp(); }
-	else if (dir == MoveDirection::Normal) { MoveLeft(); }
-	else if (dir == MoveDirection::Down) { MoveLeftDown(); }
-	else if (dir == MoveDirection::Fall) { MoveLeftDown(); }
+
+
+	auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+	if (cubeAnim) {
+		nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
+		nextMapPos += offset;
+	}
 }
 
 void ButiEngine::PlayerBehavior::OnPushFront()
 {
-	if (fall)
+	if (!fall)
 	{
-		return;
+		MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x, mapPos.y, mapPos.z + 1));
+		if (dir == MoveDirection::Up) { MoveUpFront(); }
+		else if (dir == MoveDirection::Normal) { MoveFront(); }
+		else if (dir == MoveDirection::Down) { MoveDownFront(); }
+		else if (dir == MoveDirection::Fall) { MoveDownFront(); }
 	}
-	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x, mapPos.y, mapPos.z + 1));
-	if (dir == MoveDirection::Up) { MoveUpFront(); }
-	else if (dir == MoveDirection::Normal) { MoveFront(); }
-	else if (dir == MoveDirection::Down) { MoveDownFront(); }
-	else if (dir == MoveDirection::Fall) { MoveDownFront(); }
+
+	auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+	if (cubeAnim) {
+		nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
+		nextMapPos += offset;
+	}
 }
 
 void ButiEngine::PlayerBehavior::OnPushBack()
 {
-	if (fall)
+	if (!fall)
 	{
-		return;
+		MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x, mapPos.y, mapPos.z - 1));
+		if (dir == MoveDirection::Up) { MoveUpBack(); }
+		else if (dir == MoveDirection::Normal) { MoveBack(); }
+		else if (dir == MoveDirection::Down) { MoveDownBack(); }
+		else if (dir == MoveDirection::Fall) { MoveDownBack(); }
 	}
-	MoveDirection dir = CheckMoveDirection(Vector3(mapPos.x, mapPos.y, mapPos.z - 1));
-	if (dir == MoveDirection::Up) { MoveUpBack(); }
-	else if (dir == MoveDirection::Normal) { MoveBack(); }
-	else if (dir == MoveDirection::Down) { MoveDownBack(); }
-	else if (dir == MoveDirection::Fall) { MoveDownBack(); }
+
+	auto cubeAnim = gameObject.lock()->GetGameComponent<CubeTransformAnimation>();
+	if (cubeAnim) {
+		nextMapPos = cubeAnim->GetTargetTransform()->GetWorldPosition().Ceil();
+		nextMapPos += offset;
+	}
 }
 
 void ButiEngine::PlayerBehavior::Expansion()

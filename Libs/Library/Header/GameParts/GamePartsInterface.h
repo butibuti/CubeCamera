@@ -61,7 +61,7 @@ namespace ButiEngine
 		virtual void TextureAttach(const TextureTag& arg_textureTag, const UINT slot) = 0;
 		virtual void ShaderAttach(const ShaderTag& arg_shaderTag) = 0;
 		virtual void MaterialAttach(const UINT slotOffset, const MaterialTag& arg_materialTag) = 0;
-		virtual UINT* RegistDrawObject(std::weak_ptr< IDrawObject> arg_wkp_drawObject,const bool arg_afterDraw, const UINT arg_layer = 0) = 0;
+		virtual UINT* RegistDrawObject(std::shared_ptr< IDrawObject> arg_shp_drawObject,const bool arg_afterDraw, const UINT arg_layer = 0) = 0;
 
 		virtual void UnRegistDrawObject(UINT* arg_index, const bool arg_afterDraw, const UINT arg_layer = 0) = 0;
 
@@ -111,8 +111,6 @@ namespace ButiEngine
 		virtual void SetScene_Init(const std::string& arg_sceneName, std::shared_ptr<IScene> shp_scene ) = 0;
 		virtual void LoadScene(const std::string& arg_sceneName, std::shared_ptr<SceneInformation> shp_scene = nullptr) = 0;
 		virtual void LoadScene_Init(const std::string& arg_sceneName, std::shared_ptr<SceneInformation> shp_scene = nullptr) = 0;
-		virtual void LoadScene_EditMode(const std::string& arg_sceneName, std::shared_ptr<SceneInformation> shp_scene = nullptr) = 0;
-		virtual void LoadScene_Init_EditMode(const std::string& arg_sceneName, std::shared_ptr<SceneInformation> shp_scene = nullptr) = 0;
 		virtual void RemoveScene(const std::string& arg_sceneName) = 0;
 		virtual void ChangeScene(const std::string& arg_sceneName, float sceneChangeDalay = 0) = 0;
 		virtual void RenewalScene() = 0;
@@ -121,7 +119,6 @@ namespace ButiEngine
 		virtual inline std::shared_ptr<IScene> GetCurrentScene() = 0;
 		virtual std::weak_ptr<IApplication> GetApplication() = 0;
 		virtual void Release() = 0;
-		virtual inline void Draw() = 0;
 
 
 	};

@@ -146,6 +146,17 @@ std::string ButiEngine::StageSelectManagerComponent::GetNextSceneName()
 	return nextSceneName;
 }
 
+void ButiEngine::StageSelectManagerComponent::SetMaxStageNum()
+{
+	for (int i = 0;; i++) {
+		std::string path = "Resources/Scene/Stage"+std::to_string(i)+"Scene/mapInfo.map";
+		if (!Util::CheckFileExistence(path)) {
+			maxStageNum = i-1;
+			break;
+		}
+	}
+}
+
 void ButiEngine::StageSelectManagerComponent::RestartAnimTimer()
 {
 	animTimer->Reset();

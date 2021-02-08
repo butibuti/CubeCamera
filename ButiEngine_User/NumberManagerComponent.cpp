@@ -41,7 +41,7 @@ void ButiEngine::NumberManagerComponent::SetNumber(int arg_number)
 	if (number < 10)
 	{
 		number1.lock()->transform->SetWorldPosition(Vector3(0, 100, 30));
-		number10.lock()->GetGameComponent<MeshDrawComponent>()->UnRegist();
+		meshDraw10->UnRegist();
 	}
 	else
 	{

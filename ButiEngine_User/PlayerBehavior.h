@@ -24,6 +24,14 @@ namespace ButiEngine {
 		Back,
 	};
 
+	enum class CameraDirection
+	{
+		Front,
+		Left,
+		Back,
+		Right,
+	};
+
 	class PlayerBehavior :public Behavior
 	{
 	public:
@@ -54,6 +62,7 @@ namespace ButiEngine {
 		void SetStartRotation(float rot) { startRotation = rot; }
 
 		void CheckLookBlock();
+		void RollCameraDirection(const int rotateDir);
 	private:
 		float length;
 		std::shared_ptr<MapComponent> shp_map;
@@ -69,6 +78,7 @@ namespace ButiEngine {
 		Vector3 afterFallPos;
 		float scale;
 		LookDirection lookDirection;
+		CameraDirection cameraDirection=CameraDirection::Front;
 
 		std::shared_ptr<RelativeTimer> timer;
 		std::shared_ptr<RelativeTimer> fallTimer;

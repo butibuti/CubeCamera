@@ -23,7 +23,7 @@ namespace ButiEngine {
 
 		static int GetStageNum() { return stageNum; }
 		static std::string GetNextSceneName();
-
+		static void SetMaxStageNum();
 	private:
 		std::shared_ptr<RelativeTimer> animTimer;
 		std::weak_ptr<GameObject> obj_stageNumber;

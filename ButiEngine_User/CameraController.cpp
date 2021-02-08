@@ -1,12 +1,39 @@
 #include "stdafx_u.h"
 #include "CameraController.h"
+#include "PlayerBehavior.h"
 #include"Header/GameObjects/DefaultGameComponent/TransformAnimation.h"
 
 void ButiEngine::CameraController::OnUpdate()
 {
-    auto selfRotate = gameObject.lock()->transform->GetLocalRotation().GetEulerOneValue_local().ToDegrees();
-    selfRotate.y = 0;
-    gameObject.lock()->transform->SetLocalRotation((selfRotate));
+    //auto selfRotate = gameObject.lock()->transform->GetLocalRotation().GetEulerOneValue_local().ToDegrees();
+    //selfRotate.y = 0;
+    //gameObject.lock()->transform->SetLocalRotation((selfRotate));
+
+    if (GameDevice::GetInput()->TriggerKey(Keys::E)) {
+        auto anim = shp_cameraAxis->GetGameComponent<TransformAnimation>();
+        if (!anim) {
+            anim = shp_cameraAxis->AddGameComponent<TransformAnimation>();
+            anim->SetTargetTransform(shp_cameraAxis->transform->Clone());
+            //anim->GetTargetTransform()->TranslateX(-1.0);
+            anim->GetTargetTransform()->RollLocalRotationY_Degrees(90);
+            anim->SetSpeed(1.0f / 10.0f);
+
+            shp_player->RollCameraDirection(1);
+
+        }
+    }
+    if (GameDevice::GetInput()->TriggerKey(Keys::Q)) {
+        auto anim = shp_cameraAxis->GetGameComponent<TransformAnimation>();
+        if (!anim) {
+            anim = shp_cameraAxis->AddGameComponent<TransformAnimation>();
+            anim->SetTargetTransform(shp_cameraAxis->transform->Clone());
+            anim->GetTargetTransform()->RollLocalRotationY_Degrees(-90);
+            anim->SetSpeed(1.0f / 10.0f);
+
+            shp_player->RollCameraDirection(-1);
+        }
+    }
+
 }
 
 void ButiEngine::CameraController::OnSet()
@@ -17,6 +44,7 @@ void ButiEngine::CameraController::Start()
 {
     shp_cameraAxis = gameObject.lock()->GetGameObjectManager().lock()->AddObjectFromCereal("cameraAxis").lock();
     gameObject.lock()->transform->SetBaseTransform(shp_cameraAxis->transform, true);
+    shp_player = gameObject.lock()->GetGameObjectManager().lock()->GetGameObject("Player").lock()->GetBehavior<PlayerBehavior>();
 }
 
 std::shared_ptr<ButiEngine::GameComponent> ButiEngine::CameraController::Clone()

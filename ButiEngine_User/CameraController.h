@@ -1,6 +1,7 @@
 #pragma once
 #include"Header/GameComponentHeader.h"
 namespace ButiEngine {
+	class PlayerBehavior;
 	class CameraController :public GameComponent
 	{
 	public:
@@ -27,6 +28,7 @@ namespace ButiEngine {
 	private:
 		Vector3 offset;
 		std::shared_ptr<GameObject> shp_cameraAxis;
+		std::shared_ptr<PlayerBehavior> shp_player;
 		float pase;
 	};
 
