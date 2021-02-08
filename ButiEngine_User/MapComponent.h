@@ -49,6 +49,8 @@ namespace ButiEngine {
 		const Vector4& GetMapStartColor() { return mapStartColor; }
 		void SetMapEndColor(const Vector4& arg_color) { mapEndColor = arg_color; }
 		void SetMapStartColor(const Vector4& arg_color) { mapStartColor = arg_color; }
+		void SetMapInvEndColor(const Vector4& arg_color) { mapEndColor_inv = arg_color; }
+		void SetMapInvStartColor(const Vector4& arg_color) { mapStartColor_inv = arg_color; }
 
 		void ShakeStart(float arg_amplitude);
 		void ShakeStop();
@@ -61,7 +63,9 @@ namespace ButiEngine {
 		
 		Vector3 playerPos;
 		Vector4 mapEndColor = Vector4(0.2f, 0.2f, 0.9f, 1.0f);
-		Vector4 mapStartColor=Vector4(0.4f,0.4f,0.7f,1.0f);
+		Vector4 mapStartColor = Vector4(0.4f, 0.4f, 0.7f, 1.0f);
+		Vector4 mapEndColor_inv = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
+		Vector4 mapStartColor_inv = Vector4(0.8f, 0.8f, 0.8f, 1.0f);
 		int currentStageNum;
 
 		void DestoroyMapChip();
