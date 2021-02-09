@@ -9,6 +9,7 @@ namespace ButiEngine {
 		MapEditorComponent() {}
 
 		void OnUpdate()override;
+		void ShowGUI()override;
 		void OnSet()override;
 		void Start()override;
 		std::string GetGameComponentName()override {

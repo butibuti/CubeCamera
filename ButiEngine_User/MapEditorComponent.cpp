@@ -9,7 +9,13 @@ void ButiEngine::MapEditorComponent::OnUpdate()
 {
 #ifdef DEBUG
 
+    gameObject.lock()->GetGameObjectManager().lock()->GetScene().lock()->GetSceneManager().lock()->GetApplication().lock()->GetGUIController()->vec_shp_GUIObjects.push_back(GetThis<IObject>());
+    
+#endif // DEBUG
+}
 
+void ButiEngine::MapEditorComponent::ShowGUI()
+{
     static int blockPos[3];
     static int blockPos_edgeOne[3];
     static int blockPos_edgeTwo[3];
@@ -85,12 +91,12 @@ void ButiEngine::MapEditorComponent::OnUpdate()
         }
         auto mapNum = p_mapdata->mapData[1][2][0];
         if (mapNum == GameSettings::player) {
-            Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + (GameSettings::tutorialGoal + goalMode)*10+0);
+            Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + (GameSettings::tutorialGoal + goalMode) * 10 + 0);
         }
-        else if (mapNum >= GameSettings::playerRotate_90&& mapNum <= GameSettings::playerRotate_min90) {
-            Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + (GameSettings::tutorialGoal + goalMode) * 10 + (mapNum+1- GameSettings::playerRotate_90));
-         }
-        else if (mapNum>=GameSettings::playerAndGoal) {
+        else if (mapNum >= GameSettings::playerRotate_90 && mapNum <= GameSettings::playerRotate_min90) {
+            Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + (GameSettings::tutorialGoal + goalMode) * 10 + (mapNum + 1 - GameSettings::playerRotate_90));
+        }
+        else if (mapNum >= GameSettings::playerAndGoal) {
             int dir = (mapNum - GameSettings::playerAndGoal) % 10;
             Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + (GameSettings::tutorialGoal + goalMode) * 10 + dir);
         }
@@ -210,7 +216,7 @@ void ButiEngine::MapEditorComponent::OnUpdate()
                     break;
                 }
 
-                Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName,GameSettings::playerAndGoal+ mapNum*10);
+                Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + mapNum * 10);
             }
             else {
                 p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = GameSettings::player;
@@ -243,7 +249,7 @@ void ButiEngine::MapEditorComponent::OnUpdate()
                 Replace(Vector3(blockPos[1], blockPos[2], blockPos[0]), goalObjName, GameSettings::playerAndGoal + mapNum * 10 + playerNum);
             }
 
-            p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] =playerNum ;
+            p_mapdata->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = playerNum;
             shp_currentMapData->mapData[blockPos[1]][blockPos[2]][blockPos[0]] = playerNum;
         }
 
@@ -449,7 +455,6 @@ void ButiEngine::MapEditorComponent::OnUpdate()
 
     GUI::End();
 
-#endif // DEBUG
 }
 
 void ButiEngine::MapEditorComponent::OnSet()
